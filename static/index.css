@@ -1,0 +1,19 @@
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+body pre {
+  flex: 1;
+}
+
+#control-bar {
+  background-color: #222;
+}
+
+#console {
+  color: hsl(0, 0%, 80%);
+  background-color: hsl(0, 0%, 7%);
+  height: 20vh;
+}
