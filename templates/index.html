@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		@js "/static/prism.js"
-		@css "/static/prism.css"
+		@js "/js/prism.js"
+		@css "/css/prism.css"
 		@css "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.2/css/bulma.min.css"
-		@css "/static/index.css"
+		@css "/css/index.css"
 
 		<script type="module">
 			const Prism = window.Prism
@@ -13,22 +13,25 @@
 			import {CodeJar} from "https://medv.io/codejar/codejar.js"
 			let editor = document.querySelector("#editor")
 			window.jar = new CodeJar(editor, el => Prism.highlightElement(el))
-			window.jar.updateCode("")
+      window.jar.updateCode("fn main() {\\n\\t\\n}")
 
 			editor.focus()
 		</script>
 	</head>
 	<body class="has-text-centered">
-		<pre class="editor-pre line-numbers m-4"><code id="editor" class="language-v is-size-6"></code></pre>
+		<pre class="line-numbers m-0">
+      <code id="editor" class="language-v"></code>
+    </pre>
 		<section class="section p-0">
 			<section class="section field is-grouped p-3 m-0" id="control-bar">
 				<div class="control">
-					<button class="button is-info">run</button>
+					<button class="button is-info" onclick="runCode();">run</button>
 				</div>
 			</section>
-			<section class="section p-2 m-0 has-text-left" id="console">
-				<p></p>
+			<section class="section m-0 has-text-left" id="console">
+				<p id="console-output"></p>
 			</section>
 		</section>
 	</body>
+  @js "/js/index.js"
 </html>

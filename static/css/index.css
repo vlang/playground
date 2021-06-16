@@ -15,5 +15,6 @@ body pre {
 #console {
   color: hsl(0, 0%, 80%);
   background-color: hsl(0, 0%, 7%);
-  height: 20vh;
+  height: 30vh;
+  overflow-y: auto;
 }

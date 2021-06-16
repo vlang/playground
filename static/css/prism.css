@@ -1,0 +1,182 @@
+/* PrismJS 1.23.0
+https://prismjs.com/download.html#themes=prism&languages=clike+v&plugins=line-numbers+custom-class */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: black;
+	background: none;
+	text-shadow: 0 1px white;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+	text-shadow: none;
+	background: #b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+	text-shadow: none;
+	background: #b3d4fc;
+}
+
+@media print {
+	code[class*="language-"],
+	pre[class*="language-"] {
+		text-shadow: none;
+	}
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #f5f2f0;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.pr-token.pr-comment,
+.pr-token.pr-prolog,
+.pr-token.pr-doctype,
+.pr-token.pr-cdata {
+	color: slategray;
+}
+
+.pr-token.pr-punctuation {
+	color: #999;
+}
+
+.pr-token.pr-namespace {
+	opacity: .7;
+}
+
+.pr-token.pr-property,
+.pr-token.pr-tag,
+.pr-token.pr-boolean,
+.pr-token.pr-number,
+.pr-token.pr-constant,
+.pr-token.pr-symbol,
+.pr-token.pr-deleted {
+	color: #905;
+}
+
+.pr-token.pr-selector,
+.pr-token.pr-attr-name,
+.pr-token.pr-string,
+.pr-token.pr-char,
+.pr-token.pr-builtin,
+.pr-token.pr-inserted {
+	color: #690;
+}
+
+.pr-token.pr-operator,
+.pr-token.pr-entity,
+.pr-token.pr-url,
+.language-css .pr-token.string,
+.style .pr-token.pr-string {
+	color: #9a6e3a;
+}
+
+.pr-token.pr-atrule,
+.pr-token.pr-attr-value,
+.pr-token.pr-keyword {
+	color: #07a;
+}
+
+.pr-token.pr-function,
+.pr-token.pr-class-name {
+	color: #DD4A68;
+}
+
+.pr-token.pr-regex,
+.pr-token.pr-important,
+.pr-token.pr-variable {
+	color: #e90;
+}
+
+.pr-token.pr-important,
+.pr-token.pr-bold {
+	font-weight: bold;
+}
+.pr-token.pr-italic {
+	font-style: italic;
+}
+
+.pr-token.pr-entity {
+	cursor: help;
+}
+
+pre[class*="language-"].line-numbers {
+	position: relative;
+	padding-left: 3.8em;
+	counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+	position: relative;
+	white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+	font-size: 100%;
+	left: -3.8em;
+	width: 3em; /* works for line-numbers below 1000 lines */
+	letter-spacing: -1px;
+	border-right: 1px solid #999;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+}
+
+	.line-numbers-rows > span {
+		display: block;
+		counter-increment: linenumber;
+	}
+
+		.line-numbers-rows > span:before {
+			content: counter(linenumber);
+			color: #999;
+			display: block;
+			padding-right: 0.8em;
+			text-align: right;
+		}
+

@@ -1,7 +1,12 @@
 import vweb
 import os
 
-const port = 5000
+const (
+	port = 5000
+	vexeroot = @VEXEROOT
+	block_size = 4096
+	inode_ratio = 16384
+)
 
 struct App {
 	vweb.Context
@@ -12,16 +17,33 @@ fn (mut app App) index() vweb.Result {
 	return $vweb.html()
 }
 
+fn run_in_sandbox(code string) string {
+	iso_res := os.execute("isolate --init")
+	defer { 
+		os.execute("isolate --cleanup") 
+	}
+	box_path := os.join_path(iso_res.output.trim_suffix("\n"), "box")
+	os.write_file(os.join_path(box_path, "code.v"), code) or {
+		return "Failed to write code to sandbox."
+	}
+	run_res := os.execute("isolate --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=5 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v run code.v")
+	println(run_res.output.trim_right("\n"))
+	return run_res.output.trim_right("\n")
+}
+
 [post; "/run"]
 fn (mut app App) run() vweb.Result {
-	return app.text("Unimplemented.")
+	code := app.form["code"] or {
+		return app.text("No code was provided.")
+	}
+
+	res := run_in_sandbox(code)
+	return app.text(res)
 }
 
 fn (mut app App) init_once() {
-	app.serve_static("/static/prism.js", "static/prism.js")
-	app.serve_static("/static/prism.css", "static/prism.css")
-	app.serve_static("/static/index.css", "static/index.css")
-	app.handle_static("templates", true)
+	os.execute("isolate --cleanup")
+	app.handle_static("static", true)
 }
 
 fn main() {
