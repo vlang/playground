@@ -27,7 +27,6 @@ fn run_in_sandbox(code string) string {
 		return "Failed to write code to sandbox."
 	}
 	run_res := os.execute("isolate --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=5 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v run code.v")
-	println(run_res.output.trim_right("\n"))
 	return run_res.output.trim_right("\n")
 }
 
