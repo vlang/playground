@@ -31,6 +31,21 @@ fn init_sandbox() (string, int) {
 	return "", -1
 }
 
+fn prettify(output string) string  {
+  mut pretty := output
+
+  if pretty.len > 10000 {
+    pretty = pretty[..9997] + "..."
+  }
+
+  nlines := pretty.count("\n")
+  if nlines > 100 {
+    pretty = pretty.split_into_lines()[..100].join_lines() + "\n...and ${nlines - 100} more"
+  }
+
+  return pretty
+}
+
 fn run_in_sandbox(code string) string {
 	box_path, box_id := init_sandbox()
 	defer { 
@@ -39,8 +54,8 @@ fn run_in_sandbox(code string) string {
 	os.write_file(os.join_path(box_path, "code.v"), code) or {
 		return "Failed to write code to sandbox."
 	}
-	run_res := os.execute("isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=5 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v run code.v")
-	return run_res.output.trim_right("\n")
+	run_res := os.execute("isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=50000 --wall-time=1 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v run code.v")
+	return prettify(run_res.output.trim_right("\n"))
 }
 
 [post; "/run"]
