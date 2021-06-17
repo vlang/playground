@@ -17,16 +17,29 @@ fn (mut app App) index() vweb.Result {
 	return $vweb.html()
 }
 
-fn run_in_sandbox(code string) string {
-	iso_res := os.execute("isolate --init")
-	defer { 
-		os.execute("isolate --cleanup") 
+fn init_sandbox() (string, int) {
+	for {
+		for box_id in 0..1000 {
+			iso_res := os.execute("isolate --box-id=$box_id --init")
+			if iso_res.exit_code == 0 {
+				box_path := os.join_path(iso_res.output.trim_suffix("\n"), "box")
+				return box_path, box_id
+			}
+		}
 	}
-	box_path := os.join_path(iso_res.output.trim_suffix("\n"), "box")
+
+	return "", -1
+}
+
+fn run_in_sandbox(code string) string {
+	box_path, box_id := init_sandbox()
+	defer { 
+		os.execute("isolate --box-id=$box_id --cleanup") 
+	}
 	os.write_file(os.join_path(box_path, "code.v"), code) or {
 		return "Failed to write code to sandbox."
 	}
-	run_res := os.execute("isolate --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=5 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v run code.v")
+	run_res := os.execute("isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=5 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v run code.v")
 	return run_res.output.trim_right("\n")
 }
 
