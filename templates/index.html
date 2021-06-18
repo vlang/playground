@@ -23,11 +23,15 @@
       <code id="editor" class="language-v"></code>
     </pre>
 		<section class="section p-0">
-			<section class="section field is-grouped p-3 m-0" id="control-bar">
-				<div class="control">
-					<button class="button is-info" id="run-button" onclick="runCode();">run</button>
-				</div>
-			</section>
+			<section class="section level p-3 m-0" id="control-bar">
+        <div class="level-left">
+          <button class="button is-info" id="run-button" onclick="runCode()">run</button>
+        </div>
+        <div class="level-right">
+          <button class="button is-danger" id="decrease-font-size" onclick="changeFontSize(-1)">-</button>
+          <button class="button is-success" id="increase-font-size" onclick="changeFontSize(1)">+</button>
+        </div>
+      </section>
 			<section class="section p-4 m-0 has-text-left" id="console">
 				<p id="console-output"></p>
 			</section>

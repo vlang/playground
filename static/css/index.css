@@ -12,6 +12,10 @@ body pre {
   background-color: #222;
 }
 
+#decrease-font-size {
+  margin-right: 0.75em;
+}
+
 #console {
   color: hsl(0, 0%, 80%);
   background-color: hsl(0, 0%, 7%);
