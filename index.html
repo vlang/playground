@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="/css/prism.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css" rel="stylesheet" type="text/css">
+<link href="/css/index.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/flex-splitter-directive@0.2.0/styles.min.css" rel="stylesheet" type="text/css">
+
+<title>V Playground</title>
+
+<script type="module">
+const Prism = window.Prism
+Prism.plugins.customClass.prefix("pr-")
+
+import {CodeJar} from "https://medv.io/codejar/codejar.js"
+let editor = document.querySelector("#editor")
+window.jar = new CodeJar(editor, el => Prism.highlightElement(el))
+window.jar.updateCode("fn main() {\n\t\n}")
+
+editor.focus()
+</script>
+</head>
+<body class="text-centered with-custom-webkit-scrollbars with-custom-css-scrollbars">
+<main data-flex-splitter-vertical style="flex: auto;">
+<div style="min-height: 30%; height: 70%;">
+<pre class="line-numbers m-0">
+<code id="editor" class="language-v"></code>
+</pre>
+</div>
+<div role="separator"></div>
+<div style="flex: auto; min-height: 20%;">
+<div class="p-0 console-section">
+<div class="d-flex flex-row justify-content-between p-10 m-0" id="control-bar">
+<div class="level-left">
+<button class="btn btn-primary" id="run-button" onclick="runCode()">run</button>
+</div>
+<div class="level-right">
+<button class="btn btn-danger" id="decrease-font-size" onclick="changeFontSize(-1)">-</button>
+<button class="btn btn-success text-white" id="increase-font-size" onclick="changeFontSize(1)">+</button>
+</div>
+</div>
+<div class="p-10 m-0 text-left" id="console">
+<p class="px-5 m-0" id="console-output"></p>
+</div>
+</div>
+</div>
+</main>
+</body>
+
+<script src="/js/prism.js"></script>
+<script src="/js/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flex-splitter-directive@0.2.0"></script>
+</html>
