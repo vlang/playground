@@ -28,6 +28,11 @@ body pre {
   user-select: none;
 }
 
+.btn-success {
+  background-color: hsl(141, 53%, 53%) !important;
+  border-color: hsl(141, 53%, 53%) !important;
+}
+
 #editor {
   font-size: 1.2em;
 }
