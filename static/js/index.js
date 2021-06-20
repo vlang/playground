@@ -24,3 +24,16 @@ function changeFontSize(amount) {
   let style = window.getComputedStyle(editor, null).getPropertyValue("font-size")
   editor.style.fontSize = `${parseInt(style) + amount}px`
 }
+
+function toggleDarkMode() {
+  let darkModeButton = document.getElementById("dark-mode-toggle")
+  let prismCSS = document.getElementById("prism-css");
+
+  if (prismCSS.href.endsWith("/css/prism-light.css")) {
+    prismCSS.href = "/css/prism-dark.css";
+    darkModeButton.innerHTML = '<i class="fas fa-sun"></i>';
+  } else {
+    prismCSS.href = "/css/prism-light.css";
+    darkModeButton.innerHTML = '<i class="fas fa-moon"></i>';
+  }
+}

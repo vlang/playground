@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    @css "/css/prism.css"
+    <link rel="stylesheet" href="/css/prism-light.css" id="prism-css">
     @css "https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css"
     @css "/css/index.css"
+    @css "https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
     @css "https://cdn.jsdelivr.net/npm/flex-splitter-directive@0.2.0/styles.min.css"
     <title>V Playground</title>
     <script type="module">
-      const Prism = window.Prism
-      Prism.plugins.customClass.prefix("pr-")
-      
       import {CodeJar} from "https://medv.io/codejar/codejar.js"
       let editor = document.querySelector("#editor")
       window.jar = new CodeJar(editor, el => Prism.highlightElement(el))
@@ -33,6 +31,7 @@
               <button class="btn btn-primary" id="run-button" onclick="runCode()">run</button>
             </div>
             <div class="level-right">
+              <button class="btn" id="dark-mode-toggle" onclick="toggleDarkMode();"><span class="fas fa-moon"></span></button>
               <button class="btn btn-danger" id="decrease-font-size" onclick="changeFontSize(-1)">-</button>
               <button class="btn btn-success text-white" id="increase-font-size" onclick="changeFontSize(1)">+</button>
             </div>

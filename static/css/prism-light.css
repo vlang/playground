@@ -1,5 +1,5 @@
 /* PrismJS 1.23.0
-https://prismjs.com/download.html#themes=prism&languages=clike+v&plugins=line-numbers+custom-class */
+https://prismjs.com/download.html#themes=prism&languages=clike+v&plugins=line-numbers */
 /**
  * prism.js default theme for JavaScript, CSS and HTML
  * Based on dabblet (http://dabblet.com)
@@ -68,74 +68,76 @@ pre[class*="language-"] {
 	white-space: normal;
 }
 
-.pr-token.pr-comment,
-.pr-token.pr-prolog,
-.pr-token.pr-doctype,
-.pr-token.pr-cdata {
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
 	color: slategray;
 }
 
-.pr-token.pr-punctuation {
+.token.punctuation {
 	color: #999;
 }
 
-.pr-token.pr-namespace {
+.token.namespace {
 	opacity: .7;
 }
 
-.pr-token.pr-property,
-.pr-token.pr-tag,
-.pr-token.pr-boolean,
-.pr-token.pr-number,
-.pr-token.pr-constant,
-.pr-token.pr-symbol,
-.pr-token.pr-deleted {
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
 	color: #905;
 }
 
-.pr-token.pr-selector,
-.pr-token.pr-attr-name,
-.pr-token.pr-string,
-.pr-token.pr-char,
-.pr-token.pr-builtin,
-.pr-token.pr-inserted {
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
 	color: #690;
 }
 
-.pr-token.pr-operator,
-.pr-token.pr-entity,
-.pr-token.pr-url,
-.language-css .pr-token.string,
-.style .pr-token.pr-string {
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
 	color: #9a6e3a;
+	/* This background color was intended by the author of this theme. */
+	background: hsla(0, 0%, 100%, .5);
 }
 
-.pr-token.pr-atrule,
-.pr-token.pr-attr-value,
-.pr-token.pr-keyword {
+.token.atrule,
+.token.attr-value,
+.token.keyword {
 	color: #07a;
 }
 
-.pr-token.pr-function,
-.pr-token.pr-class-name {
+.token.function,
+.token.class-name {
 	color: #DD4A68;
 }
 
-.pr-token.pr-regex,
-.pr-token.pr-important,
-.pr-token.pr-variable {
+.token.regex,
+.token.important,
+.token.variable {
 	color: #e90;
 }
 
-.pr-token.pr-important,
-.pr-token.pr-bold {
+.token.important,
+.token.bold {
 	font-weight: bold;
 }
-.pr-token.pr-italic {
+.token.italic {
 	font-style: italic;
 }
 
-.pr-token.pr-entity {
+.token.entity {
 	cursor: help;
 }
 
