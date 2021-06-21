@@ -2,7 +2,7 @@ import vweb
 import os
 
 const (
-	port        = 5000
+	port        = 5555
 	vexeroot    = @VEXEROOT
 	block_size  = 4096
 	inode_ratio = 16384
