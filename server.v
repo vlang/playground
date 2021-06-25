@@ -54,7 +54,11 @@ fn run_in_sandbox(code string) string {
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.'
 	}
-	run_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=50000 --wall-time=1 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v run code.v')
+	build_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=50000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v code.v')
+	if build_res.exit_code != 0 {
+		return prettify(build_res.output.trim_right('\n'))
+	}
+	run_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=1 --mem=10000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run code')
 	return prettify(run_res.output.trim_right('\n'))
 }
 
