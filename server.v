@@ -54,18 +54,17 @@ fn run_in_sandbox(code string) string {
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.'
 	}
-	build_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=50000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v code.v')
+	build_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=60000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run $vexeroot/v code.v')
 	if build_res.exit_code != 0 {
 		return prettify(build_res.output.trim_right('\n'))
 	}
-	run_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=1 --mem=10000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run code')
+	run_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=1 --mem=20000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run code')
 	return prettify(run_res.output.trim_right('\n'))
 }
 
 ['/run'; post]
 fn (mut app App) run() vweb.Result {
 	code := app.form['code'] or { return app.text('No code was provided.') }
-
 	res := run_in_sandbox(code)
 	return app.text(res)
 }
