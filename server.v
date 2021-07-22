@@ -1,5 +1,6 @@
 import vweb
 import os
+import rand { ulid }
 
 const (
 	port        = 5555
@@ -46,6 +47,12 @@ fn prettify(output string) string {
 	return pretty
 }
 
+fn log_code(ip string, code string) ? {
+	path := 'logs/${ulid()}'
+	log := '// ip: $ip\n$code'
+	os.write_file(path, log)?
+}
+
 fn run_in_sandbox(code string) string {
 	box_path, box_id := init_sandbox()
 	defer {
@@ -65,6 +72,7 @@ fn run_in_sandbox(code string) string {
 ['/run'; post]
 fn (mut app App) run() vweb.Result {
 	code := app.form['code'] or { return app.text('No code was provided.') }
+	log_code(code) or { eprintln('Failed to log code.') }
 	res := run_in_sandbox(code)
 	return app.text(res)
 }
