@@ -72,7 +72,7 @@ fn run_in_sandbox(code string) string {
 ['/run'; post]
 fn (mut app App) run() vweb.Result {
 	code := app.form['code'] or { return app.text('No code was provided.') }
-	log_code(code) or { eprintln('Failed to log code.') }
+	log_code(app.ip(), code) or { eprintln('Failed to log code.') }
 	res := run_in_sandbox(code)
 	return app.text(res)
 }
