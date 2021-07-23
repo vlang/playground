@@ -54,7 +54,7 @@ fn ddhhmmss(time time.Time) string {
 
 fn log_code(ip string, code string) ? {
 	now := time.now()
-	log_dir := 'logs/$now.month-$now.year'
+	log_dir := 'logs/$now.year-$now.month'
 	if !os.exists(log_dir) {
 		os.mkdir(log_dir)?	
 	}
