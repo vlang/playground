@@ -1,6 +1,6 @@
 import vweb
 import os
-import rand { ulid }
+import rand
 import time
 
 const (
@@ -56,10 +56,10 @@ fn log_code(ip string, code string) ? {
 	now := time.now()
 	log_dir := 'logs/$now.year-${now.month:02d}'
 	if !os.exists(log_dir) {
-		os.mkdir(log_dir)?	
+		os.mkdir(log_dir) ?
 	}
-	log_file := '$log_dir/${ip}_${ddhhmmss(now)}'
-	os.write_file(log_file, code)?
+	log_file := '$log_dir/${ddhhmmss(now)}_$ip'
+	os.write_file(log_file, code) ?
 }
 
 fn run_in_sandbox(code string) string {
