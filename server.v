@@ -1,6 +1,7 @@
 import vweb
 import os
 import rand { ulid }
+import time
 
 const (
 	port        = 5555
@@ -47,10 +48,18 @@ fn prettify(output string) string {
 	return pretty
 }
 
+fn ddhhmmss(time time.Time) string {
+	return '${time.day:02d}-${time.hour:02d}:${time.minute:02d}:${time.second:02d}'
+}
+
 fn log_code(ip string, code string) ? {
-	path := 'logs/${ulid()}'
-	log := '// ip: $ip\n$code'
-	os.write_file(path, log)?
+	now := time.now()
+	log_dir := 'logs/$now.month-$now.year'
+	if !os.exists(log_dir) {
+		os.mkdir(log_dir)?	
+	}
+	log_file := '$log_dir/${ip}_${ddhhmmss(now)}'
+	os.write_file(log_file, code)?
 }
 
 fn run_in_sandbox(code string) string {
