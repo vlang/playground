@@ -1,3 +1,7 @@
+function saveCode() {
+  localStorage.setItem("code", window.jar.toString())
+}
+
 function runCode() {
   let runButton = document.getElementById("run-button")
   let oldRunButtonText = runButton.innerText
@@ -11,8 +15,8 @@ function runCode() {
   fetch("/run", {
     method: "post",
     body: data
-  }).then((resp) => {
-    resp.text().then((output) => {
+  }).then(resp => {
+    resp.text().then(output => {
       document.getElementById("console-output").innerText = output
       runButton.innerText = oldRunButtonText
       runButton.removeAttribute("disabled")
@@ -60,8 +64,9 @@ switch (darkMode) {
 }
 
 // ctrl+enter to run code
-document.addEventListener("keyup", (ev) => {
+document.addEventListener("keyup", ev => {
   if (ev.ctrlKey && ev.key == "Enter") {
     runCode()
   }
 })
+
