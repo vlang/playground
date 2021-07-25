@@ -90,6 +90,7 @@ fn (mut app App) run() vweb.Result {
 fn (mut app App) init_once() {
 	os.execute('isolate --cleanup')
 	app.handle_static('static', true)
+	app.serve_static('/static/js/codejar.js', 'static/js/codejar.js')
 }
 
 fn main() {

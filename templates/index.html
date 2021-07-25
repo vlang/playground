@@ -7,14 +7,6 @@
     @css "https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
     @css "https://cdn.jsdelivr.net/npm/flex-splitter-directive@0.2.0/styles.min.css"
     <title>V Playground</title>
-    <script type="module">
-      import {CodeJar} from "https://medv.io/codejar/codejar.js"
-      let editor = document.querySelector("#editor")
-      window.jar = new CodeJar(editor, el => Prism.highlightElement(el))
-      window.jar.updateCode("fn main() {\\n\\t\\n}")
-      
-      editor.focus()
-    </script>
   </head>
   <body class="text-centered with-custom-webkit-scrollbars with-custom-css-scrollbars">
     <main data-flex-splitter-vertical style="flex: auto;">
@@ -47,4 +39,11 @@
   @js "https://cdn.jsdelivr.net/npm/flex-splitter-directive@0.2.0"
   @js "/js/prism.js"
   @js "/js/index.js"
+  <script type="module">
+    import { CodeJar } from "/static/js/codejar.js"
+    let editor = document.querySelector("#editor")
+    window.jar = new CodeJar(editor, (el) => Prism.highlightElement(el))
+    window.jar.updateCode("fn main() {\\n\\t\\n}")
+    editor.focus()
+  </script>
 </html>
