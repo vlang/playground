@@ -91,7 +91,6 @@ fn (mut app App) init_once() {
 	os.execute('isolate --cleanup')
 	app.handle_static('static', true)
 	app.serve_static('/static/js/codejar.js', 'static/js/codejar.js')
-	app.serve_static('/static/js/linenumbers.js', 'static/js/linenumbers.js')
 }
 
 fn main() {
