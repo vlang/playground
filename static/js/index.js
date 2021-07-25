@@ -4,10 +4,8 @@ function runCode() {
   runButton.setAttribute("disabled", "disabled")
 
   let code = window.jar.toString()
-  let acceptLogging = localStorage.getItem("acceptLogging")
   let data = new FormData()
   data.append("code", code)
-  data.append("accept_logging", acceptLogging)
 
   fetch("/run", {
     method: "post",
@@ -44,21 +42,6 @@ function toggleDarkMode(storePreference) {
       localStorage.setItem("darkMode", "false")
     }
   }
-}
-
-document.getElementById("modal-no").onclick = () => {
-  localStorage.setItem("acceptLogging", "false")
-  halfmoon.toggleModal("accept-logging-modal")
-}
-document.getElementById("modal-yes").onclick = () => {
-  localStorage.setItem("acceptLogging", "true")
-  halfmoon.toggleModal("accept-logging-modal")
-}
-
-// logging prompt
-let acceptLogging = localStorage.getItem("acceptLogging")
-if (acceptLogging === null) {
-  halfmoon.toggleModal("accept-logging-modal")
 }
 
 // dark mode logic

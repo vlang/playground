@@ -60,7 +60,7 @@ fn log_code(code string, build_res string) ? {
 	os.write_file(log_file, log_content) ?
 }
 
-fn run_in_sandbox(code string, accept_logging bool) string {
+fn run_in_sandbox(code string) string {
 	box_path, box_id := init_sandbox()
 	defer {
 		os.execute('isolate --box-id=$box_id --cleanup')
@@ -71,10 +71,8 @@ fn run_in_sandbox(code string, accept_logging bool) string {
 	build_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v -gc boehm code.v')
 	if build_res.exit_code != 0 {
 		build_output := build_res.output.trim_right('\n')
-		if accept_logging {
-			log_code(code, build_output) or {
-				eprintln('[WARNING] Failed to log code.')
-			}
+		log_code(code, build_output) or {
+			eprintln('[WARNING] Failed to log code.')
 		}
 		return prettify(build_output)
 	}
@@ -85,8 +83,7 @@ fn run_in_sandbox(code string, accept_logging bool) string {
 ['/run'; post]
 fn (mut app App) run() vweb.Result {
 	code := app.form['code'] or { return app.text('No code was provided.') }
-	accept_logging := app.form['accept_logging'] or { 'false' }
-	res := run_in_sandbox(code, accept_logging.bool())
+	res := run_in_sandbox(code)
 	return app.text(res)
 }
 
