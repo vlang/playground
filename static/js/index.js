@@ -27,16 +27,22 @@ function changeFontSize(amount) {
   editor.style.fontSize = `${parseInt(style) + amount}px`
 }
 
-function toggleDarkMode() {
+function toggleDarkMode(storePreference) {
   let darkModeButton = document.getElementById("dark-mode-toggle")
   let prismCSS = document.getElementById("prism-css");
 
   if (prismCSS.href.endsWith("/css/prism-light.css")) {
     prismCSS.href = "/css/prism-dark.css";
     darkModeButton.innerHTML = '<i class="fas fa-sun"></i>';
+    if (storePreference) {
+      localStorage.setItem("darkMode", "true")
+    }
   } else {
     prismCSS.href = "/css/prism-light.css";
     darkModeButton.innerHTML = '<i class="fas fa-moon"></i>';
+    if (storePreference) {
+      localStorage.setItem("darkMode", "false")
+    }
   }
 }
 
@@ -48,7 +54,23 @@ document.getElementById("modal-yes").onclick = () => {
   localStorage.setItem("acceptLogging", "true")
   halfmoon.toggleModal("accept-logging-modal")
 }
+
+// logging prompt
 let acceptLogging = localStorage.getItem("acceptLogging")
 if (acceptLogging === null) {
   halfmoon.toggleModal("accept-logging-modal")
+}
+
+// dark mode logic
+let darkMode = localStorage.getItem("darkMode")
+switch (darkMode) {
+  case "true":
+    toggleDarkMode(false)
+    break;
+  case "false":
+    break;
+  default:
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      toggleDarkMode(false) 
+    } 
 }
