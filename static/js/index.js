@@ -13,7 +13,7 @@ function runCode() {
   }).then((resp) => {
     resp.text().then((output) => {
       document.getElementById("console-output").innerText = output
-      runButton.innerText = "run"
+      runButton.innerText = "Run"
       runButton.removeAttribute("disabled")
     })
   })
