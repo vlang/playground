@@ -1,5 +1,6 @@
 function runCode() {
   let runButton = document.getElementById("run-button")
+  let oldRunButtonText = runButton.innerText
   runButton.innerText = "..."
   runButton.setAttribute("disabled", "disabled")
 
@@ -13,7 +14,7 @@ function runCode() {
   }).then((resp) => {
     resp.text().then((output) => {
       document.getElementById("console-output").innerText = output
-      runButton.innerText = "Run"
+      runButton.innerText = oldRunButtonText
       runButton.removeAttribute("disabled")
     })
   })
