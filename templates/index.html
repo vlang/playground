@@ -17,11 +17,28 @@
     </script>
   </head>
   <body class="text-centered with-custom-webkit-scrollbars with-custom-css-scrollbars">
+    <div class="modal" id="accept-logging-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <a href="#" class="close" role="button" aria-label="Close" id="modal-close">
+            <span aria-hidden="true">&times;</span>
+          </a>
+          <p>
+            Do you agree to send anonymous logs of code that fails to compile?
+          </p>
+          <div class="text-right mt-20"> <!-- text-right = text-align: right, mt-20 = margin-top: 2rem (20px) -->
+            <button class="btn mr-5" role="button" id="modal-no">No</a>
+            <button class="btn btn-primary" role="button" id="modal-yes">Yes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <main data-flex-splitter-vertical style="flex: auto;">
       <div style="min-height: 30%; height: 70%;">
         <pre class="line-numbers m-0">
-<code id="editor" class="language-v"></code>
-</pre>
+          <code id="editor" class="language-v"></code>
+        </pre>
       </div>
       <div role="separator" class="divider"></div>
       <div style="flex: auto; min-height: 20%;">
@@ -43,7 +60,8 @@
       </div>
     </main>
   </body>
+  @js "https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"
+  @js "https://cdn.jsdelivr.net/npm/flex-splitter-directive@0.2.0"
   @js "/js/prism.js"
   @js "/js/index.js"
-  @js "https://cdn.jsdelivr.net/npm/flex-splitter-directive@0.2.0"
 </html>

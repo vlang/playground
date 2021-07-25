@@ -40,8 +40,20 @@ function toggleDarkMode() {
   }
 }
 
+document.getElementById("modal-close").onclick = () => {
+  localStorage.setItem("acceptLogging", "false")
+  halfmoon.toggleModal("accept-logging-modal")
+}
+document.getElementById("modal-no").onclick = () => {
+  localStorage.setItem("acceptLogging", "false")
+  halfmoon.toggleModal("accept-logging-modal")
+}
+document.getElementById("modal-yes").onclick = () => {
+  localStorage.setItem("acceptLogging", "true")
+  halfmoon.toggleModal("accept-logging-modal")
+}
+
 let acceptLogging = localStorage.getItem("acceptLogging")
 if (acceptLogging === null) {
-  acceptLogging = confirm("Do you agree to send anonymous logs of code that fails to compile?")
-  localStorage.setItem("acceptLogging", acceptLogging.toString())
+  halfmoon.toggleModal("accept-logging-modal")
 }
