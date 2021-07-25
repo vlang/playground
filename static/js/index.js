@@ -40,10 +40,6 @@ function toggleDarkMode() {
   }
 }
 
-document.getElementById("modal-close").onclick = () => {
-  localStorage.setItem("acceptLogging", "false")
-  halfmoon.toggleModal("accept-logging-modal")
-}
 document.getElementById("modal-no").onclick = () => {
   localStorage.setItem("acceptLogging", "false")
   halfmoon.toggleModal("accept-logging-modal")
@@ -52,7 +48,6 @@ document.getElementById("modal-yes").onclick = () => {
   localStorage.setItem("acceptLogging", "true")
   halfmoon.toggleModal("accept-logging-modal")
 }
-
 let acceptLogging = localStorage.getItem("acceptLogging")
 if (acceptLogging === null) {
   halfmoon.toggleModal("accept-logging-modal")

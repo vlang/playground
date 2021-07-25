@@ -20,15 +20,12 @@
     <div class="modal" id="accept-logging-modal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <a href="#" class="close" role="button" aria-label="Close" id="modal-close">
-            <span aria-hidden="true">&times;</span>
-          </a>
           <p>
             Do you agree to send anonymous logs of code that fails to compile?
           </p>
           <div class="text-right mt-20"> <!-- text-right = text-align: right, mt-20 = margin-top: 2rem (20px) -->
-            <button class="btn mr-5" role="button" id="modal-no">No</a>
-            <button class="btn btn-primary" role="button" id="modal-yes">Yes</a>
+            <button class="btn btn-danger mr-5" role="button" id="modal-no">No</a>
+            <button class="btn btn-success text-white" role="button" id="modal-yes">Yes</a>
           </div>
         </div>
       </div>
@@ -45,7 +42,7 @@
         <div class="p-0 console-section">
           <div class="d-flex flex-row justify-content-between p-10 m-0" id="control-bar">
             <div class="level-left">
-              <button class="btn btn-primary" id="run-button" onclick="runCode()">run</button>
+              <button class="btn btn-primary" id="run-button" onclick="runCode()">Run</button>
             </div>
             <div class="level-right">
               <button class="btn" id="dark-mode-toggle" onclick="toggleDarkMode();"><span class="fas fa-moon"></span></button>
