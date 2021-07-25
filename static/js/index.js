@@ -4,8 +4,10 @@ function runCode() {
   runButton.setAttribute("disabled", "disabled")
 
   let code = window.jar.toString()
+  let acceptLogging = localStorage.getItem("acceptLogging")
   let data = new FormData()
   data.append("code", code)
+  data.append("accept_logging", acceptLogging)
 
   fetch("/run", {
     method: "post",
@@ -36,4 +38,10 @@ function toggleDarkMode() {
     prismCSS.href = "/css/prism-light.css";
     darkModeButton.innerHTML = '<i class="fas fa-moon"></i>';
   }
+}
+
+let acceptLogging = localStorage.getItem("acceptLogging")
+if (acceptLogging === null) {
+  acceptLogging = confirm("Do you agree to send anonymous logs of code that fails to compile?")
+  localStorage.setItem("acceptLogging", acceptLogging.toString())
 }

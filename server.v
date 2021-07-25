@@ -1,6 +1,5 @@
 import vweb
 import os
-import rand
 import time
 
 const (
@@ -35,11 +34,9 @@ fn init_sandbox() (string, int) {
 
 fn prettify(output string) string {
 	mut pretty := output
-
 	if pretty.len > 10000 {
 		pretty = pretty[..9997] + '...'
 	}
-
 	nlines := pretty.count('\n')
 	if nlines > 100 {
 		pretty = pretty.split_into_lines()[..100].join_lines() + '\n...and ${nlines - 100} more'
@@ -52,17 +49,18 @@ fn ddhhmmss(time time.Time) string {
 	return '${time.day:02d}-${time.hour:02d}:${time.minute:02d}:${time.second:02d}'
 }
 
-fn log_code(ip string, code string) ? {
+fn log_code(code string, build_res string) ? {
 	now := time.now()
 	log_dir := 'logs/$now.year-${now.month:02d}'
 	if !os.exists(log_dir) {
 		os.mkdir(log_dir) ?
 	}
-	log_file := '$log_dir/${ddhhmmss(now)}_$ip'
-	os.write_file(log_file, code) ?
+	log_file := '$log_dir/${ddhhmmss(now)}'
+	log_content := '$code\n\n\n$build_res'
+	os.write_file(log_file, log_content) ?
 }
 
-fn run_in_sandbox(code string) string {
+fn run_in_sandbox(code string, accept_logging bool) string {
 	box_path, box_id := init_sandbox()
 	defer {
 		os.execute('isolate --box-id=$box_id --cleanup')
@@ -72,7 +70,13 @@ fn run_in_sandbox(code string) string {
 	}
 	build_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v -gc boehm code.v')
 	if build_res.exit_code != 0 {
-		return prettify(build_res.output.trim_right('\n'))
+		build_output := build_res.output.trim_right('\n')
+		if accept_logging {
+			log_code(code, build_output) or {
+				eprintln('[WARNING] Failed to log code.')
+			}
+		}
+		return prettify(build_output)
 	}
 	run_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=1 --mem=30000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run -- code')
 	return prettify(run_res.output.trim_right('\n'))
@@ -81,8 +85,8 @@ fn run_in_sandbox(code string) string {
 ['/run'; post]
 fn (mut app App) run() vweb.Result {
 	code := app.form['code'] or { return app.text('No code was provided.') }
-	log_code(app.ip(), code) or { eprintln('Failed to log code.') }
-	res := run_in_sandbox(code)
+	accept_logging := app.form['accept_logging'] or { 'false' }
+	res := run_in_sandbox(code, accept_logging.bool())
 	return app.text(res)
 }
 
