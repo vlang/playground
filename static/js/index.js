@@ -58,3 +58,10 @@ switch (darkMode) {
       toggleDarkMode(false) 
     } 
 }
+
+// ctrl+enter to run code
+document.addEventListener("keyup", (ev) => {
+  if (ev.ctrlKey && ev.key == "Enter") {
+    runCode()
+  }
+})
