@@ -27,7 +27,9 @@ function runCode() {
 function changeFontSize(amount) {
   let editor = document.getElementById("editor")
   let style = window.getComputedStyle(editor, null).getPropertyValue("font-size")
-  editor.style.fontSize = `${parseInt(style) + amount}px`
+  let fontSize = `${parseInt(style) + amount}px`
+  editor.style.fontSize = fontSize
+  localStorage.setItem("fontSize", fontSize)
 }
 
 function toggleDarkMode(storePreference) {
@@ -49,24 +51,34 @@ function toggleDarkMode(storePreference) {
   }
 }
 
-// dark mode logic
-let darkMode = localStorage.getItem("darkMode")
-switch (darkMode) {
-  case "true":
-    toggleDarkMode(false)
-    break;
-  case "false":
-    break;
-  default:
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      toggleDarkMode(false) 
-    } 
+function main() {
+  // dark mode logic
+  let darkMode = localStorage.getItem("darkMode")
+  switch (darkMode) {
+    case "true":
+      toggleDarkMode(false)
+      break;
+    case "false":
+      break;
+    default:
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        toggleDarkMode(false) 
+      } 
+  }
+
+  // ctrl+enter to run code
+  document.addEventListener("keyup", ev => {
+    if (ev.ctrlKey && ev.key == "Enter") {
+      runCode()
+    }
+  })
+
+  // loading saved font size
+  let fontSize = localStorage.getItem("fontSize")
+  if (fontSize !== null) {
+    let editor = document.getElementById("editor")
+    editor.style.fontSize = fontSize
+  }
 }
 
-// ctrl+enter to run code
-document.addEventListener("keyup", ev => {
-  if (ev.ctrlKey && ev.key == "Enter") {
-    runCode()
-  }
-})
-
+main()
