@@ -51,6 +51,13 @@ function toggleDarkMode(storePreference) {
   }
 }
 
+function resetCode() {
+  if (confirm("Are you sure you want to reset your code?")) {
+    window.jar.updateCode("fn main() {\n\t\n}")
+    saveCode()
+  }
+}
+
 function main() {
   // dark mode logic
   let darkMode = localStorage.getItem("darkMode")

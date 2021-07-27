@@ -46,9 +46,12 @@ body pre {
   left: 0;
 }
 
-#decrease-font-size {
-  margin-left: 6px;
-  margin-right: 6px;
+#right-buttons > button {
+  margin-left: 5px;
+}
+
+#dark-mode-toggle {
+  margin-right: 8px !important;
 }
 
 #console {
