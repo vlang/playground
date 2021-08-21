@@ -75,7 +75,7 @@ function main() {
 
   // ctrl+enter to run code
   document.addEventListener("keyup", ev => {
-    if (ev.ctrlKey && ev.key == "Enter") {
+    if ((ev.ctrlKey || ev.shiftKey) && ev.key == "Enter") {
       runCode()
     }
   })
