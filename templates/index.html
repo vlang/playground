@@ -22,13 +22,39 @@
           <div class="d-flex flex-row justify-content-between p-10 m-0" id="control-bar">
             <div class="level-left">
               <button class="btn btn-primary" id="run-button" title="Run code" onclick="runCode()">Run</button>
+              <div class="dropdown">
+                <button class="btn bg-very-dark" data-toggle="dropdown" id="examples-button">
+                  Examples <i class="fa fa-angle-down ml-5"></i>
+                </button>
+                <div class="dropdown-menu examples-dropdown">
+                  <button class="btn btn-link dropdown-item" onclick="loadExample('hello');">
+                    Hello, world!
+                  </button>
+                  <button class="btn btn-link dropdown-item" onclick="loadExample('fibonacci')">
+                    Fibonacci
+                  </button>
+                  <button class="btn btn-link dropdown-item" onclick="loadExample('interpolation')">
+                    String interpolation
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="level-right" id="right-buttons">
-              <button class="btn" id="format" title="Format code" onclick="formatCode();"><span class="fas fa-paint-brush"></span></button>
-              <button class="btn" id="reset-code" title="Reset code" onclick="resetCode();"><span class="fas fa-trash"></span></button>
-              <button class="btn" id="dark-mode-toggle" title="Toggle dark mode" onclick="toggleDarkMode(true);"><span class="fas fa-moon"></span></button>
-              <button class="btn btn-danger" id="decrease-font-size" title="Decrease font size" onclick="changeFontSize(-1);">-</button>
-              <button class="btn btn-success text-white" id="increase-font-size" title="Increase font size" onclick="changeFontSize(1);">+</button>
+            <div class="level-right">
+              <button class="btn btn-square button-right" id="format" title="Format code" onclick="formatCode();">
+                <span class="fas fa-paint-brush"></span>
+              </button>
+              <button class="btn btn-square button-right" id="reset-code" title="Reset code" onclick="resetCode();">
+                <span class="fas fa-trash"></span>
+              </button>
+              <button class="btn btn-square button-right" id="dark-mode-toggle" title="Toggle dark mode" onclick="toggleDarkMode(true);">
+                <span class="fas fa-moon"></span>
+              </button>
+              <button class="btn btn-square btn-danger button-font-size-changer" id="decrease-font-size" title="Decrease font size" onclick="changeFontSize(-1);">
+                <span class="fas fa-minus"></span>
+              </button>
+              <button class="btn btn-square btn-success text-white button-font-size-changer" id="increase-font-size" title="Increase font size" onclick="changeFontSize(1);">
+                <span class="fas fa-plus"></span>
+              </button>
             </div>
           </div>
           <div class="p-10 m-0 text-left" id="console">

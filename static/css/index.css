@@ -46,12 +46,34 @@ body pre {
   left: 0;
 }
 
-#right-buttons > button {
+#examples-button {
+  color: var(--dm-muted-text-color);
+  margin-left: 10px;
+}
+
+.button-right, .button-right:focus {
+  background-color: var(--dark-color-dark) !important;
+  color: var(--dm-muted-text-color) !important;
+  width: 32px;
+  height: 32px;
   margin-left: 5px;
 }
 
+.button-right:hover {
+  background-color: var(--dark-color-dark) !important;
+  color: var(--dm-muted-text-color) !important;
+}
+
+.button-font-size-changer {
+  margin-left: 5px;
+}
+
+.fa-minus, .fa-plus {
+  font-size: 0.8em;
+}
+
 #dark-mode-toggle {
-  margin-right: 8px !important;
+  margin-right: 5px !important;
 }
 
 #console {
@@ -75,4 +97,9 @@ body pre {
 
 .divider {
   background-color: var(--primary-color) !important;
+}
+
+.examples-dropdown {
+  background-color: var(--dark-color-dark);
+  border: none;
 }

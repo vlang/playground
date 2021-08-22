@@ -58,6 +58,29 @@ function resetCode() {
   }
 }
 
+function loadExample(name) {
+  let examples = {
+    hello: "println('Hello, world!')",
+    fibonacci: `fn fib(a int, b int) {
+  val := a + b
+  println(val)
+  if val < 1000 {
+    fib(b, val)
+  }
+}
+
+fib(0, 1)`,
+   interpolation: `areas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']
+for area in areas {
+  println('Hello, $area developers!')
+}`
+  }
+  let code = examples[name]
+  if (code) {
+    window.jar.updateCode(code)
+  }
+}
+
 function main() {
   // dark mode logic
   let darkMode = localStorage.getItem("darkMode")
