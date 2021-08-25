@@ -87,6 +87,31 @@ fn (mut app App) run() vweb.Result {
 	return app.text(res)
 }
 
+fn vfmt_code(code string) (string, bool) {
+	box_path, box_id := init_sandbox()
+	defer {
+		os.execute('isolate --box-id=$box_id --cleanup')
+	}
+	os.write_file(os.join_path(box_path, 'code.v'), code) or {
+		return 'Failed to write code to sandbox.', false
+	}
+	vfmt_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v fmt code.v')
+	vfmt_output := vfmt_res.output.trim_right('\n')
+	if vfmt_res.exit_code != 0 {
+		return prettify(vfmt_output), false
+	} else {
+		return vfmt_output, true
+	}
+}
+
+['/format'; post]
+fn (mut app App) format() vweb.Result {
+	code := app.form['code'] or { return app.text('No code was provided.') }
+	res, ok := vfmt_code(code)
+	resp := '{"output": "$res", "ok": $ok}'
+	return app.json(resp)
+}
+
 fn (mut app App) init_once() {
 	os.execute('isolate --cleanup')
 	app.handle_static('static', true)

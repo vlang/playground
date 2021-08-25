@@ -15,13 +15,32 @@ function runCode() {
   fetch("/run", {
     method: "post",
     body: data
-  }).then(resp => {
-    resp.text().then(output => {
+  })
+    .then(resp => resp.text())
+    .then(output => {
       document.getElementById("console-output").innerText = output
       runButton.innerText = oldRunButtonText
       runButton.removeAttribute("disabled")
     })
+}
+
+function formatCode() {
+  let code = window.jar.toString()
+  let data = new FormData()
+  data.append("code", code)
+
+  fetch("/run", {
+    method: "post",
+    body: data
   })
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.ok) {
+        window.jar.updateCode(data.output)
+      } else {
+        document.getElementById("console-output").innerText = data.output
+      }
+    })
 }
 
 function changeFontSize(amount) {
