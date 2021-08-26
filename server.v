@@ -1,6 +1,7 @@
 import vweb
 import os
 import time
+import json
 
 const (
 	port        = 5555
@@ -96,20 +97,38 @@ fn vfmt_code(code string) (string, bool) {
 		return 'Failed to write code to sandbox.', false
 	}
 	vfmt_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v fmt code.v')
-	vfmt_output := vfmt_res.output.trim_right('\n')
+	mut vfmt_output := vfmt_res.output.trim_right('\n')
 	if vfmt_res.exit_code != 0 {
 		return prettify(vfmt_output), false
 	} else {
+		mut newline_index := -1
+		for i, b in vfmt_output {
+			if b == `\n` {
+				newline_index = i
+			}
+		}
+		if newline_index != -1 {
+			vfmt_output = vfmt_output[..newline_index]
+		}
 		return vfmt_output, true
 	}
 }
 
+struct FormatResp {
+	output string
+	ok bool
+}
+
 ['/format'; post]
 fn (mut app App) format() vweb.Result {
-	code := app.form['code'] or { return app.text('No code was provided.') }
+	code := app.form['code'] or { 
+		resp := FormatResp { output: 'No code was provided.' ok: false }
+		return app.json(json.encode(resp))
+		
+	}
 	res, ok := vfmt_code(code)
-	resp := '{"output": "$res", "ok": $ok}'
-	return app.json(resp)
+	resp := FormatResp { output: res ok: ok }
+	return app.json(json.encode(resp))
 }
 
 fn (mut app App) init_once() {

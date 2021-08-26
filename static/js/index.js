@@ -18,9 +18,9 @@ function runCode() {
   })
     .then(resp => resp.text())
     .then(output => {
-      document.getElementById("console-output").innerText = output
-      runButton.innerText = oldRunButtonText
-      runButton.removeAttribute("disabled")
+      document.getElementById("console-output").innerText = output;
+      runButton.innerText = oldRunButtonText;
+      runButton.removeAttribute("disabled");
     })
 }
 
@@ -29,16 +29,16 @@ function formatCode() {
   let data = new FormData()
   data.append("code", code)
 
-  fetch("/run", {
+  fetch("/format", {
     method: "post",
     body: data
   })
     .then(resp => resp.json())
     .then(data => {
       if (data.ok) {
-        window.jar.updateCode(data.output)
+        window.jar.updateCode(data.output);
       } else {
-        document.getElementById("console-output").innerText = data.output
+        document.getElementById("console-output").innerText = data.output;
       }
     })
 }
