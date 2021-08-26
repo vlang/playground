@@ -101,16 +101,7 @@ fn vfmt_code(code string) (string, bool) {
 	if vfmt_res.exit_code != 0 {
 		return prettify(vfmt_output), false
 	} else {
-		mut newline_index := -1
-		for i, b in vfmt_output {
-			if b == `\n` {
-				newline_index = i
-			}
-		}
-		if newline_index != -1 {
-			vfmt_output = vfmt_output[..newline_index]
-		}
-		return vfmt_output, true
+		return vfmt_output.all_before_last("\n"), true
 	}
 }
 
