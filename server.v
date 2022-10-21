@@ -1,7 +1,6 @@
 import vweb
 import os
 import time
-import json
 
 const (
 	port        = 5555
@@ -103,21 +102,19 @@ fn vfmt_code(code string) (string, bool) {
 	}
 }
 
-struct FormatResp {
-	output string
-	ok bool
-}
-
 ['/format'; post]
 fn (mut app App) format() vweb.Result {
-	code := app.form['code'] or { 
-		resp := FormatResp { output: 'No code was provided.' ok: false }
-		return app.json(json.encode(resp))
-		
+	code := app.form['code'] or {
+		return app.json({
+			'output': 'No code was provided.'
+			'ok':     'false'
+		})
 	}
 	res, ok := vfmt_code(code)
-	resp := FormatResp { output: res ok: ok }
-	return app.json(json.encode(resp))
+	return app.json({
+		'output': res
+		'ok':     ok.str()
+	})
 }
 
 fn (mut app App) init_once() {
