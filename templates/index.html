@@ -72,7 +72,7 @@
     import { CodeJar } from "/static/js/codejar.js"
     let editor = document.getElementById("editor")
     window.jar = new CodeJar(editor, el => Prism.highlightElement(el))
-    let code = localStorage.getItem("code") || "fn main() {\\n\\t\\n}"
+    let code = localStorage.getItem("code") || "fn main() {\n\t\n}"
     window.jar.updateCode(code)
     window.jar.onUpdate(_ => saveCode())
     editor.focus()
