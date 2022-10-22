@@ -1,7 +1,6 @@
 import vweb
 import os
 import time
-import json
 
 const (
 	port        = 5555
@@ -50,15 +49,15 @@ fn ddhhmmss(time time.Time) string {
 	return '${time.day:02d}-${time.hour:02d}:${time.minute:02d}:${time.second:02d}'
 }
 
-fn log_code(code string, build_res string) ? {
+fn log_code(code string, build_res string) ! {
 	now := time.now()
 	log_dir := 'logs/$now.year-${now.month:02d}'
 	if !os.exists(log_dir) {
-		os.mkdir(log_dir) ?
+		os.mkdir(log_dir)!
 	}
 	log_file := '$log_dir/${ddhhmmss(now)}'
 	log_content := '$code\n\n\n$build_res'
-	os.write_file(log_file, log_content) ?
+	os.write_file(log_file, log_content)!
 }
 
 fn run_in_sandbox(code string) string {
@@ -71,9 +70,7 @@ fn run_in_sandbox(code string) string {
 	}
 	build_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v -gc boehm code.v')
 	build_output := build_res.output.trim_right('\n')
-	log_code(code, build_output) or {
-		eprintln('[WARNING] Failed to log code.')
-	}
+	log_code(code, build_output) or { eprintln('[WARNING] Failed to log code.') }
 	if build_res.exit_code != 0 {
 		return prettify(build_output)
 	}
@@ -101,25 +98,23 @@ fn vfmt_code(code string) (string, bool) {
 	if vfmt_res.exit_code != 0 {
 		return prettify(vfmt_output), false
 	} else {
-		return vfmt_output.all_before_last("\n"), true
+		return vfmt_output.all_before_last('\n'), true
 	}
-}
-
-struct FormatResp {
-	output string
-	ok bool
 }
 
 ['/format'; post]
 fn (mut app App) format() vweb.Result {
-	code := app.form['code'] or { 
-		resp := FormatResp { output: 'No code was provided.' ok: false }
-		return app.json(json.encode(resp))
-		
+	code := app.form['code'] or {
+		return app.json({
+			'output': 'No code was provided.'
+			'ok':     'false'
+		})
 	}
 	res, ok := vfmt_code(code)
-	resp := FormatResp { output: res ok: ok }
-	return app.json(json.encode(resp))
+	return app.json({
+		'output': res
+		'ok':     ok.str()
+	})
 }
 
 fn (mut app App) init_once() {
