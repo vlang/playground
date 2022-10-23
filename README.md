@@ -1,6 +1,6 @@
 # Vlang Playground
 
-This repository container the source code for V's playground.
+This repository contains the source code for V's playground.
 
 ## Quick, containerized local development (recommended)
 
