@@ -1,7 +1,6 @@
 import vweb
 import os
 import time
-import runtime
 
 const (
 	port        = 5555
@@ -60,9 +59,7 @@ fn ddhhmmss(time time.Time) string {
 fn log_code(code string, build_res string) ! {
 	now := time.now()
 	log_dir := 'logs/$now.year-${now.month:02d}'
-	if !os.exists(log_dir) {
-		os.mkdir(log_dir)!
-	}
+	os.mkdir_all(log_dir)!
 	log_file := '$log_dir/${ddhhmmss(now)}'
 	log_content := '$code\n\n\n$build_res'
 	os.write_file(log_file, log_content)!
@@ -76,14 +73,13 @@ fn run_in_sandbox(code string) string {
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.'
 	}
-	build_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v -no-parallel code.v')
+	build_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v -cflags -DGC_MARKERS=1 -no-parallel code.v')
 	build_output := build_res.output.trim_right('\n')
 	log_code(code, build_output) or { eprintln('[WARNING] Failed to log code.') }
 	if build_res.exit_code != 0 {
 		return prettify(build_output)
 	}
-	cpus := runtime.nr_cpus()
-	run_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=$cpus --mem=30000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run -- code')
+	run_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=1 --mem=30000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run -- code')
 	return prettify(run_res.output.trim_right('\n'))
 }
 
