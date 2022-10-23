@@ -24,7 +24,7 @@ then access the playground at <http://localhost:5555>
 
 Done. And your system will remain "clean".
 
-![VSCode DevContainer Demo](./.devcontainer/vscode-open-in-container.gif)
+![vscode-open-in-container](https://user-images.githubusercontent.com/17727170/197407889-88fe33b0-8e95-47fe-b2db-598fd307140e.gif)
 
 Then just run
 
