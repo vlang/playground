@@ -1,0 +1,141 @@
+html {
+    --background-color: #fff;
+    --terminal-header-border: #ecedf1;
+    --terminal-header: #f7f8fa;
+    --terminal-header-text: #000;
+    --terminal-close-button: #777b88;
+    --terminal-close-button-hover: #ecedf1;
+    --terminal-text: #000;
+    --terminal-background: #fff;
+    --terminal-ok: #26ad2c;
+    --terminal-error: #c02929;
+    --playground-link: #4f4f4f;
+    --run-embeded-icon-color: #000000;
+}
+
+html[data-theme='dark'] {
+    --background-color: #1e1f22;
+    --terminal-header-border: #323438;
+    --terminal-header: #2a2a2d;
+    --terminal-header-text: #f7f8fa;
+    --terminal-close-button: #d9dbe2;
+    --terminal-close-button-hover: #393b41;
+    --terminal-text: #BBBBBB;
+    --terminal-background: #000;
+    --terminal-ok: #43c449;
+    --terminal-error: #e04949;
+    --playground-link: #8d8d8d;
+    --run-embeded-icon-color: #fff;
+}
+
+.v-playground {
+    position: relative;
+    max-height: calc(100vh - 70px);
+
+    display: grid;
+    grid-template-rows: 60% 40%;
+}
+
+.v-playground.playground__full-height {
+    height: 100vh;
+}
+
+.v-playground.closed-terminal {
+    grid-template-rows: 100%;
+}
+
+.v-playground.closed-terminal .playground__terminal {
+    display: none;
+}
+
+.v-playground .playground__editor {
+    position: relative;
+}
+
+.CodeMirror {
+    width: 100%;
+    height: 100%;
+
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+    font-size: 13.5px;
+    line-height: 1.57;
+}
+
+.CodeMirror {
+    background-color: var(--background-color);
+}
+
+.CodeMirror-scroll {
+    padding-top: 20px;
+    padding-bottom: 0;
+}
+
+.CodeMirror-line {
+    padding-left: 15px !important;
+}
+
+.CodeMirror-gutters {
+    padding-left: 5px;
+}
+
+.CodeMirror-linenumbers {
+}
+
+.CodeMirror-linenumber {
+    font-size: 0.9em;
+}
+
+.playground__terminal {
+    height: 100%;
+    max-height: 350px;
+
+    display: grid;
+    grid-template-rows: 45px auto;
+}
+
+.playground__terminal .header {
+    display: grid;
+    grid-template-columns: auto max-content;
+
+    padding: 10px 20px 10px 20px;
+
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.7;
+
+    color: var(--terminal-header-text);
+    border-top: 1px solid var(--terminal-header-border);
+    border-bottom: 1px solid var(--terminal-header-border);
+    background-color: var(--terminal-header);
+}
+
+.playground__terminal .terminal__close-button {
+    padding: 2px 3px 0;
+    border-radius: 5px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.playground__terminal .terminal__close-button .close-terminal-button-rect {
+    fill: var(--terminal-close-button);
+}
+
+.playground__terminal .terminal__close-button:hover {
+    background-color: var(--terminal-close-button-hover);
+}
+
+.playground__terminal .terminal__output {
+    width: 100%;
+    margin: 0;
+    overflow: scroll;
+
+    padding: 5px 20px 20px 10px;
+
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+    font-size: 13.5px;
+    line-height: 1.57;
+
+    background-color: var(--terminal-background);
+    color: var(--terminal-text);
+}

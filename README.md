@@ -1,10 +1,14 @@
-# Vlang Playground
+# V Playground: Run, Edit, Share V Code Online
 
-This repository contains the source code for V's playground.
+This repository contains the source code for V's playground (https://play.vlang.io).
 
-## Quick, containerized local development (recommended)
+![](./docs/images/playground.png)
 
-### Using Docker Compose
+## Developing
+
+### Quick, containerized local development (recommended)
+
+#### Using Docker Compose
 
 ```bash
 git clone https://github.com/vlang/playground
@@ -29,16 +33,16 @@ Done. And your system will remain "clean".
 Then just run
 
 ```sh
-v run server.v
+make run
 ```
 
 then access the playground at <http://localhost:5555>
 
-## Run the playground locally (not recommended)
+### Run the playground locally (not recommended)
 
 > NOTE: This is not recommended, as it requires you to install V and all of its dependencies manually. Only works on Linux.
 
-### Install Dependencies
+#### Install Dependencies
 
 > We use isolate to sandbox the playground, so you need to install it first.
 
