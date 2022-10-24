@@ -1,0 +1,59 @@
+.CodeMirror.cm-s-dark  {
+    color: #BBBBBB;
+}
+
+.cm-s-dark .cm-keyword { color: #CC7832; }
+.cm-s-dark .cm-builtin { color: #CC7832; }
+.cm-s-dark .cm-atom { color: #CC7832; }
+.cm-s-dark .cm-number { color: #6897BB; }
+.cm-s-dark .cm-at-identifier { color: #9876AA}
+.cm-s-dark .cm-compile-time-identifier { color: #9876AA}
+.cm-s-dark .cm-def { color: #00f; }
+.cm-s-dark .cm-variable,
+.cm-s-dark .cm-punctuation,
+.cm-s-dark .cm-property,
+.cm-s-dark .cm-operator {}
+.cm-s-dark .cm-variable-2 { color: #05a; }
+.cm-s-dark .cm-variable-3, .cm-s-dark .cm-type { color: #085; }
+.cm-s-dark .cm-comment { color: #808080; }
+.cm-s-dark .cm-string { color: #6A8759; }
+.cm-s-dark .cm-string-2 { color: #6A8759; }
+.cm-s-dark .cm-meta { color: #555; }
+.cm-s-dark .cm-qualifier { color: #555; }
+.cm-s-dark .cm-bracket { color: #997; }
+.cm-s-dark .cm-tag { color: #170; }
+.cm-s-dark .cm-attribute { color: #00c; }
+.cm-s-dark .cm-hr { color: #999; }
+.cm-s-dark .cm-link { color: #00c; }
+
+CodeMirror.cm-s-dark  span.CodeMirror-matchingbracket {
+    background-color: #336146;
+    color: #ced9d3;
+    padding: 1px 0;
+}
+CodeMirror.cm-s-dark span.CodeMirror-nonmatchingbracket { color: #a22; }
+
+.cm-s-dark .CodeMirror-gutters {
+    background-color: #1e1f22;
+    border-right: 1px solid #323438;
+}
+
+.cm-s-dark .CodeMirror-linenumbers {
+    border-right: 0 solid #e7e8ec;
+}
+
+.cm-s-dark .CodeMirror-linenumber {
+    color: #4f5157;
+}
+
+.cm-s-dark .CodeMirror-cursor {
+    border-left: 1px solid #bbbbbb;
+    border-right: none;
+    width: 0;
+}
+
+.cm-s-dark .CodeMirror-selected { background: #20407f; }
+.cm-s-dark .CodeMirror-focused .CodeMirror-selected { background: #20407f; }
+.cm-s-dark .CodeMirror-crosshair { cursor: crosshair; }
+.cm-s-dark .CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: #d7d4f0; }
+.cm-s-dark .CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }

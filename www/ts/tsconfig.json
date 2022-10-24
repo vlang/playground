@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "none",
+    "target": "es5",
+    "outFile": "../js/playground.bundle.js",
+    "moduleResolution": "Node",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "baseUrl": "."
+  },
+  "include": [
+    "./CodeRunner",
+    "./Editor",
+    "./Examples",
+    "./Repositories",
+    "./Terminal",
+    "./themes",
+    "./"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

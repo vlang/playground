@@ -1,6 +1,11 @@
+module main
+
 import vweb
 import os
 import time
+import json
+import sqlite
+import crypto.md5
 
 const (
 	port        = 5555
@@ -9,13 +14,23 @@ const (
 	inode_ratio = 16384
 )
 
+[table: 'code_storage']
+struct CodeStorage {
+	id   int    [primary; sql: serial]
+	code string [nonull]
+	hash string [nonull]
+}
+
 struct App {
 	vweb.Context
+mut:
+	db sqlite.DB
 }
 
 ['/'; get]
 fn (mut app App) index() vweb.Result {
-	return $vweb.html()
+	file := os.read_file('www/index.html') or { panic(err) }
+	return app.html(file)
 }
 
 fn isolate_cmd(cmd string) os.Result {
@@ -90,6 +105,43 @@ fn (mut app App) run() vweb.Result {
 	return app.text(res)
 }
 
+['/share'; post]
+fn (mut app App) share() vweb.Result {
+	code := app.form['code'] or { return app.text('No code was provided.') }
+	hash := md5.hexhash(code)
+	app.add_new_code(code, hash)
+	return app.text(hash)
+}
+
+['/query'; post]
+fn (mut app App) get_by_hash() vweb.Result {
+	hash := app.form['hash'] or { return app.text('No hash was provided.') }
+	res := app.get_saved_code(hash) or { return app.text('No found.') }
+	return app.text(res)
+}
+
+fn (mut app App) add_new_code(code string, hash string) {
+	new_code := CodeStorage{
+		code: code
+		hash: hash
+	}
+	db := app.db
+	sql db {
+		insert new_code into CodeStorage
+	}
+}
+
+fn (mut app App) get_saved_code(hash string) !string {
+	db := app.db
+	found := sql db {
+		select from CodeStorage where hash == hash
+	}
+	if found.len == 0 {
+		return error('Not Found')
+	}
+	return found.last().code
+}
+
 fn vfmt_code(code string) (string, bool) {
 	box_path, box_id := init_sandbox()
 	defer {
@@ -107,25 +159,38 @@ fn vfmt_code(code string) (string, bool) {
 	}
 }
 
+struct FormatResp {
+	output string
+	ok     bool
+}
+
 ['/format'; post]
 fn (mut app App) format() vweb.Result {
 	code := app.form['code'] or {
-		return app.json({
-			'output': 'No code was provided.'
-			'ok':     'false'
-		})
+		resp := FormatResp{
+			output: 'No code was provided.'
+			ok: false
+		}
+		return app.json(json.encode(resp))
 	}
 	res, ok := vfmt_code(code)
-	return app.json({
-		'output': res
-		'ok':     ok.str()
-	})
+	resp := FormatResp{
+		output: res
+		ok: ok
+	}
+
+	return app.json(json.encode(resp))
 }
 
 fn (mut app App) init_once() {
+	db := sqlite.connect('code_storage.db') or { panic(err) }
+	sql db {
+		create table CodeStorage
+	}
+	app.db = db
 	isolate_cmd('isolate --cleanup')
-	app.handle_static('static', true)
-	app.serve_static('/static/js/codejar.js', 'static/js/codejar.js')
+	app.handle_static('./www', true)
+	app.serve_static('./www/js', 'www/js/')
 }
 
 fn main() {

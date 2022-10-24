@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   playground:
-    command: bash -c "cd /usr/src/app && v run server.v"
+    command: bash -c "cd /usr/src/app && make run"
     build:
       context: .
       dockerfile: Dockerfile

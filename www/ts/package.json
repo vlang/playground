@@ -1,0 +1,10 @@
+{
+  "name": "ts",
+  "version": "1.0.0",
+  "dependencies": {
+    "@codemirror/language": "^6.2.1",
+    "@types/codemirror": "^5.60.5",
+    "@types/tern": "^0.23.4",
+    "@types/estree": "^1.0.0"
+  }
+}

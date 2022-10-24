@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Inter, sans-serif;
+    background-color: #1e1f22;
+}
+
+/* Header Styles Start */
+
+header {
+    height: 70px;
+    color: #fff;
+    background-color: #2a2a2d;
+}
+
+header .container {
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto max-content;
+
+    padding: 0 15px 0 40px;
+}
+
+header .container .title {
+    height: 100%;
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-column-gap: 15px;
+    align-content: center;
+    font-size: 22px;
+}
+
+header .container .title .title-v-part {
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+}
+
+header .container .buttons {
+    display: grid;
+    height: 100%;
+    grid-template-columns: repeat(4, max-content);
+    align-content: center;
+    grid-column-gap: 8px;
+}
+
+header .container button {
+    height: 38px;
+    padding: 8px 20px 6px 17px;
+    border: none;
+    border-radius: 12px;
+    background-color: transparent;
+    color: #fff;
+    font-size: 15px;
+    line-height: 1.5;
+
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-column-gap: 8px;
+
+    transition: background-color 150ms ease 100ms
+}
+
+header .container button:hover {
+    cursor: pointer;
+    background-color: #393b41;
+}
+
+header .container button.run-style-button {
+    margin-left: 20px;
+    background-color: #3474f0;
+}
+
+header .container button.run-style-button:hover {
+    background-color: #2a5ed0;
+}
+
+header .container button.theme {
+    padding-top: 3px;
+    grid-template-columns: max-content;
+    margin-left: 20px
+}
+
+header .container button.theme:hover {
+    background-color: transparent;
+}
+
+header .container button.theme:hover .icon .theme-icon path {
+    fill: #d2d2d2;
+}
+
+header .container button.theme .theme-icon {
+    width: 22px;
+}
+
+header .container button .icon {
+    padding-top: 2px;
+}
+
+header .container button .icon .run-icon {
+    fill: #fff;
+}
+
+/* Header Styles End */
