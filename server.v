@@ -18,10 +18,17 @@ fn (mut app App) index() vweb.Result {
 	return $vweb.html()
 }
 
+fn isolate_cmd(cmd string) os.Result {
+	$if debug {
+		eprintln('> cmd: $cmd')
+	}
+	return os.execute(cmd)
+}
+
 fn init_sandbox() (string, int) {
 	for {
 		for box_id in 0 .. 1000 {
-			iso_res := os.execute('isolate --box-id=$box_id --init')
+			iso_res := isolate_cmd('isolate --box-id=$box_id --init')
 			if iso_res.exit_code == 0 {
 				box_path := os.join_path(iso_res.output.trim_string_right('\n'), 'box')
 				return box_path, box_id
@@ -52,9 +59,7 @@ fn ddhhmmss(time time.Time) string {
 fn log_code(code string, build_res string) ! {
 	now := time.now()
 	log_dir := 'logs/$now.year-${now.month:02d}'
-	if !os.exists(log_dir) {
-		os.mkdir(log_dir)!
-	}
+	os.mkdir_all(log_dir)!
 	log_file := '$log_dir/${ddhhmmss(now)}'
 	log_content := '$code\n\n\n$build_res'
 	os.write_file(log_file, log_content)!
@@ -63,18 +68,18 @@ fn log_code(code string, build_res string) ! {
 fn run_in_sandbox(code string) string {
 	box_path, box_id := init_sandbox()
 	defer {
-		os.execute('isolate --box-id=$box_id --cleanup')
+		isolate_cmd('isolate --box-id=$box_id --cleanup')
 	}
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.'
 	}
-	build_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v -gc boehm code.v')
+	build_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g code.v')
 	build_output := build_res.output.trim_right('\n')
 	log_code(code, build_output) or { eprintln('[WARNING] Failed to log code.') }
 	if build_res.exit_code != 0 {
 		return prettify(build_output)
 	}
-	run_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=1 --mem=30000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run -- code')
+	run_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=1 --mem=30000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run -- code')
 	return prettify(run_res.output.trim_right('\n'))
 }
 
@@ -88,12 +93,12 @@ fn (mut app App) run() vweb.Result {
 fn vfmt_code(code string) (string, bool) {
 	box_path, box_id := init_sandbox()
 	defer {
-		os.execute('isolate --box-id=$box_id --cleanup')
+		isolate_cmd('isolate --box-id=$box_id --cleanup')
 	}
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.', false
 	}
-	vfmt_res := os.execute('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v fmt code.v')
+	vfmt_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v fmt code.v')
 	mut vfmt_output := vfmt_res.output.trim_right('\n')
 	if vfmt_res.exit_code != 0 {
 		return prettify(vfmt_output), false
@@ -118,7 +123,7 @@ fn (mut app App) format() vweb.Result {
 }
 
 fn (mut app App) init_once() {
-	os.execute('isolate --cleanup')
+	isolate_cmd('isolate --cleanup')
 	app.handle_static('static', true)
 	app.serve_static('/static/js/codejar.js', 'static/js/codejar.js')
 }
