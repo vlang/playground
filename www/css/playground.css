@@ -50,6 +50,7 @@ html[data-theme='dark'] {
 
 .v-playground .playground__editor {
     position: relative;
+    max-width: 100vw;
 }
 
 .CodeMirror {
