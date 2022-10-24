@@ -1,0 +1,143 @@
+html {
+    --help-button-background: #fff;
+    --help-button-background-hover: #f7f8fa;
+    --help-button-color: #545454;
+    --help-button-border: #7c7c7c;
+    --help-button-border-hover: #4f4f4f;
+    --help-tip-background: #fff;
+    --help-tip-text: #000;
+}
+
+html[data-theme='dark'] {
+    --help-button-background: #2a2a2d;
+    --help-button-background-hover: #2e2e31;
+    --help-button-color: #e0e0e0;
+    --help-button-border: #737373;
+    --help-button-border-hover: #a1a1a1;
+    --help-tip-background: #fff;
+    --help-tip-text: #000;
+}
+
+.playground__help-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--help-button-border);
+    background-color: var(--help-button-background);
+    color: var(--help-button-color);
+    font-size: 25px;
+
+    position: absolute;
+
+    margin-top: -60px;
+    right: 20px;
+    bottom: 20px;
+
+    transition: background-color 100ms, border-color 100ms;
+}
+
+.playground__help-button:hover {
+    cursor: pointer;
+    border: 1px solid var(--help-button-border-hover);
+    background-color: var(--help-button-background-hover);
+}
+
+.playground__help-overlay {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.playground__help-overlay.opened {
+    display: block;
+}
+
+.playground__help-overlay:hover {
+    cursor: pointer;
+}
+
+.playground__help-tip {
+    width: 300px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
+
+    margin-top: -300px;
+    padding: 15px 15px;
+    right: 80px;
+
+    bottom: 20px;
+    position: absolute;
+
+    display: none;
+
+    z-index: 1000;
+}
+
+.playground__help-tip.opened {
+    display: block;
+}
+
+.playground__help-tip .header {
+    display: grid;
+    grid-template-columns: auto max-content;
+    align-content: center;
+    height: 30px;
+
+    margin-bottom: 20px;
+}
+
+.playground__help-tip .header .playground__close-help-tip-button {
+    margin-top: 2px;
+    border-radius: 5px;
+    border: none;
+    background-color: transparent;
+}
+
+.playground__help-tip .header .playground__close-help-tip-button:hover {
+    cursor: pointer;
+}
+
+.playground__help-tip .shortcut {
+    display: grid;
+    grid-template-columns: auto max-content;
+    grid-column-gap: 10px;
+    align-content: center;
+    margin-bottom: 15px;
+}
+
+.playground__help-tip .shortcut .key {
+    font-size: 14px;
+}
+
+.playground__help-tip .shortcut .key kbd {
+    display: inline-block;
+
+    font-family: Inter, sans-serif;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+    padding: 0.05em 0.3em 0.1em;
+    margin: 0 0.2em;
+
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
+    background-color: #f7f7f7;
+}
+
+.playground__help-tip .shortcut .key kbd:hover {
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.playground__help-tip .shortcut .key kbd:active {
+    box-shadow: 0 0 0 2px #fff inset;
+    transform: translateY(1px);
+}
