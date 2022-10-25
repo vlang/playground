@@ -104,19 +104,27 @@ class Playground {
 
                 this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, result.hash)
 
-                const link = window.location.href
-
+                const link = this.buildShareLink(result)
                 this.writeToTerminal("Share link: " + link)
+
                 copyTextToClipboard(link, () => {
                     this.writeToTerminal("\nLink copied to clipboard.")
                 })
 
-                this.writeToTerminal("Note: current page has changed its own URL, it now equals the share link shown above.")
+                this.writeToTerminal("Note: current page has changed its own URL, it now links to shared code.")
             })
             .catch(err => {
                 console.log(err)
                 this.writeToTerminal("Can't share code. Please try again.")
             })
+    }
+
+    private buildShareLink(result: ShareCodeResult) {
+        let url = window.location.href.split("?")[0]
+        if (!url.endsWith("/")) {
+            url += "/"
+        }
+        return url + "p/" + result.hash
     }
 
     public changeTheme(): void {

@@ -3,6 +3,7 @@
  */
 class SharedCodeRepository implements CodeRepository {
     public static readonly QUERY_PARAM_NAME = "query"
+    public static readonly CODE_NOT_FOUND = "Not found."
 
     private readonly hash: string
 

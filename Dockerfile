@@ -21,7 +21,11 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     curl \
     git \
     make \
+    nodejs \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# install typescript
+RUN npm install -g typescript
 
 # install isolate
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
