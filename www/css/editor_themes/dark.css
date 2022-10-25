@@ -26,12 +26,12 @@
 .cm-s-dark .cm-hr { color: #999; }
 .cm-s-dark .cm-link { color: #00c; }
 
-CodeMirror.cm-s-dark  span.CodeMirror-matchingbracket {
+.CodeMirror.cm-s-dark  span.CodeMirror-matchingbracket {
     background-color: #336146;
     color: #ced9d3;
     padding: 1px 0;
 }
-CodeMirror.cm-s-dark span.CodeMirror-nonmatchingbracket { color: #a22; }
+.CodeMirror.cm-s-dark span.CodeMirror-nonmatchingbracket { color: #a22; }
 
 .cm-s-dark .CodeMirror-gutters {
     background-color: #1e1f22;

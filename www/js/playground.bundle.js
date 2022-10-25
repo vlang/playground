@@ -94,6 +94,12 @@ var Editor = /** @class */ (function () {
         this.editor = CodeMirror.fromTextArea(place, editorConfig);
         this.repository = repository;
         this.repository.getCode(function (code) {
+            if (code === SharedCodeRepository.CODE_NOT_FOUND) {
+                // If the code is not found, use default Hello World example.
+                _this.setCode(codeIfSharedLinkBroken);
+                _this.terminal.write("Code for shared link not found.");
+                return;
+            }
             _this.setCode(code);
         });
         var terminalElement = wrapper.querySelector(".js-terminal");
@@ -240,6 +246,7 @@ var examples = [
         .trim();
     return example;
 });
+var codeIfSharedLinkBroken = "\n// Oops, the shared link is broken.\n// Please recheck the link and try again.\nprintln('Hello, link 404!')\n".trim();
 /**
  * CodeRepositoryManager is responsible for managing the code repositories.
  */
@@ -323,6 +330,7 @@ var SharedCodeRepository = /** @class */ (function () {
         });
     };
     SharedCodeRepository.QUERY_PARAM_NAME = "query";
+    SharedCodeRepository.CODE_NOT_FOUND = "Not found.";
     return SharedCodeRepository;
 }());
 var TextCodeRepository = /** @class */ (function () {
@@ -529,17 +537,24 @@ var Playground = /** @class */ (function () {
             .then(function (result) {
             _this.writeToTerminal("Code shared successfully!");
             _this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, result.hash);
-            var link = window.location.href;
+            var link = _this.buildShareLink(result);
             _this.writeToTerminal("Share link: " + link);
             copyTextToClipboard(link, function () {
                 _this.writeToTerminal("\nLink copied to clipboard.");
             });
-            _this.writeToTerminal("Note: current page has changed its own URL, it now equals the share link shown above.");
+            _this.writeToTerminal("Note: current page has changed its own URL, it now links to shared code.");
         })
             .catch(function (err) {
             console.log(err);
             _this.writeToTerminal("Can't share code. Please try again.");
         });
+    };
+    Playground.prototype.buildShareLink = function (result) {
+        var url = window.location.href.split("?")[0];
+        if (!url.endsWith("/")) {
+            url += "/";
+        }
+        return url + "p/" + result.hash;
     };
     Playground.prototype.changeTheme = function () {
         this.themeManager.toggleTheme();

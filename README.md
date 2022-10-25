@@ -58,7 +58,7 @@ make install
 ```bash
 git clone https://github.com/vlang/playground
 cd playground
-v run server.v
+make run
 ```
 
 then access the playground at <http://localhost:5555>

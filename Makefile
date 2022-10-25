@@ -1,9 +1,9 @@
 build_ts:
-	npm install ./www/ts
+	cd ./www/ts && npm install
 	tsc -p ./www/ts/tsconfig.json
 
 build_ts_watch:
-	npm install ./www/ts
+	cd ./www/ts && npm install
 	tsc -w -p ./www/ts/tsconfig.json
 
 build: build_ts
@@ -12,5 +12,5 @@ build: build_ts
 run: build
 	./server
 
-run_docker: build
+run_docker:
 	docker-compose up -d
