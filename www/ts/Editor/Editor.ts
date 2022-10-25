@@ -37,6 +37,13 @@ class Editor {
         this.editor = CodeMirror.fromTextArea(place, editorConfig)
         this.repository = repository
         this.repository.getCode((code) => {
+            if (code === SharedCodeRepository.CODE_NOT_FOUND) {
+                // If the code is not found, use default Hello World example.
+                this.setCode(codeIfSharedLinkBroken)
+                this.terminal.write("Code for shared link not found.")
+                return
+            }
+
             this.setCode(code)
         })
 

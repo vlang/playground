@@ -180,3 +180,9 @@ fn get_int(data string, field string) int {
         .trim()
     return example
 })
+
+const codeIfSharedLinkBroken = `
+// Oops, the shared link is broken.
+// Please recheck the link and try again.
+println('Hello, link 404!')
+`.trim()

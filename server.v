@@ -33,6 +33,14 @@ fn (mut app App) index() vweb.Result {
 	return app.html(file)
 }
 
+['/p/:hash'; get]
+fn (mut app App) shared_code(hash string) vweb.Result {
+	if hash == '' {
+		return app.index()
+	}
+	return app.redirect('/?query=$hash')
+}
+
 fn isolate_cmd(cmd string) os.Result {
 	$if debug {
 		eprintln('> cmd: $cmd')
@@ -108,7 +116,8 @@ fn (mut app App) run() vweb.Result {
 ['/share'; post]
 fn (mut app App) share() vweb.Result {
 	code := app.form['code'] or { return app.text('No code was provided.') }
-	hash := md5.hexhash(code)
+	// using 10 chars is enough for now
+	hash := md5.hexhash(code)[0..10]
 	app.add_new_code(code, hash)
 	return app.text(hash)
 }
@@ -116,7 +125,7 @@ fn (mut app App) share() vweb.Result {
 ['/query'; post]
 fn (mut app App) get_by_hash() vweb.Result {
 	hash := app.form['hash'] or { return app.text('No hash was provided.') }
-	res := app.get_saved_code(hash) or { return app.text('No found.') }
+	res := app.get_saved_code(hash) or { return app.text('Not found.') }
 	return app.text(res)
 }
 
