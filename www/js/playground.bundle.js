@@ -349,6 +349,7 @@ var Terminal = /** @class */ (function () {
         this.onClose = null;
         this.onWrite = null;
         this.element = element;
+        this.attachResizeHandler(element);
     }
     Terminal.prototype.registerCloseHandler = function (handler) {
         this.onClose = handler;
@@ -374,6 +375,25 @@ var Terminal = /** @class */ (function () {
     };
     Terminal.prototype.getTerminalOutputElement = function () {
         return this.element.querySelector(".js-terminal__output");
+    };
+    Terminal.prototype.attachResizeHandler = function (element) {
+        var header = element.querySelector('.header');
+        if (!header)
+            return;
+        var mouseDown = false;
+        header.addEventListener('mousedown', function () {
+            mouseDown = true;
+            document.body.classList.add('dragging');
+        });
+        document.addEventListener('mousemove', function (e) {
+            if (!mouseDown)
+                return;
+            element.style.height = "".concat(document.body.clientHeight - e.clientY + header.clientHeight / 2, "px");
+        });
+        document.addEventListener('mouseup', function () {
+            mouseDown = false;
+            document.body.classList.remove('dragging');
+        });
     };
     return Terminal;
 }());
