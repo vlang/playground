@@ -5,6 +5,7 @@ class Terminal {
 
     constructor(element: HTMLElement) {
         this.element = element
+        this.attachResizeHandler(element)
     }
 
     public registerCloseHandler(handler: () => void) {
@@ -38,5 +39,26 @@ class Terminal {
 
     private getTerminalOutputElement(): HTMLElement {
         return this.element.querySelector(".js-terminal__output") as HTMLElement
+    }
+
+    private attachResizeHandler(element: HTMLElement) {
+        const header = element.querySelector('.header');
+        if (!header) return;
+
+        let mouseDown = false;
+        header.addEventListener('mousedown', () => {
+            mouseDown = true;
+            document.body.classList.add('dragging');
+        });
+
+        document.addEventListener('mousemove', (e: MouseEvent) => {
+            if (!mouseDown) return;
+            element.style.height = `${document.body.clientHeight - e.clientY + header.clientHeight / 2}px`;
+        });
+        
+        document.addEventListener('mouseup', () => {
+            mouseDown = false;
+            document.body.classList.remove('dragging');
+        });
     }
 }
