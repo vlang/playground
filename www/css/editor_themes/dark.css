@@ -14,7 +14,7 @@
 .cm-s-dark .cm-property,
 .cm-s-dark .cm-operator {}
 .cm-s-dark .cm-variable-2 { color: #05a; }
-.cm-s-dark .cm-variable-3, .cm-s-dark .cm-type { color: #085; }
+.cm-s-dark .cm-variable-3, .cm-s-dark .cm-type { font-weight: 700; }
 .cm-s-dark .cm-comment { color: #808080; }
 .cm-s-dark .cm-string { color: #6A8759; }
 .cm-s-dark .cm-string-2 { color: #6A8759; }
@@ -25,6 +25,7 @@
 .cm-s-dark .cm-attribute { color: #00c; }
 .cm-s-dark .cm-hr { color: #999; }
 .cm-s-dark .cm-link { color: #00c; }
+.cm-s-dark .cm-function { color: #FFC66D; }
 
 .CodeMirror.cm-s-dark  span.CodeMirror-matchingbracket {
     background-color: #336146;
