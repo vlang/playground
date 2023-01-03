@@ -44,6 +44,10 @@ CodeMirror.defineMode("v", function (config) {
         "__offsetof": true,
     };
 
+    const pseudo_keywords = {
+        "sql": true,
+    };
+
     const atoms = {
         "true": true, "false": true, "nil": true, "print": true,
         "println": true, "exit": true, "panic": true, "error": true,
@@ -75,6 +79,10 @@ CodeMirror.defineMode("v", function (config) {
 
     let curPunc;
 
+    /**
+     * @param stream
+     * @returns {string}
+     */
     function eatIdentifier(stream) {
         stream.eatWhile(/[\w\$_\xa1-\uffff]/);
         return stream.current();
@@ -138,8 +146,18 @@ CodeMirror.defineMode("v", function (config) {
 
         const cur = eatIdentifier(stream);
         if (keywords.propertyIsEnumerable(cur)) return "keyword";
+        if (pseudo_keywords.propertyIsEnumerable(cur)) return "keyword";
         if (atoms.propertyIsEnumerable(cur)) return "atom";
         if (builtinTypes.propertyIsEnumerable(cur)) return "builtin";
+
+        if (cur[0].toUpperCase() === cur[0]) {
+            return "type";
+        }
+
+        const next = stream.peek()
+        if (next === '(' || next === '<') {
+            return "function";
+        }
 
         return "variable";
     }

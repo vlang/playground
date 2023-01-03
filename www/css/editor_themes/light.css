@@ -9,7 +9,7 @@
 .cm-s-light .cm-property,
 .cm-s-light .cm-operator {}
 .cm-s-light .cm-variable-2 { color: #05a; }
-.cm-s-light .cm-variable-3, .cm-s-light .cm-type { color: #085; }
+.cm-s-light .cm-variable-3, .cm-s-light .cm-type { font-weight: 700; }
 .cm-s-light .cm-comment { color: #8C8C8C; }
 .cm-s-light .cm-string { color: #067D17; }
 .cm-s-light .cm-string-2 { color: #067D17; }
@@ -20,6 +20,7 @@
 .cm-s-light .cm-attribute { color: #00c; }
 .cm-s-light .cm-hr { color: #999; }
 .cm-s-light .cm-link { color: #00c; }
+.cm-s-light .cm-function {}
 
 .CodeMirror.cm-s-light  span.CodeMirror-matchingbracket {
     background-color: #93d9d9;
