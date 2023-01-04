@@ -118,7 +118,7 @@ fn run_in_sandbox(code string) string {
 	is_reached_resource_limit := run_res.exit_code == 1
 		&& run_res.output.contains('Resource temporarily unavailable')
 	is_out_of_memory := run_res.exit_code == 1
-		&& run_res.output.contains('GC Warning: Failed to expand heap by')
+		&& run_res.output.contains('GC Warning: Out of Memory!')
 
 	if is_reached_resource_limit || is_out_of_memory {
 		return 'The program reached the resource limit assigned to it.'
