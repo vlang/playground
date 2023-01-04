@@ -19,9 +19,9 @@ const (
 	max_run_processes_and_threads = 10
 	max_compiler_memory_in_kb     = 100_000
 	max_run_memory_in_kb          = 50_000
-	run_time_in_seconds           = 3
+	run_time_in_seconds           = 2
 	// from isolate docs: we recommend to use --time as the main limit, but set --wall-time to a much higher value as a precaution against sleeping programs
-	wall_time_in_seconds          = 2
+	wall_time_in_seconds          = 3
 )
 
 [table: 'code_storage']
@@ -115,6 +115,15 @@ fn run_in_sandbox(code string) string {
 		return prettify(build_output)
 	}
 	run_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_run_memory_in_kb} --time=${run_time_in_seconds} --wall-time=${wall_time_in_seconds} --run -- code')
+	is_reached_resource_limit := run_res.exit_code == 1
+		&& run_res.output.contains('Resource temporarily unavailable')
+	is_out_of_memory := run_res.exit_code == 1
+		&& run_res.output.contains('GC Warning: Out of Memory!')
+
+	if is_reached_resource_limit || is_out_of_memory {
+		return 'The program reached the resource limit assigned to it.'
+	}
+
 	return prettify(run_res.output.trim_right('\n'))
 }
 
