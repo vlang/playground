@@ -12,13 +12,16 @@ const (
 	vexeroot                      = @VEXEROOT
 	// non-standard block size, different for different filesystems
 	block_size                    = 4096
-	fs_usage_max_size_in_bytes    = 10 * 1024 * 1024
+	fs_usage_max_size_in_bytes    = 3 * 1024 * 1024
 	// from isolate docs: please note that this currently works only on the ext family of filesystems (other filesystems use other interfaces for setting quotas)
 	block_max_count               = u32(fs_usage_max_size_in_bytes / block_size)
 	inode_max_count               = 50
 	max_run_processes_and_threads = 10
+	max_compiler_memory_in_kb     = 100_000
 	max_run_memory_in_kb          = 50_000
-	run_time_in_seconds           = 2
+	run_time_in_seconds           = 3
+	// from isolate docs: we recommend to use --time as the main limit, but set --wall-time to a much higher value as a precaution against sleeping programs
+	wall_time_in_seconds          = 2
 )
 
 [table: 'code_storage']
@@ -105,13 +108,13 @@ fn run_in_sandbox(code string) string {
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.'
 	}
-	build_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_run_memory_in_kb} --wall-time=${run_time_in_seconds} --run -- ${vexeroot}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g code.v')
+	build_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_compiler_memory_in_kb} --wall-time=${wall_time_in_seconds} --run -- ${vexeroot}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g code.v')
 	build_output := build_res.output.trim_right('\n')
 	log_code(code, build_output) or { eprintln('[WARNING] Failed to log code.') }
 	if build_res.exit_code != 0 {
 		return prettify(build_output)
 	}
-	run_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_run_memory_in_kb} --time=${run_time_in_seconds} --wall-time=${run_time_in_seconds} --run -- code')
+	run_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_run_memory_in_kb} --time=${run_time_in_seconds} --wall-time=${wall_time_in_seconds} --run -- code')
 	return prettify(run_res.output.trim_right('\n'))
 }
 
