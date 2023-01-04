@@ -8,10 +8,17 @@ import sqlite
 import crypto.md5
 
 const (
-	port        = 5555
-	vexeroot    = @VEXEROOT
-	block_size  = 4096
-	inode_ratio = 16384
+	port                          = 5555
+	vexeroot                      = @VEXEROOT
+	// non-standard block size, different for different filesystems
+	block_size                    = 4096
+	fs_usage_max_size_in_bytes    = 10 * 1024 * 1024
+	// from isolate docs: please note that this currently works only on the ext family of filesystems (other filesystems use other interfaces for setting quotas)
+	block_max_count               = u32(fs_usage_max_size_in_bytes / block_size)
+	inode_max_count               = 50
+	max_run_processes_and_threads = 10
+	max_run_memory_in_kb          = 50_000
+	run_time_in_seconds           = 2
 )
 
 [table: 'code_storage']
@@ -38,20 +45,22 @@ fn (mut app App) shared_code(hash string) vweb.Result {
 	if hash == '' {
 		return app.index()
 	}
-	return app.redirect('/?query=$hash')
+	return app.redirect('/?query=${hash}')
 }
 
 fn isolate_cmd(cmd string) os.Result {
 	$if debug {
-		eprintln('> cmd: $cmd')
+		eprintln('> cmd: ${cmd}')
 	}
 	return os.execute(cmd)
 }
 
-fn init_sandbox() (string, int) {
+fn try_init_sandbox() (string, int) {
 	for {
 		for box_id in 0 .. 1000 {
-			iso_res := isolate_cmd('isolate --box-id=$box_id --init')
+			// TODO: implement --cg when isolate releases v2 support
+			// remove --quota if isolate throws `Cannot identify filesystem which contains /var/local/lib/isolate/0`
+			iso_res := isolate_cmd('isolate --box-id=${box_id} --quota=${block_max_count},${inode_max_count} --init')
 			if iso_res.exit_code == 0 {
 				box_path := os.join_path(iso_res.output.trim_string_right('\n'), 'box')
 				return box_path, box_id
@@ -81,28 +90,28 @@ fn ddhhmmss(time time.Time) string {
 
 fn log_code(code string, build_res string) ! {
 	now := time.now()
-	log_dir := 'logs/$now.year-${now.month:02d}'
+	log_dir := 'logs/${now.year}-${now.month:02d}'
 	os.mkdir_all(log_dir)!
-	log_file := '$log_dir/${ddhhmmss(now)}'
-	log_content := '$code\n\n\n$build_res'
+	log_file := '${log_dir}/${ddhhmmss(now)}'
+	log_content := '${code}\n\n\n${build_res}'
 	os.write_file(log_file, log_content)!
 }
 
 fn run_in_sandbox(code string) string {
-	box_path, box_id := init_sandbox()
+	box_path, box_id := try_init_sandbox()
 	defer {
-		isolate_cmd('isolate --box-id=$box_id --cleanup')
+		isolate_cmd('isolate --box-id=${box_id} --cleanup')
 	}
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.'
 	}
-	build_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g code.v')
+	build_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_run_memory_in_kb} --wall-time=${run_time_in_seconds} --run -- ${vexeroot}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g code.v')
 	build_output := build_res.output.trim_right('\n')
 	log_code(code, build_output) or { eprintln('[WARNING] Failed to log code.') }
 	if build_res.exit_code != 0 {
 		return prettify(build_output)
 	}
-	run_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=1 --mem=30000 --wall-time=2 --quota=${10240 / block_size},${10240 / inode_ratio} --run -- code')
+	run_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_run_memory_in_kb} --time=${run_time_in_seconds} --wall-time=${run_time_in_seconds} --run -- code')
 	return prettify(run_res.output.trim_right('\n'))
 }
 
@@ -125,8 +134,8 @@ fn (mut app App) share() vweb.Result {
 ['/query'; post]
 fn (mut app App) get_by_hash() vweb.Result {
 	hash := app.form['hash'] or { return app.text('No hash was provided.') }
-	res := app.get_saved_code(hash) or { return app.text('Not found.') }
-	return app.text(res)
+	code := app.get_saved_code(hash) or { return app.text('Not found.') }
+	return app.text(code)
 }
 
 fn (mut app App) add_new_code(code string, hash string) {
@@ -134,32 +143,33 @@ fn (mut app App) add_new_code(code string, hash string) {
 		code: code
 		hash: hash
 	}
-	db := app.db
-	sql db {
+
+	sql app.db {
 		insert new_code into CodeStorage
 	}
 }
 
-fn (mut app App) get_saved_code(hash string) !string {
-	db := app.db
-	found := sql db {
+fn (mut app App) get_saved_code(hash string) ?string {
+	found := sql app.db {
 		select from CodeStorage where hash == hash
 	}
+
 	if found.len == 0 {
-		return error('Not Found')
+		return none
 	}
+
 	return found.last().code
 }
 
 fn vfmt_code(code string) (string, bool) {
-	box_path, box_id := init_sandbox()
+	box_path, box_id := try_init_sandbox()
 	defer {
-		isolate_cmd('isolate --box-id=$box_id --cleanup')
+		isolate_cmd('isolate --box-id=${box_id} --cleanup')
 	}
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.', false
 	}
-	vfmt_res := isolate_cmd('isolate --box-id=$box_id --dir=$vexeroot --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --quota=${1048576 / block_size},${1048576 / inode_ratio} --run -- $vexeroot/v fmt code.v')
+	vfmt_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --run -- ${vexeroot}/v fmt code.v')
 	mut vfmt_output := vfmt_res.output.trim_right('\n')
 	if vfmt_res.exit_code != 0 {
 		return prettify(vfmt_output), false
@@ -202,7 +212,19 @@ fn (mut app App) init_once() {
 	app.serve_static('./www/js', 'www/js/')
 }
 
+// V can't compile fmt first time in isolate because
+// > `folder `/opt/vlang/cmd/tools` is not writable` when `v fmt`
+fn precompile_vfmt() {
+	result := os.execute('${vexeroot}/v fmt')
+
+	if result.exit_code != 0 {
+		panic(result.output)
+	}
+}
+
 fn main() {
+	precompile_vfmt()
+
 	mut app := &App{}
 	app.init_once()
 	vweb.run(app, port)
