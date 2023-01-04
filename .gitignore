@@ -1,3 +1,9 @@
+.idea
+.vscode
+
 server
 logs/*
 node_modules
+
+playground
+code_storage.db
