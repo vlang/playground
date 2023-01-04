@@ -19,9 +19,9 @@ const (
 	max_run_processes_and_threads = 10
 	max_compiler_memory_in_kb     = 100_000
 	max_run_memory_in_kb          = 50_000
-	run_time_in_seconds           = 3
+	run_time_in_seconds           = 2
 	// from isolate docs: we recommend to use --time as the main limit, but set --wall-time to a much higher value as a precaution against sleeping programs
-	wall_time_in_seconds          = 2
+	wall_time_in_seconds          = 3
 )
 
 [table: 'code_storage']
