@@ -7,4 +7,5 @@ static/wasm/vfmt.*
 static/wasm/__build/vfmt.c
 node_modules
 
+playground
 code_storage.db
