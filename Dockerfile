@@ -27,7 +27,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
 # install typescript
 RUN npm install -g typescript
 
-# install isolate
+# install isolate deps
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
     libcap-dev \
     libseccomp-dev \
@@ -36,6 +36,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     asciidoc \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# install isolate
 RUN git clone https://github.com/ioi/isolate /tmp/isolate \
   && cd /tmp/isolate \
   && make isolate isolate-check-environment \
