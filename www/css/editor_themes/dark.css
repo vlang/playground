@@ -26,6 +26,8 @@
 .cm-s-dark .cm-hr { color: #999; }
 .cm-s-dark .cm-link { color: #00c; }
 .cm-s-dark .cm-function { color: #FFC66D; }
+.cm-s-dark .cm-start-interpolation { color: #CC7832; }
+.cm-s-dark .cm-end-interpolation { color: #CC7832; }
 
 .CodeMirror.cm-s-dark  span.CodeMirror-matchingbracket {
     background-color: #336146;
