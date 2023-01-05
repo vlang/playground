@@ -36,6 +36,7 @@ CodeMirror.defineMode("v", function (config) {
         "sizeof": true,
         "static": true,
         "struct": true,
+        "spawn": true,
         "type": true,
         "typeof": true,
         "union": true,
@@ -94,7 +95,7 @@ CodeMirror.defineMode("v", function (config) {
         if (state.context.insideString && ch === '}') {
             stream.eat('}');
             state.tokenize = tokenString(state.context.stringQuote);
-            return state.tokenize(stream, state);
+            return 'end-interpolation';
         }
 
         if (ch === '"' || ch === "'" || ch === "`") {
@@ -103,7 +104,9 @@ CodeMirror.defineMode("v", function (config) {
         }
         if (/[\d.]/.test(ch)) {
             if (ch === ".") {
-                stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/);
+                if (!stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/)) {
+                    return "operator";
+                }
             } else if (ch === "0") {
                 stream.match(/^[xX][0-9a-fA-F]+/) || stream.match(/^0[0-7]+/);
             } else {
@@ -145,6 +148,10 @@ CodeMirror.defineMode("v", function (config) {
         }
 
         const cur = eatIdentifier(stream);
+        if (cur === "import") {
+            state.expectedImportName = true;
+        }
+
         if (keywords.propertyIsEnumerable(cur)) return "keyword";
         if (pseudo_keywords.propertyIsEnumerable(cur)) return "keyword";
         if (atoms.propertyIsEnumerable(cur)) return "atom";
@@ -159,13 +166,37 @@ CodeMirror.defineMode("v", function (config) {
             return "function";
         }
 
+        // highlight only last part
+        // example:
+        //   import foo.boo
+        //              ^^^ - only this part will be highlighted
+        if (state.expectedImportName && !stream.peek(".")) {
+            state.expectedImportName = false;
+            if (state.knownImports === undefined) {
+                state.knownImports = {};
+            }
+            state.knownImports[cur] = true;
+            return "import-name";
+        }
+
+        // highlight only identifier with dot after it
+        // example:
+        //   import foo
+        //   import bar
+        //
+        //   foo.bar
+        //   ^^^ - only this part will be highlighted
+        if (state.knownImports !== undefined && state.knownImports[cur] && stream.peek(".")) {
+            return "import-name";
+        }
+
         return "variable";
     }
 
     function tokenLongInterpolation(stream, state) {
         if (stream.match("}")) {
             state.tokenize = tokenString(state.context.stringQuote);
-            return state.tokenize(stream, state);
+            return 'end-interpolation';
         }
         state.tokenize = tokenBase;
         return state.tokenize(stream, state);
@@ -204,6 +235,20 @@ CodeMirror.defineMode("v", function (config) {
         return "variable"
     }
 
+    function tokenNextInterpolation(stream, state) {
+        let next = stream.next()
+        if (next === '$' && stream.eat('{')) {
+            state.tokenize = tokenLongInterpolation;
+            return "start-interpolation";
+        }
+        if (next === '$') {
+            state.tokenize = tokenShortInterpolation;
+            return "start-interpolation";
+        }
+
+        return "string";
+    }
+
     function tokenString(quote) {
         return function (stream, state) {
             state.context.insideString = true;
@@ -219,11 +264,13 @@ CodeMirror.defineMode("v", function (config) {
                     break;
                 }
                 if (next === '$' && !escaped && stream.eat('{')) {
-                    state.tokenize = tokenLongInterpolation;
+                    state.tokenize = tokenNextInterpolation;
+                    stream.backUp(2)
                     return "string";
                 }
                 if (next === '$' && !escaped) {
-                    state.tokenize = tokenShortInterpolation;
+                    state.tokenize = tokenNextInterpolation;
+                    stream.backUp(1)
                     return "string";
                 }
                 escaped = !escaped && next === "\\";
@@ -260,6 +307,8 @@ CodeMirror.defineMode("v", function (config) {
         this.insideString = false;
         this.stringQuote = null;
         this.afterDotInsideInterpolation = true;
+        this.expectedImportName = true;
+        this.knownImports = {"": true};
     }
 
     function pushContext(state, col, type) {
