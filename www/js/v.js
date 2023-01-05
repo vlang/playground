@@ -104,7 +104,9 @@ CodeMirror.defineMode("v", function (config) {
         }
         if (/[\d.]/.test(ch)) {
             if (ch === ".") {
-                stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/);
+                if (!stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/)) {
+                    return "operator";
+                }
             } else if (ch === "0") {
                 stream.match(/^[xX][0-9a-fA-F]+/) || stream.match(/^0[0-7]+/);
             } else {
@@ -146,6 +148,10 @@ CodeMirror.defineMode("v", function (config) {
         }
 
         const cur = eatIdentifier(stream);
+        if (cur === "import") {
+            state.expectedImportName = true;
+        }
+
         if (keywords.propertyIsEnumerable(cur)) return "keyword";
         if (pseudo_keywords.propertyIsEnumerable(cur)) return "keyword";
         if (atoms.propertyIsEnumerable(cur)) return "atom";
@@ -158,6 +164,30 @@ CodeMirror.defineMode("v", function (config) {
         const next = stream.peek()
         if (next === '(' || next === '<') {
             return "function";
+        }
+
+        // highlight only last part
+        // example:
+        //   import foo.boo
+        //              ^^^ - only this part will be highlighted
+        if (state.expectedImportName && !stream.peek(".")) {
+            state.expectedImportName = false;
+            if (state.knownImports === undefined) {
+                state.knownImports = {};
+            }
+            state.knownImports[cur] = true;
+            return "import-name";
+        }
+
+        // highlight only identifier with dot after it
+        // example:
+        //   import foo
+        //   import bar
+        //
+        //   foo.bar
+        //   ^^^ - only this part will be highlighted
+        if (state.knownImports !== undefined && state.knownImports[cur] && stream.peek(".")) {
+            return "import-name";
         }
 
         return "variable";
@@ -277,6 +307,8 @@ CodeMirror.defineMode("v", function (config) {
         this.insideString = false;
         this.stringQuote = null;
         this.afterDotInsideInterpolation = true;
+        this.expectedImportName = true;
+        this.knownImports = {"": true};
     }
 
     function pushContext(state, col, type) {
