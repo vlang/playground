@@ -1,10 +1,17 @@
 {
   "name": "ts",
   "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
   "dependencies": {
-    "@codemirror/language": "^6.2.1",
+    "@codemirror/language": "^6.2.1"
+  },
+  "devDependencies": {
+    "typescript": "~4.9.4",
     "@types/codemirror": "^5.60.5",
-    "@types/tern": "^0.23.4",
-    "@types/estree": "^1.0.0"
+    "@types/estree": "^1.0.0",
+    "@types/tern": "^0.23.4"
   }
 }
