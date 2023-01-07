@@ -17,7 +17,8 @@ body {
 header {
     height: 70px;
     color: #fff;
-    background-color: #2a2a2d;
+    background-color: var(--header-background-color);
+    border-bottom: 1px solid var(--header-border);
 }
 
 header .container {
@@ -35,12 +36,24 @@ header .container .title {
     grid-column-gap: 15px;
     align-content: center;
     font-size: 22px;
+    color: var(--text-color);
 }
 
 header .container .title .title-v-part {
     font-weight: 700;
-    color: white;
+    color: var(--text-color);
     text-decoration: none;
+}
+
+header .container .title .title-v-part svg {
+    margin-top: 5px;
+}
+
+header .container .title span {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-column-gap: 3px;
+    align-items: center;
 }
 
 header .container .buttons {
@@ -57,7 +70,7 @@ header .container button {
     border: none;
     border-radius: 12px;
     background-color: transparent;
-    color: #fff;
+    color: var(--text-color);
     font-size: 15px;
     line-height: 1.5;
 
@@ -70,12 +83,21 @@ header .container button {
 
 header .container button:hover {
     cursor: pointer;
-    background-color: #393b41;
+    background-color: var(--header-button-hover);
+}
+
+header .container button .icon path {
+    fill: var(--text-color);
+}
+
+header .container button .icon rect {
+    fill: var(--text-color);
 }
 
 header .container button.run-style-button {
     margin-left: 20px;
     background-color: #3474f0;
+    color: #fff;
 }
 
 header .container button.run-style-button:hover {
@@ -93,11 +115,15 @@ header .container button.theme:hover {
 }
 
 header .container button.theme:hover .icon .theme-icon path {
-    fill: #d2d2d2;
+    fill: #9b9b9b;
 }
 
 header .container button.theme .theme-icon {
     width: 22px;
+}
+
+header .container button.theme .theme-icon path {
+    fill: var(--text-color);
 }
 
 header .container button .icon {

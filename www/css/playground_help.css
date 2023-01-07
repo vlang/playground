@@ -64,7 +64,7 @@ html[data-theme='dark'] {
     width: 300px;
     border-radius: 10px;
     background-color: #fff;
-    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
 
     margin-top: -300px;
     padding: 15px 15px;
@@ -76,6 +76,7 @@ html[data-theme='dark'] {
     display: none;
 
     z-index: 1000;
+    border: 1px solid var(--terminal-header-border);
 }
 
 .playground__help-tip.opened {
