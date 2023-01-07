@@ -2,7 +2,7 @@
 
 This repository contains the source code for V's playground (https://play.vlang.io).
 
-![](./docs/images/playground.png)
+![](./docs/images/cover.png)
 
 ## Developing
 
