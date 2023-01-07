@@ -1,5 +1,6 @@
 html {
     --background-color: #fff;
+    --scrollbar-thumb-color: #d2d2d2;
     --terminal-header-border: #ecedf1;
     --terminal-header: #f7f8fa;
     --terminal-header-text: #000;
@@ -15,6 +16,7 @@ html {
 
 html[data-theme='dark'] {
     --background-color: #1e1f22;
+    --scrollbar-thumb-color: #404042;
     --terminal-header-border: #323438;
     --terminal-header: #2a2a2d;
     --terminal-header-text: #f7f8fa;
@@ -26,6 +28,28 @@ html[data-theme='dark'] {
     --terminal-error: #e04949;
     --playground-link: #8d8d8d;
     --run-embeded-icon-color: #fff;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: var(--background-color);
+}
+
+::-webkit-scrollbar-track-piece {
+    background-color: var(--background-color);
 }
 
 body.dragging {
@@ -149,4 +173,17 @@ body.dragging .playground__terminal .header {
 
     background-color: var(--terminal-background);
     color: var(--terminal-text);
+}
+
+.playground__terminal .terminal__output::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-color);
+    border-radius: 5px;
+}
+
+.playground__terminal .terminal__output::-webkit-scrollbar-corner {
+    background-color: var(--terminal-background);
+}
+
+.playground__terminal .terminal__output::-webkit-scrollbar-track-piece {
+    background-color: var(--terminal-background);
 }
