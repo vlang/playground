@@ -616,7 +616,10 @@ var Playground = /** @class */ (function () {
             if (isCodeFromShareURL && !ev.ctrlKey && !ev.metaKey) {
                 _this.markCodeAsUnsaved();
             }
-            if (ev.ctrlKey && (ev.key === "Enter" || ev.key === "r")) {
+            var isCtrlEnter = ev.ctrlKey && ev.key === "Enter";
+            var isCtrlR = ev.ctrlKey && ev.key === "r";
+            var isShiftEnter = ev.shiftKey && ev.key === "Enter";
+            if (isCtrlEnter || isCtrlR || isShiftEnter) {
                 _this.runCode();
                 ev.preventDefault();
             }
