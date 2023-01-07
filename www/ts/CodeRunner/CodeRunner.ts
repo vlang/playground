@@ -3,9 +3,9 @@ class RunCodeResult {
     }
 }
 
-class FormatCodeResult {
-    public ok: boolean
-    public output: string
+type FormatCodeResult = {
+    ok: boolean
+    output: string
 }
 
 class ShareCodeResult {

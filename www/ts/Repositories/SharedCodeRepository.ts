@@ -15,11 +15,11 @@ class SharedCodeRepository implements CodeRepository {
         // nothing to do
     }
 
-    getCode(onReady: (string) => void) {
+    getCode(onReady: (code: string) => void) {
         return this.getSharedCode(onReady)
     }
 
-    private getSharedCode(onReady: (string) => void) {
+    private getSharedCode(onReady: (code: string) => void) {
         const data = new FormData()
         data.append("hash", this.hash)
 

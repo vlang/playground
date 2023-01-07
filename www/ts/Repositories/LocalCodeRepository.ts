@@ -21,7 +21,7 @@ println('Hello, World!')
         window.localStorage.setItem(LocalCodeRepository.LOCAL_STORAGE_KEY, code)
     }
 
-    getCode(onReady: (string) => void) {
+    getCode(onReady: (code: string) => void) {
         const localCode = window.localStorage.getItem(LocalCodeRepository.LOCAL_STORAGE_KEY)
         if (localCode === null || localCode === undefined) {
             onReady(LocalCodeRepository.WELCOME_CODE)

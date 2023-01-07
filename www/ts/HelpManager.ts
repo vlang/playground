@@ -5,20 +5,21 @@ class HelpManager {
 
     private containingElement: HTMLElement
     private readonly element: HTMLElement
-    private readonly helpOverlay: HTMLElement
-    private readonly showHelpButton: HTMLElement
-    private readonly closeHelpButton: HTMLElement
+    private readonly helpOverlay!: HTMLElement
+    private readonly showHelpButton!: HTMLElement
+    private readonly closeHelpButton!: HTMLElement
 
     constructor(containingElement: HTMLElement) {
         this.containingElement = containingElement
         this.element = containingElement.getElementsByClassName("js-help-wrapper")[0] as HTMLElement
+
         if (this.element === null || this.element === undefined) {
             return
         }
 
-        this.helpOverlay = this.element.getElementsByClassName("js-help-overlay")[0] as HTMLElement
-        this.showHelpButton = this.element.getElementsByClassName("js-show-help")[0] as HTMLElement
-        this.closeHelpButton = this.element.getElementsByClassName("js-close-help")[0] as HTMLElement
+        this.helpOverlay = this.element.querySelector(".js-help-overlay")!
+        this.showHelpButton = this.element.querySelector(".js-show-help")!
+        this.closeHelpButton = this.element.querySelector(".js-close-help")!
 
         this.mount()
     }
@@ -46,7 +47,7 @@ class HelpManager {
         //  - macOS: ⌃
         //  - Windows/Linux: Ctrl
         if (!HelpManager.isMac) {
-            const shortcuts = document.querySelectorAll(".js-shortcut kbd.ctrl")
+            const shortcuts = document.querySelectorAll<HTMLElement>(".js-shortcut kbd.ctrl")
             shortcuts.forEach(function (shortcut: HTMLElement) {
                 shortcut.innerText = "Ctrl"
             })

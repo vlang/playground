@@ -1,6 +1,6 @@
 class ExamplesManager {
     private readonly selectElement: HTMLElement
-    private onSelectHandler: (example: IExample) => void = null
+    private onSelectHandler: ((example: IExample) => void) | null = null
 
     constructor() {
         this.selectElement = document.querySelector(".js-examples__select") as HTMLElement
@@ -18,14 +18,14 @@ class ExamplesManager {
         const examplesSelectList = this.selectElement.querySelector(".select-box__list")
         const examplesSelectBox = this.selectElement.querySelector(".select-box__current")
 
-        if (examplesSelectList !== null) {
+        if (examplesSelectList !== null && examplesSelectBox !== null) {
             examples.forEach(function (example: IExample, index: number) {
                 examplesSelectList.innerHTML += ExamplesManager.exampleElementListTemplate(example.name, index)
                 examplesSelectBox.innerHTML += ExamplesManager.exampleElementTemplate(example.name, index)
             })
         }
 
-        const selectOptions = this.selectElement.querySelectorAll(".select-box__option")
+        const selectOptions = this.selectElement.querySelectorAll<HTMLElement>(".select-box__option")
         selectOptions.forEach((option: HTMLElement) => {
             option.addEventListener("click", () => {
                 const exampleName = option.innerText
@@ -33,14 +33,14 @@ class ExamplesManager {
                     return example.name === exampleName
                 })
 
-                if (this.onSelectHandler !== null) {
+                if (this.onSelectHandler !== null && example != null) {
                     this.onSelectHandler(example)
                 }
             })
         })
     }
 
-    static exampleElementTemplate = function (name, index) {
+    static exampleElementTemplate = function (name: string, index: number) {
         let checked = ""
         if (index === 0) {
             checked = "checked=\"checked\""
@@ -52,7 +52,8 @@ class ExamplesManager {
 </div>
 `
     }
-    static exampleElementListTemplate = function (name, index) {
+
+    static exampleElementListTemplate = function (name: string, index: number) {
         return `
 <li>
     <label class="select-box__option" for="__select-id-${index}" aria-hidden="true">${name}</label>
