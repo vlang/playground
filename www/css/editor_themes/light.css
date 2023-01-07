@@ -21,6 +21,9 @@
 .cm-s-light .cm-hr { color: #999; }
 .cm-s-light .cm-link { color: #00c; }
 .cm-s-light .cm-function {}
+.cm-s-light .cm-start-interpolation { color: #0037A6; }
+.cm-s-light .cm-end-interpolation { color: #0037A6; }
+.cm-s-light .cm-import-name { font-weight: 700; }
 
 .CodeMirror.cm-s-light  span.CodeMirror-matchingbracket {
     background-color: #93d9d9;
