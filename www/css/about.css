@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+html {
+    font-family: Inter, sans-serif;
+}
+
+article {
+    margin: 70px auto;
+    max-width: 800px;
+    padding: 0 20px;
+    line-height: 1.4;
+}
