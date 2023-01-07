@@ -15,49 +15,75 @@ class ExamplesManager {
             return
         }
 
-        const examplesSelectList = this.selectElement.querySelector(".select-box__list")
-        const examplesSelectBox = this.selectElement.querySelector(".select-box__current")
+        const examplesSelectList = this.selectElement.querySelector(".dropdown__list")
+        const examplesButton = this.selectElement.querySelector(".dropdown__button")
 
-        if (examplesSelectList !== null && examplesSelectBox !== null) {
+        if (examplesSelectList !== null && examplesButton !== null) {
             examples.forEach(function (example: IExample, index: number) {
                 examplesSelectList.innerHTML += ExamplesManager.exampleElementListTemplate(example.name, index)
-                examplesSelectBox.innerHTML += ExamplesManager.exampleElementTemplate(example.name, index)
             })
+
+            examplesButton.innerHTML = examples[0].name
         }
 
-        const selectOptions = this.selectElement.querySelectorAll<HTMLElement>(".select-box__option")
-        selectOptions.forEach((option: HTMLElement) => {
+        const dropdownItems = this.selectElement.querySelectorAll<HTMLElement>(".dropdown__list-item")
+        dropdownItems.forEach((option: HTMLElement) => {
             option.addEventListener("click", () => {
                 const exampleName = option.innerText
                 const example = examples.find((example) => {
                     return example.name === exampleName
                 })
 
-                if (this.onSelectHandler !== null && example != null) {
+                if (this.onSelectHandler !== null && example) {
                     this.onSelectHandler(example)
                 }
             })
         })
-    }
 
-    static exampleElementTemplate = function (name: string, index: number) {
-        let checked = ""
-        if (index === 0) {
-            checked = "checked=\"checked\""
-        }
-        return `
-<div class="select-box__value">
-    <input class="select-box__input" type="radio" id="__select-id-${index}" value="1" name="Some" ${checked}/>
-    <p class="select-box__input-text">${name}</p>
-</div>
-`
+        const dropdownBtn = this.selectElement.querySelector<HTMLElement>(".dropdown__button")!
+        const dropdownList = this.selectElement.querySelector<HTMLElement>(".dropdown__list")!
+        const dropdownInput = this.selectElement.querySelector<HTMLInputElement>(".dropdown__input_hidden")!
+
+        dropdownBtn.addEventListener("click", function () {
+            dropdownList.classList.toggle("dropdown__list_visible")
+            this.classList.toggle("dropdown__button_active")
+        })
+
+        dropdownItems.forEach(function (option: HTMLElement) {
+            option.addEventListener("click", function (e) {
+                dropdownItems.forEach(function (el) {
+                    el.classList.remove("dropdown__list-item_active")
+                })
+                const target = e.target as HTMLElement
+                target.classList.add("dropdown__list-item_active")
+                dropdownBtn.innerText = this.innerText
+                dropdownInput.value = this.dataset.value ?? ""
+                dropdownList.classList.remove("dropdown__list_visible")
+            })
+        })
+
+        document.addEventListener("click", function (e) {
+            if (e.target !== dropdownBtn) {
+                dropdownBtn.classList.remove("dropdown__button_active")
+                dropdownList.classList.remove("dropdown__list_visible")
+            }
+        })
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Tab" || e.key === "Escape") {
+                dropdownBtn.classList.remove("dropdown__button_active")
+                dropdownList.classList.remove("dropdown__list_visible")
+            }
+        })
     }
 
     static exampleElementListTemplate = function (name: string, index: number) {
+        let className = ""
+        if (index === 0) {
+            className = "dropdown__list-item_active"
+        }
         return `
-<li>
-    <label class="select-box__option" for="__select-id-${index}" aria-hidden="true">${name}</label>
-</li>
+<li class="dropdown__list-item ${className}" data-value="${name}">${name}</li>
 `
     }
 }
