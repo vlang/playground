@@ -156,6 +156,9 @@ class Playground {
             } else if (ev.ctrlKey && ev.key === "h") {
                 this.helpManager.toggleHelp()
                 ev.preventDefault()
+            } else if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") {
+                this.editor.saveCode()
+                ev.preventDefault()
             } else if (ev.key === "Escape") {
                 this.helpManager.closeHelp()
                 ev.preventDefault()
