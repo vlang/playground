@@ -8,6 +8,7 @@
       "dom",
       "esnext"
     ],
+    "strict": true,
     "skipLibCheck": true,
     "baseUrl": "."
   },
