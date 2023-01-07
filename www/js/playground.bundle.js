@@ -636,6 +636,10 @@ var Playground = /** @class */ (function () {
                 _this.helpManager.toggleHelp();
                 ev.preventDefault();
             }
+            else if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") {
+                _this.editor.saveCode();
+                ev.preventDefault();
+            }
             else if (ev.key === "Escape") {
                 _this.helpManager.closeHelp();
                 ev.preventDefault();
