@@ -10,17 +10,26 @@ import crypto.md5
 const (
 	port                          = 5555
 	vexeroot                      = @VEXEROOT
-	// non-standard block size, different for different filesystems
+
+	// Non-standard block size, different for different filesystems.
 	block_size                    = 4096
 	fs_usage_max_size_in_bytes    = 3 * 1024 * 1024
-	// from isolate docs: please note that this currently works only on the ext family of filesystems (other filesystems use other interfaces for setting quotas)
+
+	// From isolate docs:
+	//
+	// Please note that this currently works only on the ext family of filesystems
+	// (other filesystems use other interfaces for setting quotas).
 	block_max_count               = u32(fs_usage_max_size_in_bytes / block_size)
 	inode_max_count               = 50
 	max_run_processes_and_threads = 10
 	max_compiler_memory_in_kb     = 100_000
 	max_run_memory_in_kb          = 50_000
 	run_time_in_seconds           = 2
-	// from isolate docs: we recommend to use --time as the main limit, but set --wall-time to a much higher value as a precaution against sleeping programs
+
+	// From isolate docs:
+	//
+	// We recommend to use `--time` as the main limit, but set `--wall-time` to a much
+	// higher value as a precaution against sleeping programs.
 	wall_time_in_seconds          = 3
 )
 
@@ -51,10 +60,17 @@ fn (mut app App) shared_code(hash string) vweb.Result {
 	return app.redirect('/?query=${hash}')
 }
 
-fn isolate_cmd(cmd string) os.Result {
+fn isolate_cmd(raw_cmd string) os.Result {
+	cmd := raw_cmd
+		.strip_margin()
+		.trim(' \n\r')
+		.replace('\r', '')
+		.replace('\n', ' ')
+
 	$if debug {
 		eprintln('> cmd: ${cmd}')
 	}
+
 	return os.execute(cmd)
 }
 
@@ -100,21 +116,74 @@ fn log_code(code string, build_res string) ! {
 	os.write_file(log_file, log_content)!
 }
 
-fn run_in_sandbox(code string) string {
+fn run_in_sandbox(code string, as_test bool) string {
 	box_path, box_id := try_init_sandbox()
 	defer {
 		isolate_cmd('isolate --box-id=${box_id} --cleanup')
 	}
-	os.write_file(os.join_path(box_path, 'code.v'), code) or {
+
+	file := if as_test { 'code_test.v' } else { 'code.v' }
+
+	os.write_file(os.join_path(box_path, file), code) or {
 		return 'Failed to write code to sandbox.'
 	}
-	build_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_compiler_memory_in_kb} --wall-time=${wall_time_in_seconds} --run -- ${vexeroot}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g code.v')
+
+	if as_test {
+		run_res := isolate_cmd('
+			|isolate 
+			| --box-id=${box_id} 
+			| --dir=${vexeroot} 
+			| --env=HOME=/box 
+			| --processes=${max_run_processes_and_threads} 
+			| --mem=${max_compiler_memory_in_kb} 
+			| --wall-time=${wall_time_in_seconds} 
+			| --run 
+			| -- 
+			|
+			| ${vexeroot}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g test ${file}
+		')
+		run_output := run_res.output.trim_right('\n')
+
+		log_code(code, run_output) or { eprintln('[WARNING] Failed to log code.') }
+
+		return prettify(run_output)
+	}
+
+	build_res := isolate_cmd('
+		|isolate 
+		| --box-id=${box_id} 
+		| --dir=${vexeroot} 
+		| --env=HOME=/box 
+		| --processes=${max_run_processes_and_threads} 
+		| --mem=${max_compiler_memory_in_kb} 
+		| --wall-time=${wall_time_in_seconds} 
+		| --run 
+		| -- 
+		|
+		| ${vexeroot}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g ${file}
+	')
 	build_output := build_res.output.trim_right('\n')
+
 	log_code(code, build_output) or { eprintln('[WARNING] Failed to log code.') }
+
 	if build_res.exit_code != 0 {
 		return prettify(build_output)
 	}
-	run_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=${max_run_processes_and_threads} --mem=${max_run_memory_in_kb} --time=${run_time_in_seconds} --wall-time=${wall_time_in_seconds} --run -- code')
+
+	run_res := isolate_cmd('
+		|isolate 
+		| --box-id=${box_id} 
+		| --dir=${vexeroot} 
+		| --env=HOME=/box 
+		| --processes=${max_run_processes_and_threads} 
+		| --mem=${max_run_memory_in_kb} 
+		| --time=${run_time_in_seconds} 
+		| --wall-time=${wall_time_in_seconds} 
+		| --run 
+		| -- 
+		| ./code
+	')
+
 	is_reached_resource_limit := run_res.exit_code == 1
 		&& run_res.output.contains('Resource temporarily unavailable')
 	is_out_of_memory := run_res.exit_code == 1
@@ -130,7 +199,14 @@ fn run_in_sandbox(code string) string {
 ['/run'; post]
 fn (mut app App) run() vweb.Result {
 	code := app.form['code'] or { return app.text('No code was provided.') }
-	res := run_in_sandbox(code)
+	res := run_in_sandbox(code, false)
+	return app.text(res)
+}
+
+['/run_test'; post]
+fn (mut app App) run_test() vweb.Result {
+	code := app.form['code'] or { return app.text('No code was provided.') }
+	res := run_in_sandbox(code, true)
 	return app.text(res)
 }
 
@@ -178,16 +254,30 @@ fn vfmt_code(code string) (string, bool) {
 	defer {
 		isolate_cmd('isolate --box-id=${box_id} --cleanup')
 	}
+
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {
 		return 'Failed to write code to sandbox.', false
 	}
-	vfmt_res := isolate_cmd('isolate --box-id=${box_id} --dir=${vexeroot} --env=HOME=/box --processes=3 --mem=100000 --wall-time=2 --run -- ${vexeroot}/v fmt code.v')
+
+	vfmt_res := isolate_cmd('
+		|isolate 
+		| --box-id=${box_id} 
+		| --dir=${vexeroot} 
+		| --env=HOME=/box 
+		| --processes=3 
+		| --mem=100000 
+		| --wall-time=2 
+		| --run 
+		| -- 
+		| ${vexeroot}/v fmt code.v
+	')
+
 	mut vfmt_output := vfmt_res.output.trim_right('\n')
 	if vfmt_res.exit_code != 0 {
 		return prettify(vfmt_output), false
-	} else {
-		return vfmt_output.all_before_last('\n'), true
 	}
+
+	return vfmt_output.all_before_last('\n'), true
 }
 
 struct FormatResp {
@@ -214,23 +304,31 @@ fn (mut app App) format() vweb.Result {
 }
 
 fn (mut app App) init_once() {
-	db := sqlite.connect('code_storage.db') or { panic(err) }
-	sql db {
+	app.db = sqlite.connect('code_storage.db') or { panic(err) }
+	sql app.db {
 		create table CodeStorage
 	}
-	app.db = db
 	isolate_cmd('isolate --cleanup')
 	app.handle_static('./www', true)
 	app.serve_static('./www/js', 'www/js/')
 }
 
-// V can't compile fmt first time in isolate because
-// > `folder `/opt/vlang/cmd/tools` is not writable` when `v fmt`
+// precompile_vfmt prepares the vfmt binary in the sandbox.
+//
+// V can't compile fmt first time in isolate because:
+//
+// `folder '/opt/vlang/cmd/tools' is not writable`
+//
+// when run `v fmt`, so we need to run `v fmt` first time outside isolate.
 fn precompile_vfmt() {
 	result := os.execute('${vexeroot}/v fmt')
 
 	if result.exit_code != 0 {
 		panic(result.output)
+	}
+
+	$if debug {
+		eprintln('v fmt successfully precompiled.')
 	}
 }
 

@@ -32,6 +32,21 @@ var CodeRunner = /** @class */ (function () {
         })
             .then(function (output) { return new RunCodeResult(output); });
     };
+    CodeRunner.runTest = function (code) {
+        var data = new FormData();
+        data.append("code", code);
+        return fetch("/run_test", {
+            method: "post",
+            body: data,
+        })
+            .then(function (resp) {
+            if (resp.status != 200) {
+                throw new Error("Can't run test");
+            }
+            return resp.text();
+        })
+            .then(function (output) { return new RunCodeResult(output); });
+    };
     CodeRunner.formatCode = function (code) {
         var data = new FormData();
         data.append("code", code);
@@ -517,6 +532,7 @@ var Playground = /** @class */ (function () {
      */
     function Playground(editorElement) {
         var _this = this;
+        this.runAsTestConsumer = function () { return false; };
         this.queryParams = new QueryParams(window.location.search);
         this.repository = CodeRepositoryManager.selectRepository(this.queryParams);
         this.editor = new Editor(editorElement, this.repository);
@@ -531,7 +547,17 @@ var Playground = /** @class */ (function () {
         });
         this.examplesManager.mount();
         this.helpManager = new HelpManager(editorElement);
+        this.runConfigurationManager = new RunConfigurationManager(this.queryParams);
+        this.runConfigurationManager.registerOnChange(function () { });
+        this.runConfigurationManager.registerOnSelect(function () {
+            _this.runConfigurationManager.toggleConfigurationsList();
+            _this.run();
+        });
+        this.runConfigurationManager.setupConfiguration();
     }
+    Playground.prototype.registerRunAsTestConsumer = function (consumer) {
+        this.runAsTestConsumer = consumer;
+    };
     /**
      * Register a handler for the default or new action.
      * @param name - The name of the action.
@@ -543,6 +569,13 @@ var Playground = /** @class */ (function () {
             throw new Error("Can't find action button with class js-playground__action-".concat(name));
         }
         actionButton.addEventListener("click", callback);
+    };
+    Playground.prototype.run = function () {
+        if (this.runAsTestConsumer()) {
+            this.runTest();
+            return;
+        }
+        this.runCode();
     };
     Playground.prototype.runCode = function () {
         var _this = this;
@@ -557,6 +590,21 @@ var Playground = /** @class */ (function () {
             .catch(function (err) {
             console.log(err);
             _this.writeToTerminal("Can't run code. Please try again.");
+        });
+    };
+    Playground.prototype.runTest = function () {
+        var _this = this;
+        this.clearTerminal();
+        this.writeToTerminal("Running tests...");
+        var code = this.editor.getCode();
+        CodeRunner.runTest(code)
+            .then(function (result) {
+            _this.clearTerminal();
+            _this.writeToTerminal(result.output);
+        })
+            .catch(function (err) {
+            console.log(err);
+            _this.writeToTerminal("Can't run tests. Please try again.");
         });
     };
     Playground.prototype.formatCode = function () {
@@ -617,7 +665,7 @@ var Playground = /** @class */ (function () {
                 _this.markCodeAsUnsaved();
             }
             if (ev.ctrlKey && (ev.key === "Enter" || ev.key === "r")) {
-                _this.runCode();
+                _this.run();
                 ev.preventDefault();
             }
             else if (ev.ctrlKey && ev.key === "l") {
@@ -746,6 +794,97 @@ function copyTextToClipboard(text, onCopy) {
         console.log("Async: Could not copy text: ", err, "fallback to old method");
     });
 }
+var RunConfigurationType;
+(function (RunConfigurationType) {
+    RunConfigurationType["Run"] = "Run";
+    RunConfigurationType["Test"] = "Test";
+})(RunConfigurationType || (RunConfigurationType = {}));
+function getRunConfigurationTypeByString(runConfigurationType) {
+    switch (runConfigurationType) {
+        case "Run":
+            return RunConfigurationType.Run;
+        case "Test":
+            return RunConfigurationType.Test;
+        default:
+            throw new Error("Unknown run configuration type: ".concat(runConfigurationType));
+    }
+}
+var RunConfigurationManager = /** @class */ (function () {
+    function RunConfigurationManager(queryParams) {
+        this.currentConfiguration = RunConfigurationType.Run;
+        this.fromQueryParam = false;
+        this.runButton = document.querySelector(".js-playground__action-run");
+        this.runButtonLabel = document.querySelector(".js-playground__action-run .label");
+        this.openRunButton = document.querySelector(".js-open-run-select");
+        this.configurationsList = document.querySelector(".js-run-configurations-list");
+        this.configurations = document.querySelectorAll(".js-configuration");
+        this.onChange = function () { };
+        this.onSelect = function () { };
+        this.queryParams = queryParams;
+        this.mount();
+    }
+    RunConfigurationManager.prototype.registerOnChange = function (callback) {
+        this.onChange = callback;
+    };
+    RunConfigurationManager.prototype.registerOnSelect = function (callback) {
+        this.onSelect = callback;
+    };
+    RunConfigurationManager.prototype.toggleConfigurationsList = function () {
+        this.configurationsList.classList.toggle("hidden");
+    };
+    RunConfigurationManager.prototype.setupConfiguration = function () {
+        var configurationFromQuery = this.queryParams.params.get(RunConfigurationManager.QUERY_PARAM_NAME);
+        if (configurationFromQuery !== null && configurationFromQuery !== undefined) {
+            this.fromQueryParam = true;
+            this.useConfiguration(getRunConfigurationTypeByString(configurationFromQuery));
+            return;
+        }
+        var configurationFromLocalStorage = window.localStorage.getItem(RunConfigurationManager.LOCAL_STORAGE_KEY);
+        if (configurationFromLocalStorage !== null && configurationFromLocalStorage !== undefined) {
+            this.useConfiguration(getRunConfigurationTypeByString(configurationFromLocalStorage));
+            return;
+        }
+        this.useConfiguration(RunConfigurationType.Run);
+    };
+    RunConfigurationManager.prototype.useConfiguration = function (runConfigurationType) {
+        this.currentConfiguration = runConfigurationType;
+        this.onChange(runConfigurationType);
+        var runConfigurationAsString = RunConfigurationType[runConfigurationType];
+        this.runButton.setAttribute("data-type", runConfigurationAsString);
+        this.runButtonLabel.textContent = runConfigurationAsString;
+        if (!this.fromQueryParam) {
+            // Don't update saved theme state if we're loading from query param.
+            window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_KEY, runConfigurationAsString);
+        }
+        if (this.fromQueryParam) {
+            // We update the query param only if we loaded from it.
+            // If we don't change, then the user can change the configuration and then reload the page.
+            // In this case, the page will load with the configuration from the URL, and the user
+            // will think that his configuration change has not been saved (and will not be saved
+            // until he removes the configuration from the URL).
+            // To avoid this, we update the URL if the user changes configuration.
+            this.queryParams.updateURLParameter(RunConfigurationManager.QUERY_PARAM_NAME, runConfigurationAsString);
+        }
+    };
+    RunConfigurationManager.prototype.mount = function () {
+        var _this = this;
+        this.openRunButton.addEventListener("click", function () {
+            _this.toggleConfigurationsList();
+        });
+        this.configurations.forEach(function (configuration) {
+            configuration.addEventListener("click", function () {
+                var _a;
+                var configurationTypeString = (_a = configuration.getAttribute("data-type")) !== null && _a !== void 0 ? _a : "Run";
+                var configurationType = getRunConfigurationTypeByString(configurationTypeString);
+                _this.useConfiguration(configurationType);
+                _this.onSelect(configurationType);
+            });
+        });
+    };
+    RunConfigurationManager.QUERY_PARAM_NAME = "runConfiguration";
+    RunConfigurationManager.LOCAL_STORAGE_KEY = "run-configuration";
+    return RunConfigurationManager;
+}());
 /**
  * ThemeManager is responsible for managing the theme of the playground.
  * It will register a callback to the change theme button and will update the

@@ -31,9 +31,12 @@
             <span>
                 <a href="https://vlang.io" class="title-v-part">
                     <svg width="33" height="23" viewBox="0 0 33 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z" fill="#536B8A"/>
-                        <path d="M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954 7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635 20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074 3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z" fill="#5D87BF"/>
-                        <path d="M28.6948 15.9266L22.5937 19.4338C22.2604 19.6254 21.8446 19.3848 21.8446 19.0003V11.9859C21.8446 11.6014 22.2604 11.3608 22.5937 11.5524L28.6948 15.0596C29.0292 15.2518 29.0292 15.7343 28.6948 15.9266Z" fill="#659360" stroke="#659360"/>
+                        <path d="M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z"
+                              fill="#536B8A"/>
+                        <path d="M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954 7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635 20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074 3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z"
+                              fill="#5D87BF"/>
+                        <path d="M28.6948 15.9266L22.5937 19.4338C22.2604 19.6254 21.8446 19.3848 21.8446 19.0003V11.9859C21.8446 11.6014 22.2604 11.3608 22.5937 11.5524L28.6948 15.0596C29.0292 15.2518 29.0292 15.7343 28.6948 15.9266Z"
+                              fill="#659360" stroke="#659360"/>
                     </svg>
                 </a>
                 Playground
@@ -72,21 +75,79 @@
                 </span>
                 <spa>Format</spa>
             </button>
-            <button class="js-playground__action-run run-style-button">
-                <span class="icon">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_1_5)">
-                            <path class="run-icon" d="M14.4657 8.20966L2.4657 15.1379L2.4657 1.28145L14.4657 8.20966Z"/>
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_1_5">
-                                <rect width="16" height="16" fill="white"/>
-                            </clipPath>
-                        </defs>
-                    </svg>
-                </span>
-                <spa>Run</spa>
-            </button>
+            <div class="run-button-select">
+                <button class="js-playground__action-run" data-type="Run">
+                    <span class="icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_1_5)">
+                                <path class="run-icon" d="M14.4657 8.20966L2.4657 15.1379L2.4657 1.28145L14.4657 8.20966Z"/>
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_1_5">
+                                    <rect width="16" height="16" fill="white"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </span>
+                    <span class="label">Run</span>
+                </button>
+
+                <div class="js-open-run-select open-run-select">
+                    <div class="open-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="8.13306" y="11.6247" width="8" height="1" transform="rotate(-135 8.13306 11.6247)" fill="white"/>
+                            <rect x="7.43687" y="10.9072" width="8" height="1" transform="rotate(-45 7.43687 10.9072)" fill="white"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="js-run-configurations-list run-configurations-list hidden">
+                    <h4>Configurations</h4>
+
+                    <div class="js-configuration configuration" data-type="Run">
+                        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_14_12)">
+                                <path d="M14.0548 8.75068L3.25542 14.9857C2.92209 15.1782 2.50542 14.9376 2.50542 14.5527L2.50542 2.08263C2.50542 1.69774 2.92208 1.45717 3.25542 1.64962L14.0548 7.88465C14.3881 8.0771 14.3881 8.55823 14.0548 8.75068Z"
+                                      fill="#659360" fill-opacity="0.2" stroke="#659360"/>
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_14_12">
+                                    <rect width="16" height="16" fill="white"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+
+                        <span>Run</span>
+                    </div>
+
+                    <div class="js-configuration configuration" data-type="Test">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_10_21)">
+                                <path d="M14.2435 11.7122L9.12788 14.6657C8.79455 14.8582 8.37788 14.6176 8.37788 14.2327V8.32568C8.37788 7.94078 8.79455 7.70022 9.12788 7.89267L14.2435 10.8462C14.5769 11.0386 14.5769 11.5198 14.2435 11.7122Z"
+                                      fill="#659360" fill-opacity="0.2" stroke="#659360"/>
+                                <mask id="mask0_10_21" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-1" y="0" width="17"
+                                      height="17">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                          d="M16 0H-2.24113e-05V6.69516H-0.575562V16.4948H7.32227V14H8.49998L8.74439 7.85167L16 12V0Z"
+                                          fill="#D9D9D9"/>
+                                </mask>
+                                <g mask="url(#mask0_10_21)">
+                                    <circle cx="6.68359" cy="7.13858" r="5.9928" fill="#659360" fill-opacity="0.2"/>
+                                    <circle cx="6.68359" cy="7.13858" r="5.4928" stroke="#659360"/>
+                                    <path d="M4.19995 4.58716H9.09369V5.43183H7.10044V10.844H6.19767V5.43183H4.19995V4.58716Z"
+                                          fill="#659360"/>
+                                </g>
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_10_21">
+                                    <rect width="16" height="16" fill="white"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+                        <span>Test</span>
+                    </div>
+                </div>
+            </div>
             <button class="js-playground__action-change-theme theme">
                 <span class="icon">
                   <svg class="theme-icon" width="30" height="30" viewBox="0 0 30 30" fill="none"

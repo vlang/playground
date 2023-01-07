@@ -14,12 +14,14 @@ const CODE_UNSAVED_KEY = "unsaved";
  * Playground is responsible for managing the all playground.
  */
 class Playground {
+    private runAsTestConsumer: () => boolean = () => false
     private readonly queryParams: QueryParams
     private readonly repository: CodeRepository
     private readonly editor: Editor
     private readonly themeManager: ThemeManager
     private readonly examplesManager: ExamplesManager
     private readonly helpManager: HelpManager
+    private readonly runConfigurationManager: RunConfigurationManager
 
     /**
      * @param editorElement - The element that will contain the playground.
@@ -42,6 +44,18 @@ class Playground {
         this.examplesManager.mount()
 
         this.helpManager = new HelpManager(editorElement)
+
+        this.runConfigurationManager = new RunConfigurationManager(this.queryParams)
+        this.runConfigurationManager.registerOnChange((): void => {})
+        this.runConfigurationManager.registerOnSelect((): void => {
+            this.runConfigurationManager.toggleConfigurationsList()
+            this.run()
+        })
+        this.runConfigurationManager.setupConfiguration()
+    }
+
+    public registerRunAsTestConsumer(consumer: () => boolean): void {
+        this.runAsTestConsumer = consumer
     }
 
     /**
@@ -58,6 +72,15 @@ class Playground {
         actionButton.addEventListener("click", callback)
     }
 
+    public run(): void {
+        if (this.runAsTestConsumer()) {
+            this.runTest()
+            return
+        }
+
+        this.runCode()
+    }
+
     public runCode(): void {
         this.clearTerminal()
         this.writeToTerminal("Running code...")
@@ -71,6 +94,22 @@ class Playground {
             .catch(err => {
                 console.log(err)
                 this.writeToTerminal("Can't run code. Please try again.")
+            })
+    }
+
+    public runTest(): void {
+        this.clearTerminal()
+        this.writeToTerminal("Running tests...")
+
+        const code = this.editor.getCode()
+        CodeRunner.runTest(code)
+            .then(result => {
+                this.clearTerminal()
+                this.writeToTerminal(result.output)
+            })
+            .catch(err => {
+                console.log(err)
+                this.writeToTerminal("Can't run tests. Please try again.")
             })
     }
 
@@ -142,7 +181,7 @@ class Playground {
             }
 
             if (ev.ctrlKey && (ev.key === "Enter" || ev.key === "r")) {
-                this.runCode()
+                this.run()
                 ev.preventDefault()
             } else if (ev.ctrlKey && ev.key === "l") {
                 this.formatCode()
