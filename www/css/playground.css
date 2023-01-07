@@ -1,5 +1,9 @@
 html {
     --background-color: #fff;
+    --text-color: #000;
+    --header-background-color: #f7f8fa;
+    --header-border: #ecedf1;
+    --header-button-hover: #ecedf1;
     --scrollbar-thumb-color: #d2d2d2;
     --terminal-header-border: #ecedf1;
     --terminal-header: #f7f8fa;
@@ -16,6 +20,10 @@ html {
 
 html[data-theme='dark'] {
     --background-color: #1e1f22;
+    --text-color: #e0e0e0;
+    --header-background-color: #2a2a2d;
+    --header-border: #2a2a2d;
+    --header-button-hover: #393b41;
     --scrollbar-thumb-color: #404042;
     --terminal-header-border: #323438;
     --terminal-header: #2a2a2d;
