@@ -5,7 +5,7 @@ class TextCodeRepository implements CodeRepository {
     saveCode(_: string): void {
     }
 
-    getCode(onReady: (string) => void): void {
+    getCode(onReady: (code: string) => void): void {
         onReady(this.text)
     }
 }

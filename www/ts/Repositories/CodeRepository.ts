@@ -14,5 +14,5 @@ interface CodeRepository {
      * Async gets the code from the storage.
      * @param onReady Callback function that will be called when the code is ready.
      */
-    getCode(onReady: (string) => void): void
+    getCode(onReady: (code: string) => void): void
 }

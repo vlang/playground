@@ -25,7 +25,7 @@ class CodeRepositoryManager {
         }
 
         const repository = new LocalCodeRepository()
-        const hash = params.params[SharedCodeRepository.QUERY_PARAM_NAME]
+        const hash = params.getURLParameter(SharedCodeRepository.QUERY_PARAM_NAME)
         if (hash !== null && hash !== undefined) {
             return new SharedCodeRepository(hash)
         }

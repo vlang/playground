@@ -33,7 +33,7 @@ class Editor {
 
         this.wrapperElement = wrapper
 
-        const place = wrapper.querySelector("textarea")
+        const place = wrapper.querySelector("textarea")!
         this.editor = CodeMirror.fromTextArea(place, editorConfig)
         this.repository = repository
         this.repository.getCode((code) => {
@@ -103,6 +103,12 @@ class Editor {
     }
 
     public saveCode() {
+        const isSharedCodeRepository = this.repository instanceof SharedCodeRepository
+
+        if (isSharedCodeRepository) {
+            this.repository = new LocalCodeRepository()
+        }
+
         this.repository.saveCode(this.getCode())
     }
 

@@ -1,7 +1,10 @@
+type OnCloseCallback = () => void
+type OnWriteCallback = (text: string) => void
+
 class Terminal {
     private readonly element: HTMLElement
-    private onClose: () => void = null
-    private onWrite: (text: string) => void = null
+    private onClose: OnCloseCallback | null = null
+    private onWrite: OnWriteCallback | null = null
 
     constructor(element: HTMLElement) {
         this.element = element

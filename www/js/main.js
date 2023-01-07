@@ -18,6 +18,7 @@ playground.registerAction(PlaygroundDefaultAction.CHANGE_THEME, () => {
 })
 
 playground.setupShortcuts()
+playground.askLoadUnsavedCode()
 
 window.onload = () => {
     const html = document.querySelector("html");

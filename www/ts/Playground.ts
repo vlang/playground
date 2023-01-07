@@ -8,6 +8,8 @@ enum PlaygroundDefaultAction {
     CHANGE_THEME = "change-theme",
 }
 
+const CODE_UNSAVED_KEY = "unsaved";
+
 /**
  * Playground is responsible for managing the all playground.
  */
@@ -133,38 +135,50 @@ class Playground {
 
     public setupShortcuts(): void {
         document.addEventListener("keydown", ev => {
-            this.editor.saveCode()
+            const isCodeFromShareURL = this.repository instanceof SharedCodeRepository
+
+            if (isCodeFromShareURL && !ev.ctrlKey && !ev.metaKey) {
+                this.markCodeAsUnsaved()
+            }
 
             if (ev.ctrlKey && (ev.key === "Enter" || ev.key === "r")) {
                 this.runCode()
                 ev.preventDefault()
-            }
-            if (ev.ctrlKey && ev.key === "l") {
+            } else if (ev.ctrlKey && ev.key === "l") {
                 this.formatCode()
                 ev.preventDefault()
-            }
-            if (ev.ctrlKey && ev.key === "=") {
+            } else if (ev.ctrlKey && ev.key === "=") {
                 this.editor.changeEditorFontSize(1)
                 ev.preventDefault()
-            }
-            if (ev.ctrlKey && ev.key === "-") {
+            } else if (ev.ctrlKey && ev.key === "-") {
                 this.editor.changeEditorFontSize(-1)
                 ev.preventDefault()
-            }
-            if (ev.ctrlKey && ev.key === "h") {
+            } else if (ev.ctrlKey && ev.key === "h") {
                 this.helpManager.toggleHelp()
                 ev.preventDefault()
-            }
-            if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") {
-                this.repository.saveCode(this.editor.getCode())
-                ev.preventDefault()
-            }
-
-            if (ev.key === "Escape") {
+            } else if (ev.key === "Escape") {
                 this.helpManager.closeHelp()
                 ev.preventDefault()
+            } else {
+                this.editor.saveCode()
             }
         })
+    }
+
+    public askLoadUnsavedCode() {
+        const isCodeFromShareURL = this.repository instanceof SharedCodeRepository
+        const hasUnsavedCode = window.localStorage.getItem(CODE_UNSAVED_KEY) != null
+
+        window.localStorage.removeItem(CODE_UNSAVED_KEY)
+
+        if (isCodeFromShareURL && hasUnsavedCode) {
+            const yes = confirm("You have previously unsaved changes. Do you want to load it?")
+
+            if (yes) {
+                this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, null)
+                window.location.reload()
+            }
+        }
     }
 
     public clearTerminal(): void {
@@ -173,5 +187,9 @@ class Playground {
 
     public writeToTerminal(text: string): void {
         this.editor.terminal.write(text)
+    }
+
+    private markCodeAsUnsaved() {
+        window.localStorage.setItem(CODE_UNSAVED_KEY, "")
     }
 }

@@ -1,6 +1,6 @@
 class ExamplesManager {
     private readonly selectElement: HTMLElement
-    private onSelectHandler: (example: IExample) => void = null
+    private onSelectHandler: ((example: IExample) => void) | null = null
 
     constructor() {
         this.selectElement = document.querySelector(".js-examples__select") as HTMLElement
@@ -18,7 +18,7 @@ class ExamplesManager {
         const examplesSelectList = this.selectElement.querySelector(".dropdown__list")
         const examplesButton = this.selectElement.querySelector(".dropdown__button")
 
-        if (examplesSelectList !== null) {
+        if (examplesSelectList !== null && examplesButton !== null) {
             examples.forEach(function (example: IExample, index: number) {
                 examplesSelectList.innerHTML += ExamplesManager.exampleElementListTemplate(example.name, index)
             })
@@ -26,7 +26,7 @@ class ExamplesManager {
             examplesButton.innerHTML = examples[0].name
         }
 
-        const dropdownItems = this.selectElement.querySelectorAll(".dropdown__list-item")
+        const dropdownItems = this.selectElement.querySelectorAll<HTMLElement>(".dropdown__list-item")
         dropdownItems.forEach((option: HTMLElement) => {
             option.addEventListener("click", () => {
                 const exampleName = option.innerText
@@ -34,15 +34,15 @@ class ExamplesManager {
                     return example.name === exampleName
                 })
 
-                if (this.onSelectHandler !== null) {
+                if (this.onSelectHandler !== null && example) {
                     this.onSelectHandler(example)
                 }
             })
         })
 
-        const dropdownBtn = this.selectElement.querySelector(".dropdown__button") as HTMLElement
-        const dropdownList = this.selectElement.querySelector(".dropdown__list") as HTMLElement
-        const dropdownInput = this.selectElement.querySelector(".dropdown__input_hidden") as HTMLInputElement
+        const dropdownBtn = this.selectElement.querySelector<HTMLElement>(".dropdown__button")!
+        const dropdownList = this.selectElement.querySelector<HTMLElement>(".dropdown__list")!
+        const dropdownInput = this.selectElement.querySelector<HTMLInputElement>(".dropdown__input_hidden")!
 
         dropdownBtn.addEventListener("click", function () {
             dropdownList.classList.toggle("dropdown__list_visible")
@@ -57,7 +57,7 @@ class ExamplesManager {
                 const target = e.target as HTMLElement
                 target.classList.add("dropdown__list-item_active")
                 dropdownBtn.innerText = this.innerText
-                dropdownInput.value = this.dataset.value
+                dropdownInput.value = this.dataset.value ?? ""
                 dropdownList.classList.remove("dropdown__list_visible")
             })
         })
@@ -77,7 +77,7 @@ class ExamplesManager {
         })
     }
 
-    static exampleElementListTemplate = function (name, index) {
+    static exampleElementListTemplate = function (name: string, index: number) {
         let className = ""
         if (index === 0) {
             className = "dropdown__list-item_active"

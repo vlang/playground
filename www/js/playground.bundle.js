@@ -1,13 +1,9 @@
+"use strict";
 var RunCodeResult = /** @class */ (function () {
     function RunCodeResult(output) {
         this.output = output;
     }
     return RunCodeResult;
-}());
-var FormatCodeResult = /** @class */ (function () {
-    function FormatCodeResult() {
-    }
-    return FormatCodeResult;
 }());
 var ShareCodeResult = /** @class */ (function () {
     function ShareCodeResult(hash) {
@@ -151,6 +147,10 @@ var Editor = /** @class */ (function () {
         return this.editor.getValue();
     };
     Editor.prototype.saveCode = function () {
+        var isSharedCodeRepository = this.repository instanceof SharedCodeRepository;
+        if (isSharedCodeRepository) {
+            this.repository = new LocalCodeRepository();
+        }
         this.repository.saveCode(this.getCode());
     };
     Editor.prototype.openTerminal = function () {
@@ -183,7 +183,7 @@ var ExamplesManager = /** @class */ (function () {
         }
         var examplesSelectList = this.selectElement.querySelector(".dropdown__list");
         var examplesButton = this.selectElement.querySelector(".dropdown__button");
-        if (examplesSelectList !== null) {
+        if (examplesSelectList !== null && examplesButton !== null) {
             examples.forEach(function (example, index) {
                 examplesSelectList.innerHTML += ExamplesManager.exampleElementListTemplate(example.name, index);
             });
@@ -196,7 +196,7 @@ var ExamplesManager = /** @class */ (function () {
                 var example = examples.find(function (example) {
                     return example.name === exampleName;
                 });
-                if (_this.onSelectHandler !== null) {
+                if (_this.onSelectHandler !== null && example) {
                     _this.onSelectHandler(example);
                 }
             });
@@ -210,13 +210,14 @@ var ExamplesManager = /** @class */ (function () {
         });
         dropdownItems.forEach(function (option) {
             option.addEventListener("click", function (e) {
+                var _a;
                 dropdownItems.forEach(function (el) {
                     el.classList.remove("dropdown__list-item_active");
                 });
                 var target = e.target;
                 target.classList.add("dropdown__list-item_active");
                 dropdownBtn.innerText = this.innerText;
-                dropdownInput.value = this.dataset.value;
+                dropdownInput.value = (_a = this.dataset.value) !== null && _a !== void 0 ? _a : "";
                 dropdownList.classList.remove("dropdown__list_visible");
             });
         });
@@ -300,7 +301,7 @@ var CodeRepositoryManager = /** @class */ (function () {
             return new TextCodeRepository("");
         }
         var repository = new LocalCodeRepository();
-        var hash = params.params[SharedCodeRepository.QUERY_PARAM_NAME];
+        var hash = params.getURLParameter(SharedCodeRepository.QUERY_PARAM_NAME);
         if (hash !== null && hash !== undefined) {
             return new SharedCodeRepository(hash);
         }
@@ -448,9 +449,9 @@ var HelpManager = /** @class */ (function () {
         if (this.element === null || this.element === undefined) {
             return;
         }
-        this.helpOverlay = this.element.getElementsByClassName("js-help-overlay")[0];
-        this.showHelpButton = this.element.getElementsByClassName("js-show-help")[0];
-        this.closeHelpButton = this.element.getElementsByClassName("js-close-help")[0];
+        this.helpOverlay = this.element.querySelector(".js-help-overlay");
+        this.showHelpButton = this.element.querySelector(".js-show-help");
+        this.closeHelpButton = this.element.querySelector(".js-close-help");
         this.mount();
     }
     HelpManager.prototype.mount = function () {
@@ -506,6 +507,7 @@ var PlaygroundDefaultAction;
     PlaygroundDefaultAction["SHARE"] = "share";
     PlaygroundDefaultAction["CHANGE_THEME"] = "change-theme";
 })(PlaygroundDefaultAction || (PlaygroundDefaultAction = {}));
+var CODE_UNSAVED_KEY = "unsaved";
 /**
  * Playground is responsible for managing the all playground.
  */
@@ -610,42 +612,59 @@ var Playground = /** @class */ (function () {
     Playground.prototype.setupShortcuts = function () {
         var _this = this;
         document.addEventListener("keydown", function (ev) {
-            _this.editor.saveCode();
+            var isCodeFromShareURL = _this.repository instanceof SharedCodeRepository;
+            if (isCodeFromShareURL && !ev.ctrlKey && !ev.metaKey) {
+                _this.markCodeAsUnsaved();
+            }
             if (ev.ctrlKey && (ev.key === "Enter" || ev.key === "r")) {
                 _this.runCode();
                 ev.preventDefault();
             }
-            if (ev.ctrlKey && ev.key === "l") {
+            else if (ev.ctrlKey && ev.key === "l") {
                 _this.formatCode();
                 ev.preventDefault();
             }
-            if (ev.ctrlKey && ev.key === "=") {
+            else if (ev.ctrlKey && ev.key === "=") {
                 _this.editor.changeEditorFontSize(1);
                 ev.preventDefault();
             }
-            if (ev.ctrlKey && ev.key === "-") {
+            else if (ev.ctrlKey && ev.key === "-") {
                 _this.editor.changeEditorFontSize(-1);
                 ev.preventDefault();
             }
-            if (ev.ctrlKey && ev.key === "h") {
+            else if (ev.ctrlKey && ev.key === "h") {
                 _this.helpManager.toggleHelp();
                 ev.preventDefault();
             }
-            if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") {
-                _this.repository.saveCode(_this.editor.getCode());
-                ev.preventDefault();
-            }
-            if (ev.key === "Escape") {
+            else if (ev.key === "Escape") {
                 _this.helpManager.closeHelp();
                 ev.preventDefault();
             }
+            else {
+                _this.editor.saveCode();
+            }
         });
+    };
+    Playground.prototype.askLoadUnsavedCode = function () {
+        var isCodeFromShareURL = this.repository instanceof SharedCodeRepository;
+        var hasUnsavedCode = window.localStorage.getItem(CODE_UNSAVED_KEY) != null;
+        window.localStorage.removeItem(CODE_UNSAVED_KEY);
+        if (isCodeFromShareURL && hasUnsavedCode) {
+            var yes = confirm("You have previously unsaved changes. Do you want to load it?");
+            if (yes) {
+                this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, null);
+                window.location.reload();
+            }
+        }
     };
     Playground.prototype.clearTerminal = function () {
         this.editor.terminal.clear();
     };
     Playground.prototype.writeToTerminal = function (text) {
         this.editor.terminal.write(text);
+    };
+    Playground.prototype.markCodeAsUnsaved = function () {
+        window.localStorage.setItem(CODE_UNSAVED_KEY, "");
     };
     return Playground;
 }());
@@ -663,9 +682,7 @@ var QueryParams = /** @class */ (function () {
      * @param path - The path to parse (usually `window.location.search`).
      */
     function QueryParams(path) {
-        this.params = new Proxy(new URLSearchParams(path), {
-            get: function (searchParams, prop) { return searchParams.get(prop.toString()); },
-        });
+        this.params = new URLSearchParams(path);
     }
     /**
      * Update the URL with the new param.
@@ -676,23 +693,18 @@ var QueryParams = /** @class */ (function () {
         var url = QueryParams.updateURLParameter(window.location.href, param, value);
         window.history.replaceState({}, "", url);
     };
+    QueryParams.prototype.getURLParameter = function (param) {
+        return this.params.get(param);
+    };
     QueryParams.updateURLParameter = function (url, param, value) {
-        var newAdditionalURL = "";
-        var tempArray = url.split("?");
-        var baseURL = tempArray[0];
-        var additionalURL = tempArray[1];
-        var temp = "";
-        if (additionalURL) {
-            tempArray = additionalURL.split("&");
-            for (var i = 0; i < tempArray.length; i++) {
-                if (tempArray[i].split("=")[0] !== param) {
-                    newAdditionalURL += temp + tempArray[i];
-                    temp = "&";
-                }
-            }
+        var parsedUrl = new URL(url);
+        if (value) {
+            parsedUrl.searchParams.set(param, value);
         }
-        var rows_txt = temp + "" + param + "=" + value;
-        return baseURL + "?" + newAdditionalURL + rows_txt;
+        else {
+            parsedUrl.searchParams.delete(param);
+        }
+        return parsedUrl.toString();
     };
     return QueryParams;
 }());
@@ -750,7 +762,9 @@ function copyTextToClipboard(text, onCopy) {
  */
 var ThemeManager = /** @class */ (function () {
     function ThemeManager(queryParams, predefinedTheme) {
+        if (predefinedTheme === void 0) { predefinedTheme = null; }
         this.themes = [new Dark(), new Light()];
+        this.currentTheme = null;
         this.onChange = [];
         this.changeThemeButton = null;
         this.predefinedTheme = null;
@@ -763,7 +777,7 @@ var ThemeManager = /** @class */ (function () {
         this.onChange.push(callback);
     };
     ThemeManager.prototype.loadTheme = function () {
-        var themeFromQuery = this.queryParams.params[ThemeManager.QUERY_PARAM_NAME];
+        var themeFromQuery = this.queryParams.getURLParameter(ThemeManager.QUERY_PARAM_NAME);
         if (themeFromQuery !== null && themeFromQuery !== undefined) {
             this.fromQueryParam = true;
             var theme = this.findTheme(themeFromQuery);
@@ -824,6 +838,9 @@ var ThemeManager = /** @class */ (function () {
         this.turnTheme(new Light());
     };
     ThemeManager.prototype.toggleTheme = function () {
+        if (!this.currentTheme) {
+            return;
+        }
         if (this.currentTheme.name() === "light") {
             this.turnDarkTheme();
         }
