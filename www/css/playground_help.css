@@ -102,42 +102,14 @@ html[data-theme='dark'] {
     cursor: pointer;
 }
 
-.playground__help-tip .shortcut {
-    display: grid;
-    grid-template-columns: auto max-content;
-    grid-column-gap: 10px;
-    align-content: center;
-    margin-bottom: 15px;
+.playground__help-tip .about-link {
+    margin-top: 20px;
 }
 
-.playground__help-tip .shortcut .key {
-    font-size: 14px;
+.playground__help-tip .about-link a {
+    color: #000;
 }
 
-.playground__help-tip .shortcut .key kbd {
-    display: inline-block;
-
-    font-family: Inter, sans-serif;
-
-    border: 1px solid #ccc;
-    border-radius: 4px;
-
-    padding: 0.05em 0.3em 0.1em;
-    margin: 0 0.2em;
-
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
-    background-color: #f7f7f7;
-}
-
-.playground__help-tip .shortcut .key kbd:hover {
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-
-.playground__help-tip .shortcut .key kbd:active {
-    box-shadow: 0 0 0 2px #fff inset;
-    transform: translateY(1px);
+.playground__help-tip .about-link a:visited {
+    color: #000;
 }
