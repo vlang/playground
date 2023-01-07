@@ -1,8 +1,8 @@
 build_ts:
-	cd ./www/ts && npm install && npm run build
+	cd ./www/ts && npm ci && npm run build
 
 build_ts_watch:
-	cd ./www/ts && npm install && npm run watch
+	cd ./www/ts && npm ci && npm run watch
 
 build: build_ts
 	v server.v

@@ -180,7 +180,11 @@ class Playground {
                 this.markCodeAsUnsaved()
             }
 
-            if (ev.ctrlKey && (ev.key === "Enter" || ev.key === "r")) {
+            const isCtrlEnter = ev.ctrlKey && ev.key === "Enter"
+            const isCtrlR = ev.ctrlKey && ev.key === "r"
+            const isShiftEnter = ev.shiftKey && ev.key === "Enter"
+
+            if (isCtrlEnter || isCtrlR || isShiftEnter) {
                 this.run()
                 ev.preventDefault()
             } else if (ev.ctrlKey && ev.key === "l") {
