@@ -34,6 +34,8 @@ fn main() {
     {
         name: "String interpolation",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
+
 areas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']
 
 for area in areas {
@@ -44,6 +46,8 @@ for area in areas {
     {
         name: "JSON Encoding/Decoding",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#json
+
 import json
 
 struct User {
@@ -128,6 +132,8 @@ for line in lines {
     {
         name: "Compile-time Reflection",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#compile-time-reflection
+
 struct User {
 	name string
 	age  int
@@ -180,6 +186,8 @@ fn get_int(data string, field string) int {
     {
         name: "Embedded structs",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#embedded-structs
+
 struct Size {
 mut:
 	width  int
@@ -202,8 +210,11 @@ mut button := Button{
 
 button.width = 3
 
+// With embedding, the struct Button will automatically have get all the fields and methods from the struct Size, which allows you to do:
 assert button.area() == 6
+// If you need to access embedded structs directly, use an explicit reference like button.Size:
 assert button.Size.area() == 6
+// Conceptually, embedded structs are similar to mixins in OOP, not base classes.
 
 print(button)
 `
@@ -211,6 +222,8 @@ print(button)
     {
         name: "Anonymous & higher order functions",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#anonymous--higher-order-functions
+
 fn sqr(n int) int {
 	return n * n
 }
@@ -258,6 +271,8 @@ fn main() {
     {
         name: "Sum types",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#sum-types
+
 struct Empty {}
 
 struct Node {
@@ -288,6 +303,8 @@ fn main() {
     {
         name: "Concurrency",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#concurrency
+
 import time
 
 fn task(id int, duration int) {
@@ -311,6 +328,8 @@ fn main() {
     {
         name: "Channel Select",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#channel-select
+
 import time
 
 fn main() {
@@ -361,6 +380,8 @@ fn main() {
     {
         name: "Testing",
         code: `
+// https://github.com/vlang/v/blob/master/doc/docs.md#testing
+
 fn hello() string {
 	return 'Hello world'
 }
