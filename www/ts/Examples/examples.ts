@@ -11,6 +11,7 @@ const examples: IExample[] = [
     },
     {
         name: "Fibonacci",
+        // language=v
         code: `
 fn fib(n int) int {
 	mut f := []int{len: n + 2}
@@ -33,23 +34,29 @@ fn main() {
     },
     {
         name: "String interpolation",
+        // language=v
         code: `
-// https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
-
+// In V you can define array of string with the following syntax:
 areas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']
 
 for area in areas {
+	// V uses the \${} notation to interpolate a variable or expression right on the string.
+	// You can find the details in the documentation: https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
 	println('Hello, \${area} developers!')
 }
 `,
     },
     {
         name: "JSON Encoding/Decoding",
+        // language=v
         code: `
-// https://github.com/vlang/v/blob/master/doc/docs.md#json
-
+// V very modular and has a lot of built-in modules.
+// In this example we will use the json module to encode and decode JSON data.
+// If you want to learn more about modules, visit 
+// https://github.com/vlang/v/blob/master/doc/docs.md#modules
 import json
 
+// Since V is statically typed, you need to define a struct to hold the data.
 struct User {
 	name string
 	age  int
@@ -58,15 +65,34 @@ mut:
 }
 
 fn main() {
-	s := '[{"name":"Frodo", "age":25}, {"name":"Bobby", "age":10}]'
-	mut users := json.decode([]User, s) or {
-		eprintln('Failed to parse json')
+	json_data := '[{"name":"Frodo", "age":25}, {"name":"Bobby", "age":10}]'
+    
+    // json.decode() is special function that can decode JSON data.
+    // It takes a type and a json data as arguments and returns a value of passed type.
+    // V tries to decode the data as the passed type. For example, if you pass []User, 
+    // it will try to decode the data as an array of User.
+    // 
+    // In this case it will return an array of User.
+    // 
+    // Learn more about the json module in the documentation:
+    // https://github.com/vlang/v/blob/master/doc/docs.md#json
+	mut users := json.decode([]User, json_data) or {
+        // But if the json data is invalid, it will return an error.
+        // You can handle it with the 'or {}' syntax as in this example.
+        // 
+        // err is a special variable that contains the error message.
+        // 
+        // Learn more about error handling in documentation: 
+        // https://github.com/vlang/v/blob/master/doc/docs.md#optionresult-types-and-error-handling
+		eprintln('Failed to parse json, error: \${err}')
 		return
 	}
+
 	for user in users {
 		println('\${user.name}: \${user.age}')
 	}
 	println('')
+    
 	for i, mut user in users {
 		println('\${i}) \${user.name}')
 		if !user.can_register() {
@@ -79,9 +105,14 @@ fn main() {
 		user.register()
 	}
 
-	// Let's encode users again just for fun
 	println('')
-	println(json.encode(users))
+    
+    // json.encode() is a special function that can encode a value to JSON.
+    // It takes a value and returns a JSON string.
+    // 
+    // It always return a string, so you don't need to handle the error.
+    encoded_data := json.encode(users)
+	println(encoded_data)
 }
 
 fn (u User) can_register() bool {
@@ -91,6 +122,16 @@ fn (u User) can_register() bool {
 fn (mut u User) register() {
 	u.is_registered = true
 }
+
+// Output:
+// Frodo: 25
+// Bobby: 10
+//
+// 0) Frodo
+// 1) Bobby
+// Cannot register Bobby, they are too young
+//
+// [{"name":"Frodo","age":25,"is_registered":true},{"name":"Bobby","age":10,"is_registered":false}]
 `,
     },
     {
