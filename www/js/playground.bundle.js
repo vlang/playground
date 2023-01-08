@@ -277,14 +277,14 @@ var examples = [
         code: "\n// In V you can define array of string with the following syntax:\nareas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']\n\nfor area in areas {\n    // V uses the ${} notation to interpolate a variable or expression right on the string.\n    // You can find the details in the documentation: https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation\n    println('Hello, ${area} developers!')\n}\n        ",
     },
     {
+        name: "Fibonacci",
+        // language=v
+        code: "\n// As in other languages, you can define functions in V.\n// Learn more about functions in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#functions\nfn fib(n int) int {\n    // To define a array of specific type, use the following syntax.\n    // Here we define an array of int with the length of n + 2.\n    // Learn more about arrays in the documentation:\n    // https://github.com/vlang/v/blob/master/doc/docs.md#arrays\n    mut f := []int{len: n + 2}\n    f[0] = 0\n    f[1] = 1\n\n    for i := 2; i <= n; i++ {\n        f[i] = f[i - 1] + f[i - 2]\n    }\n\n    return f[n]\n}\n\n// main function is the entry point of the program.\n// See note about the main function in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#hello-world\nfn main() {\n    for i in 0 .. 30 {\n        println(fib(i))\n    }\n}\n        ",
+    },
+    {
         name: "Structs and embedded structs",
         // language=V
         code: "\n// Structs are a way to define a new type with a set of fields.\n// You can define a struct with the following syntax:\n// Learn more about structs in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#structs\nstruct Size {\n// mut keyword is used to define mutable fields\n// pub keyword is used to define public fields\n// \n// By default, all fields are private and immutable.\npub mut:\n\twidth  int\n\theight int\n}\n\n// Structs can have methods.\nfn (s &Size) area() int {\n\treturn s.width * s.height\n}\n\n// Structs can be embedded in other structs.\nstruct Button {\n\tSize\n\ttitle string\n}\n\nmut button := Button{\n\ttitle: 'Click me'\n\theight: 2\n}\n\nbutton.width = 3\n\n// With embedding, the struct Button will automatically have get all the \n// fields and methods from the struct Size, which allows you to do:\nassert button.area() == 6\n// If you need to access embedded structs directly, use an explicit \n// reference like `button.Size`:\nassert button.Size.area() == 6\n// Conceptually, embedded structs are similar to mixins in OOP, not base classes.\n\nprint(button)\n"
-    },
-    {
-        name: "Fibonacci",
-        // language=v
-        code: "\n// As in other languages, you can define functions in V.\n// Learn more about functions in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#functions\nfn fib(n int) int {\n    // To define a array of specific type, use the following syntax.\n    // Here we define an array of int with the length of n + 2.\n    // Learn more about arrays in the documentation:\n    // https://github.com/vlang/v/blob/master/doc/docs.md#arrays\n\tmut f := []int{len: n + 2}\n\tf[0] = 0\n\tf[1] = 1\n\n\tfor i := 2; i <= n; i++ {\n\t\tf[i] = f[i - 1] + f[i - 2]\n\t}\n\n\treturn f[n]\n}\n\n// main function is the entry point of the program.\n// See note about the main function in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#hello-world\nfn main() {\n\tfor i in 0 .. 30 {\n\t\tprintln(fib(i))\n\t}\n}\n",
     },
     {
         name: "Sum types",
@@ -304,7 +304,7 @@ var examples = [
     {
         name: "Filter Log file",
         // language=v
-        code: "\n// Print file lines that start with \"DEBUG:\"\nimport os\n\n// `write_file` returns a result (`!`), it must be checked\nos.write_file('app.log', '\nERROR: log file not found\nDEBUG: create new file\nDEBUG: write text to log file\nERROR: file not writeable\n') or {\n\t// `err` is a special variable that contains the error\n\t// in `or {}` blocks\n\teprintln('failed to write the file: ${err}')\n\treturn\n}\n\n// `read_file` returns a result (`!string`), it must be checked\ntext := os.read_file('app.log') or {\n\teprintln('failed to read the file: ${err}')\n\treturn\n}\n\nlines := text.split_into_lines()\nfor line in lines {\n\tif line.starts_with('DEBUG:') {\n\t\tprintln(line)\n\t}\n}\n\n// DEBUG: create new file\n// DEBUG: write text to log file\n",
+        code: "\n// Print file lines that start with \"DEBUG:\"\nimport os\n\n// `write_file` returns a result (`!`), it must be checked\nos.write_file('app.log', '\nERROR: log file not found\nDEBUG: create new file\nDEBUG: write text to log file\nERROR: file not writeable\n') or {\n\t// `err` is a special variable that contains the error\n\t// in `or {}` blocks\n\teprintln('failed to write the file: ${err}')\n\treturn\n}\n\n// `read_file` returns a result (`!string`), it must be checked\ntext := os.read_file('app.log') or {\n\teprintln('failed to read the file: ${err}')\n\treturn\n}\n\nlines := text.split_into_lines()\nfor line in lines {\n\tif line.starts_with('DEBUG:') {\n\t\tprintln(line)\n\t}\n}\n\n// Output:\n// DEBUG: create new file\n// DEBUG: write text to log file\n",
     },
     {
         name: "Compile-time Reflection",

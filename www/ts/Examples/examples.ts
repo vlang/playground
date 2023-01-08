@@ -24,6 +24,39 @@ for area in areas {
         `,
     },
     {
+        name: "Fibonacci",
+        // language=v
+        code: `
+// As in other languages, you can define functions in V.
+// Learn more about functions in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#functions
+fn fib(n int) int {
+    // To define a array of specific type, use the following syntax.
+    // Here we define an array of int with the length of n + 2.
+    // Learn more about arrays in the documentation:
+    // https://github.com/vlang/v/blob/master/doc/docs.md#arrays
+    mut f := []int{len: n + 2}
+    f[0] = 0
+    f[1] = 1
+
+    for i := 2; i <= n; i++ {
+        f[i] = f[i - 1] + f[i - 2]
+    }
+
+    return f[n]
+}
+
+// main function is the entry point of the program.
+// See note about the main function in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#hello-world
+fn main() {
+    for i in 0 .. 30 {
+        println(fib(i))
+    }
+}
+        `,
+    },
+    {
         name: "Structs and embedded structs",
         // language=V
         code: `
@@ -69,39 +102,6 @@ assert button.Size.area() == 6
 
 print(button)
 `
-    },
-    {
-        name: "Fibonacci",
-        // language=v
-        code: `
-// As in other languages, you can define functions in V.
-// Learn more about functions in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#functions
-fn fib(n int) int {
-    // To define a array of specific type, use the following syntax.
-    // Here we define an array of int with the length of n + 2.
-    // Learn more about arrays in the documentation:
-    // https://github.com/vlang/v/blob/master/doc/docs.md#arrays
-	mut f := []int{len: n + 2}
-	f[0] = 0
-	f[1] = 1
-
-	for i := 2; i <= n; i++ {
-		f[i] = f[i - 1] + f[i - 2]
-	}
-
-	return f[n]
-}
-
-// main function is the entry point of the program.
-// See note about the main function in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#hello-world
-fn main() {
-	for i in 0 .. 30 {
-		println(fib(i))
-	}
-}
-`,
     },
     {
         name: "Sum types",
@@ -351,6 +351,7 @@ for line in lines {
 	}
 }
 
+// Output:
 // DEBUG: create new file
 // DEBUG: write text to log file
 `,
