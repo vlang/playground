@@ -15,7 +15,7 @@ class Editor {
                 "Ctrl-Space": "autocomplete",
                 "Ctrl-/": "toggleComment",
             },
-            indentWithTabs: false,
+            indentWithTabs: true,
             indentUnit: 4,
             autoCloseBrackets: true,
             showHint: true,
