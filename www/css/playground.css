@@ -4,6 +4,7 @@ html {
     --header-background-color: #f7f8fa;
     --header-border: #ecedf1;
     --header-button-hover: #ecedf1;
+    --configuration-item-hover: #cfdefd;
     --scrollbar-thumb-color: #d2d2d2;
     --terminal-header-border: #ecedf1;
     --terminal-header: #f7f8fa;
@@ -24,6 +25,7 @@ html[data-theme='dark'] {
     --header-background-color: #2a2a2d;
     --header-border: #2a2a2d;
     --header-button-hover: #393b41;
+    --configuration-item-hover: #2f446e;
     --scrollbar-thumb-color: #404042;
     --terminal-header-border: #323438;
     --terminal-header: #2a2a2d;
@@ -40,6 +42,7 @@ html[data-theme='dark'] {
 
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -49,7 +52,7 @@ html[data-theme='dark'] {
 
 ::-webkit-scrollbar-track {
     border-radius: 5px;
-    margin: 5px 0;
+    margin: 5px;
 }
 
 ::-webkit-scrollbar-corner {

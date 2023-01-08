@@ -59,6 +59,9 @@ class Editor {
         this.terminal.registerWriteHandler((_) => {
             this.openTerminal()
         })
+        this.terminal.registerFilter((line) => {
+            return !line.trim().startsWith('Failed command')
+        })
         this.terminal.mount()
 
         this.initFont()
