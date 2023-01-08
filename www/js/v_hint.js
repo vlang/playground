@@ -74,14 +74,6 @@ function scriptHint(editor, keywords, getToken, options) {
         token.string = token.string.slice(0, cur.ch - token.start);
     }
 
-    let tprop = token;
-    // If it is a property, find out what it is a property of.
-    while (tprop.type === "property") {
-        tprop = getToken(editor, Pos(cur.line, tprop.start));
-        if (tprop.string !== ".") return;
-        tprop = getToken(editor, Pos(cur.line, tprop.start));
-        context.push(tprop);
-    }
     return {
         list: getCompletions(token, context, keywords, options),
         from: Pos(cur.line, token.start),

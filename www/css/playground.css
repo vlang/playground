@@ -16,6 +16,11 @@ html {
     --terminal-error: #c02929;
     --playground-link: #4f4f4f;
     --run-embeded-icon-color: #000000;
+
+    --completion-variant-background: #cfdefd;
+    --completion-variant-color: #000;
+    --completion-module-icon: url("../images/module-light.svg");
+    --completion-type-icon: url("../images/type-light.svg");
 }
 
 html[data-theme='dark'] {
@@ -36,6 +41,11 @@ html[data-theme='dark'] {
     --terminal-error: #e04949;
     --playground-link: #8d8d8d;
     --run-embeded-icon-color: #fff;
+
+    --completion-variant-background: #2e436e;
+    --completion-variant-color: #b4b8c0;
+    --completion-module-icon: url("../images/module.svg");
+    --completion-type-icon: url("../images/type.svg");
 }
 
 ::-webkit-scrollbar {
@@ -214,7 +224,7 @@ body.dragging .playground__terminal .header {
     border: 1px solid var(--select-header-border);
     background: var(--select-background);
 
-    color: #b4b8c0;
+    color: var(--completion-variant-color);
     font-size: 80%;
     font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
 
@@ -223,7 +233,7 @@ body.dragging .playground__terminal .header {
 }
 
 .CodeMirror-hint {
-    padding: 3px 10px 3px 38px;
+    padding: 3px 10px 3px 33px;
     border-radius: 5px;
     white-space: pre;
     cursor: pointer;
@@ -234,11 +244,11 @@ body.dragging .playground__terminal .header {
 }
 
 .CodeMirror-hint.completion-type::before {
-    background-image: url("../images/type.svg");
+    background-image: var(--completion-type-icon);
 }
 
 .CodeMirror-hint.completion-module::before {
-    background-image: url("../images/module.svg");
+    background-image: var(--completion-module-icon);
     opacity: 0.9;
 }
 
@@ -246,7 +256,7 @@ body.dragging .playground__terminal .header {
     content: "";
     display: inline-block;
     position: absolute;
-    left: 15px;
+    left: 10px;
     width: 18px;
     height: 18px;
     margin-right: 5px;
@@ -255,5 +265,5 @@ body.dragging .playground__terminal .header {
 }
 
 li.CodeMirror-hint-active {
-    background: #2e436e;
+    background-color: var(--completion-variant-background);
 }
