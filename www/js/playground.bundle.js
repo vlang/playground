@@ -635,7 +635,7 @@ var Playground = /** @class */ (function () {
                 _this.editor.changeEditorFontSize(-1);
                 ev.preventDefault();
             }
-            else if (ev.ctrlKey && ev.key === "h") {
+            else if (ev.ctrlKey && ev.key === "i") {
                 _this.helpManager.toggleHelp();
                 ev.preventDefault();
             }
