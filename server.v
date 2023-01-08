@@ -332,8 +332,23 @@ fn precompile_vfmt() {
 	}
 }
 
+// precompile_vtest prepares the vtest binary in the sandbox.
+// See `precompile_vfmt` for more details.
+fn precompile_vtest() {
+	result := os.execute('${vexeroot}/v test .')
+
+	if result.exit_code != 0 {
+		panic(result.output)
+	}
+
+	$if debug {
+		eprintln('v test successfully precompiled.')
+	}
+}
+
 fn main() {
 	precompile_vfmt()
+	precompile_vtest()
 
 	mut app := &App{}
 	app.init_once()
