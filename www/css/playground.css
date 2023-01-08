@@ -210,12 +210,12 @@ body.dragging .playground__terminal .header {
     -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
     box-shadow: 2px 3px 5px rgba(0,0,0,.2);
 
-    border-radius: 8px;
+    border-radius: 6px;
     border: 1px solid var(--select-header-border);
     background: var(--select-background);
 
     color: #b4b8c0;
-    font-size: 90%;
+    font-size: 80%;
     font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
 
     max-height: 20em;
@@ -223,8 +223,8 @@ body.dragging .playground__terminal .header {
 }
 
 .CodeMirror-hint {
-    padding: 3px 10px 3px 27px;
-    border-radius: 6px;
+    padding: 3px 10px 3px 38px;
+    border-radius: 5px;
     white-space: pre;
     cursor: pointer;
 }
@@ -234,17 +234,24 @@ body.dragging .playground__terminal .header {
 }
 
 .CodeMirror-hint.completion-type::before {
+    background-image: url("../images/type.svg");
+}
+
+.CodeMirror-hint.completion-module::before {
+    background-image: url("../images/module.svg");
+    opacity: 0.9;
+}
+
+.CodeMirror-hint::before {
     content: "";
     display: inline-block;
     position: absolute;
-    left: 7px;
+    left: 15px;
     width: 18px;
     height: 18px;
     margin-right: 5px;
-    border-radius: 50%;
-    background-image: url("../images/type.svg");
     background-repeat: no-repeat;
-    background-size: 20px;
+    background-size: 18px;
 }
 
 li.CodeMirror-hint-active {
