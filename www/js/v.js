@@ -166,6 +166,15 @@ CodeMirror.defineMode("v", function (config) {
             return "function";
         }
 
+        if (next === '[') {
+            stream.next()
+            const after = stream.next()
+            stream.backUp(2)
+            if (after === after.toUpperCase()) {
+                return "function";
+            }
+        }
+
         // highlight only last part
         // example:
         //   import foo.boo
