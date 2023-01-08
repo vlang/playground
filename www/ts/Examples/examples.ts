@@ -56,11 +56,15 @@ for area in areas {
 // https://github.com/vlang/v/blob/master/doc/docs.md#modules
 import json
 
-// Since V is statically typed, you need to define a struct to hold the data.
+// Since V is statically typed, we need to define a struct to hold the data.
+// Learn more about structs in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#structs
 struct User {
 	name string
 	age  int
 mut:
+    // We can use the \`mut\` keyword to make the field mutable.
+    // Without it, there is no way to change the field value.
 	is_registered bool
 }
 
@@ -89,6 +93,7 @@ fn main() {
 	}
 
 	for user in users {
+        // See 'String interpolation' example to learn more about the \${} notation.
 		println('\${user.name}: \${user.age}')
 	}
 	println('')
@@ -105,14 +110,14 @@ fn main() {
 		user.register()
 	}
 
-	println('')
+    println('')
     
     // json.encode() is a special function that can encode a value to JSON.
     // It takes a value and returns a JSON string.
     // 
     // It always return a string, so you don't need to handle the error.
     encoded_data := json.encode(users)
-	println(encoded_data)
+    println(encoded_data)
 }
 
 fn (u User) can_register() bool {
