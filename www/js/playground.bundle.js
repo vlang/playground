@@ -838,7 +838,7 @@ var RunConfigurationManager = /** @class */ (function () {
         this.configurationsList.classList.toggle("hidden");
     };
     RunConfigurationManager.prototype.setupConfiguration = function () {
-        var configurationFromQuery = this.queryParams.params.get(RunConfigurationManager.QUERY_PARAM_NAME);
+        var configurationFromQuery = this.queryParams.getURLParameter(RunConfigurationManager.QUERY_PARAM_NAME);
         if (configurationFromQuery !== null && configurationFromQuery !== undefined) {
             this.fromQueryParam = true;
             this.useConfiguration(getRunConfigurationTypeByString(configurationFromQuery));

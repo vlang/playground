@@ -50,7 +50,7 @@ class RunConfigurationManager {
     }
 
     public setupConfiguration() {
-        const configurationFromQuery = this.queryParams.params.get(RunConfigurationManager.QUERY_PARAM_NAME) as string
+        const configurationFromQuery = this.queryParams.getURLParameter(RunConfigurationManager.QUERY_PARAM_NAME)
         if (configurationFromQuery !== null && configurationFromQuery !== undefined) {
             this.fromQueryParam = true
             this.useConfiguration(getRunConfigurationTypeByString(configurationFromQuery))
