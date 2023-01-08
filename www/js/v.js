@@ -170,7 +170,7 @@ CodeMirror.defineMode("v", function (config) {
             stream.next()
             const after = stream.next()
             stream.backUp(2)
-            if (after === after.toUpperCase()) {
+            if (after.match(/[A-Z]/i)) {
                 return "function";
             }
         }
