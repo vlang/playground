@@ -125,6 +125,9 @@ var Editor = /** @class */ (function () {
         this.terminal.registerWriteHandler(function (_) {
             _this.openTerminal();
         });
+        this.terminal.registerFilter(function (line) {
+            return !line.trim().startsWith('Failed command');
+        });
         this.terminal.mount();
         this.initFont();
     }
@@ -392,6 +395,7 @@ var Terminal = /** @class */ (function () {
     function Terminal(element) {
         this.onClose = null;
         this.onWrite = null;
+        this.filters = [];
         this.element = element;
         this.attachResizeHandler(element);
     }
@@ -401,8 +405,16 @@ var Terminal = /** @class */ (function () {
     Terminal.prototype.registerWriteHandler = function (handler) {
         this.onWrite = handler;
     };
+    Terminal.prototype.registerFilter = function (filter) {
+        this.filters.push(filter);
+    };
     Terminal.prototype.write = function (text) {
-        this.getTerminalOutputElement().innerHTML += text + "\n";
+        var _this = this;
+        var lines = text.split("\n");
+        var outputElement = this.getTerminalOutputElement();
+        var filteredLines = lines.filter(function (line) { return _this.filters.every(function (filter) { return filter(line); }); });
+        var newText = filteredLines.join("\n");
+        outputElement.innerHTML += newText + "\n";
         if (this.onWrite !== null) {
             this.onWrite(text);
         }
