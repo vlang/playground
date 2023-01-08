@@ -3,7 +3,7 @@ class Editor {
 
     private wrapperElement: HTMLElement
     private repository: CodeRepository
-    private editor: CodeMirror.Editor
+    public editor: CodeMirror.Editor
     public terminal: Terminal
 
     constructor(wrapper: HTMLElement, repository: CodeRepository) {
@@ -122,6 +122,10 @@ class Editor {
 
     public setTheme(theme: ITheme) {
         this.editor.setOption("theme", theme.name())
+    }
+
+    public showCompletion() {
+       this.editor.execCommand("autocomplete")
     }
 
     public refresh() {

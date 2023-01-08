@@ -195,3 +195,58 @@ body.dragging .playground__terminal .header {
 .playground__terminal .terminal__output::-webkit-scrollbar-track-piece {
     background-color: var(--terminal-background);
 }
+
+.CodeMirror-hints {
+    position: absolute;
+    z-index: 10;
+    overflow: hidden;
+    list-style: none;
+
+    min-width: 200px;
+    margin: 0;
+    padding: 4px;
+
+    -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+    -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+    box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+
+    border-radius: 8px;
+    border: 1px solid var(--select-header-border);
+    background: var(--select-background);
+
+    color: #b4b8c0;
+    font-size: 90%;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+
+    max-height: 20em;
+    overflow-y: auto;
+}
+
+.CodeMirror-hint {
+    padding: 3px 10px 3px 27px;
+    border-radius: 6px;
+    white-space: pre;
+    cursor: pointer;
+}
+
+.CodeMirror-hint.completion-keyword {
+    font-weight: 600;
+}
+
+.CodeMirror-hint.completion-type::before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    left: 7px;
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background-image: url("../images/type.svg");
+    background-repeat: no-repeat;
+    background-size: 20px;
+}
+
+li.CodeMirror-hint-active {
+    background: #2e436e;
+}
