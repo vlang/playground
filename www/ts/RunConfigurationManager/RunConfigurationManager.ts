@@ -88,6 +88,16 @@ class RunConfigurationManager {
             // To avoid this, we update the URL if the user changes configuration.
             this.queryParams.updateURLParameter(RunConfigurationManager.QUERY_PARAM_NAME, runConfigurationAsString)
         }
+
+        this.setIconForV(runConfigurationType)
+    }
+
+    private setIconForV(runConfigurationType: RunConfigurationType) {
+        let icon = runIcons
+        if (runConfigurationType != RunConfigurationType.Run) {
+            icon = testIcons
+        }
+        document.querySelector(".title-v-part")!.innerHTML = icon
     }
 
     private mount() {
