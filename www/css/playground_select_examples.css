@@ -79,7 +79,7 @@ html[data-theme='dark'] {
 
 .dropdown__list-item {
     margin: 0;
-    padding: 15px;
+    padding: 10px 15px;
     cursor: pointer;
     line-height: 18px;
     color: var(--select-color);

@@ -129,6 +129,9 @@ fn main() {
 	tree := Node{0.5, left, right}
 
     // And call the sum function.
+    // Since the sum function accepts a Tree, we can pass it any of the
+    // possible types of the Tree sum type.
+    // In this case, we pass it a Node.
 	println(sum(tree)) // 0.2 + 0.3 + 0.4 + 0.5 = 1.4
 }
 
@@ -145,6 +148,82 @@ fn sum(tree Tree) f64 {
 	}
 }
 `
+    },
+    {
+        name: "Generics",
+        // language=V
+        code: `
+// Sometimes there may be situations where you need code that will 
+// work in the same way for different types.
+//
+// For example, in this example, we are creating a \`List\` that will 
+// be able to store elements of any type while maintaining type safety.
+//
+// In V, to define a generic structure, you need to write the generic parameters 
+// in square brackets after name. 
+// There may be one or more of them, each of them must be named with a 
+// single capital letter.
+//
+// Learn more about generics in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#generics
+struct List[T] {
+mut:
+    data []T
+}
+
+// Since the \`List\` structure is generic, we can define methods that accept or 
+// return the type with which the structure was created.
+//
+// That is, for each \`List\` with a specific type, its own copy of this structure 
+// will be created when V compile code.
+//
+// This means that if you call push on a \`List[int]\`, then the \`push()\` function will 
+// take an int argument.
+fn (mut l List[T]) push(val T) {
+    l.data << val
+}
+
+// Here everything is the same as with \`push()\`, however, for \`List[int]\` the function 
+// will return an int value, and not accept it.
+fn (l &List[T]) pop() T {
+    return l.data.last()
+}
+
+// In V, there can be not only structures, but also functions, so the following function 
+// creates a generic structure with the type passed to the function.
+fn list_of[T]() List[T] {
+    return List[T]{}
+}
+
+fn main() {
+    // Let's create a new \`List\` that will contain the strings:
+    mut string_list := List[string]{}
+    //                     ^^^^^^^^ Generic arguments to create a struct
+    // Here we have passed a string as the T parameter to the struct.
+    // We can say that this code is equivalent to \`List_string{}\`, where 
+    // \`List_string\` has a data field with type \`[]string\`.
+
+    // Methods are called as usual, the compiler will understand 
+    // that \`push()\` takes a value of type string.
+    string_list.push('hello')
+    string_list.push('world')
+
+    // When you call \`pop()\`, the compiler will understand that the method returns a string.
+    last_string := string_list.pop()
+    println(last_string)
+
+    // Now let's create a new \`List\` but which stores bool.
+    // We use our \`list_of()\` function for this.
+    mut bool_list := list_of[bool]()
+    //                      ^^^^^^ Generic arguments to call the function.
+    // Here, as for \`List\`, we passed arguments to be used instead of T.
+    // The compiler itself will compute and understand that it is necessary 
+    // to create a \`List\` with the bool type.
+
+    bool_list.push(true)
+    println(bool_list)
+}
+        `
     },
     {
         name: "JSON Encoding/Decoding",
@@ -332,6 +411,7 @@ fn get_int(data string, field string) int {
     },
     {
         name: "Anonymous & higher order functions",
+        // language=V
         code: `
 // https://github.com/vlang/v/blob/master/doc/docs.md#anonymous--higher-order-functions
 
@@ -371,7 +451,8 @@ fn main() {
 	// You can even have an array/map of functions:
 	fns := [sqr, cube]
 	println(fns[0](10)) // "100"
-	fns_map := {
+	
+    fns_map := {
 		'sqr':  sqr
 		'cube': cube
 	}
