@@ -58,6 +58,15 @@ function scriptHint(editor, keywords, getToken, options) {
         context.push(prevToken);
     }
 
+    const len = token.string.length;
+    const prevToken = getToken(editor, Pos(cur.line, cur.ch - len));
+    if (token.string === '.') {
+        context.push(token);
+    }
+    if (prevToken.string === '.') {
+        context.push(prevToken);
+    }
+
     if (/\b(?:string|comment)\b/.test(token.type)) return;
     const innerMode = CodeMirror.innerMode(editor.getMode(), token.state);
     if (innerMode.mode.helperType === "json") return;
@@ -106,6 +115,10 @@ function getCompletions(token, context, options) {
                 })
             })
             return found;
+        }
+
+        if (lastToken.string === ".") {
+            return [];
         }
     }
 
