@@ -11,7 +11,7 @@ class LocalCodeRepository implements CodeRepository {
 println('Hello, World!')
 
 // More examples are available in right dropdown list.
-// You can find Help for shortcuts in the bottom right corner or just press ⌃ + H (Ctrl + H).
+// You can find Help for shortcuts in the bottom right corner or just press ⌃ + I (Ctrl + I).
 // See also change theme button in the top right corner. 
 // If you want to learn more about V, visit https://vlang.io
 // Enjoy!

@@ -261,13 +261,13 @@ var LocalCodeRepository = /** @class */ (function () {
         onReady(localCode);
     };
     LocalCodeRepository.LOCAL_STORAGE_KEY = "code";
-    LocalCodeRepository.WELCOME_CODE = "\n// Welcome to the V Playground!\n// Here you can edit, run, and share V code.\n// Let's start with a simple \"Hello, World!\" example:\nprintln('Hello, World!')\n\n// More examples are available in right dropdown list.\n// You can find Help for shortcuts in the bottom right corner or just press \u2303 + H (Ctrl + H).\n// See also change theme button in the top right corner. \n// If you want to learn more about V, visit https://vlang.io\n// Enjoy!\n".trimStart();
+    LocalCodeRepository.WELCOME_CODE = "\n// Welcome to the V Playground!\n// Here you can edit, run, and share V code.\n// Let's start with a simple \"Hello, World!\" example:\nprintln('Hello, World!')\n\n// More examples are available in right dropdown list.\n// You can find Help for shortcuts in the bottom right corner or just press \u2303 + I (Ctrl + I).\n// See also change theme button in the top right corner. \n// If you want to learn more about V, visit https://vlang.io\n// Enjoy!\n".trimStart();
     return LocalCodeRepository;
 }());
 ///<reference path="../Repositories/LocalCodeRepository.ts"/>
 var examples = [
     {
-        name: "Hello, World!",
+        name: "Hello, Playground!",
         code: LocalCodeRepository.WELCOME_CODE
     },
     {

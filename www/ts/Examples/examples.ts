@@ -6,7 +6,7 @@ interface IExample {
 
 const examples: IExample[] = [
     {
-        name: "Hello, World!",
+        name: "Hello, Playground!",
         code: LocalCodeRepository.WELCOME_CODE
     },
     {
