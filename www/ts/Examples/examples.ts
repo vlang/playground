@@ -1,3 +1,4 @@
+///<reference path="../Repositories/LocalCodeRepository.ts"/>
 interface IExample {
     name: string
     code: string
@@ -6,9 +7,7 @@ interface IExample {
 const examples: IExample[] = [
     {
         name: "Hello, World!",
-        code: `
-println('Hello, world!')
-`,
+        code: LocalCodeRepository.WELCOME_CODE
     },
     {
         name: "Fibonacci",
@@ -372,7 +371,7 @@ fn test_hello() {
 `
     }
 ].map((example: IExample) => {
-    example.code = example.code.trim()
+    example.code = example.code.trimStart()
 
     return example
 })
