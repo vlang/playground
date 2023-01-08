@@ -157,7 +157,7 @@ class Playground {
             } else if (ev.ctrlKey && ev.key === "-") {
                 this.editor.changeEditorFontSize(-1)
                 ev.preventDefault()
-            } else if (ev.ctrlKey && ev.key === "h") {
+            } else if (ev.ctrlKey && ev.key === "i") {
                 this.helpManager.toggleHelp()
                 ev.preventDefault()
             } else if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") {
