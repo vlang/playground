@@ -15,7 +15,7 @@ class Editor {
                 "Ctrl-Space": "autocomplete",
                 "Ctrl-/": "toggleComment",
             },
-            indentWithTabs: false,
+            indentWithTabs: true,
             indentUnit: 4,
             autoCloseBrackets: true,
             showHint: true,
@@ -58,6 +58,9 @@ class Editor {
         })
         this.terminal.registerWriteHandler((_) => {
             this.openTerminal()
+        })
+        this.terminal.registerFilter((line) => {
+            return !line.trim().startsWith('Failed command')
         })
         this.terminal.mount()
 

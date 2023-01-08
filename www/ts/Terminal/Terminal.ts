@@ -1,10 +1,12 @@
 type OnCloseCallback = () => void
 type OnWriteCallback = (text: string) => void
+type FilterCallback = (text: string) => boolean
 
 class Terminal {
     private readonly element: HTMLElement
     private onClose: OnCloseCallback | null = null
     private onWrite: OnWriteCallback | null = null
+    private filters: FilterCallback[] = []
 
     constructor(element: HTMLElement) {
         this.element = element
@@ -19,8 +21,16 @@ class Terminal {
         this.onWrite = handler
     }
 
+    public registerFilter(filter: FilterCallback) {
+        this.filters.push(filter)
+    }
+
     public write(text: string) {
-        this.getTerminalOutputElement().innerHTML += text + "\n"
+        const lines = text.split("\n")
+        const outputElement = this.getTerminalOutputElement()
+        const filteredLines = lines.filter(line => this.filters.every(filter => filter(line)))
+        const newText = filteredLines.join("\n")
+        outputElement.innerHTML += newText + "\n"
 
         if (this.onWrite !== null) {
             this.onWrite(text)

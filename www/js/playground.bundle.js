@@ -32,6 +32,21 @@ var CodeRunner = /** @class */ (function () {
         })
             .then(function (output) { return new RunCodeResult(output); });
     };
+    CodeRunner.runTest = function (code) {
+        var data = new FormData();
+        data.append("code", code);
+        return fetch("/run_test", {
+            method: "post",
+            body: data,
+        })
+            .then(function (resp) {
+            if (resp.status != 200) {
+                throw new Error("Can't run test");
+            }
+            return resp.text();
+        })
+            .then(function (output) { return new RunCodeResult(output); });
+    };
     CodeRunner.formatCode = function (code) {
         var data = new FormData();
         data.append("code", code);
@@ -70,7 +85,7 @@ var Editor = /** @class */ (function () {
                 "Ctrl-Space": "autocomplete",
                 "Ctrl-/": "toggleComment",
             },
-            indentWithTabs: false,
+            indentWithTabs: true,
             indentUnit: 4,
             autoCloseBrackets: true,
             showHint: true,
@@ -109,6 +124,9 @@ var Editor = /** @class */ (function () {
         });
         this.terminal.registerWriteHandler(function (_) {
             _this.openTerminal();
+        });
+        this.terminal.registerFilter(function (line) {
+            return !line.trim().startsWith('Failed command');
         });
         this.terminal.mount();
         this.initFont();
@@ -413,6 +431,7 @@ var Terminal = /** @class */ (function () {
     function Terminal(element) {
         this.onClose = null;
         this.onWrite = null;
+        this.filters = [];
         this.element = element;
         this.attachResizeHandler(element);
     }
@@ -422,8 +441,16 @@ var Terminal = /** @class */ (function () {
     Terminal.prototype.registerWriteHandler = function (handler) {
         this.onWrite = handler;
     };
+    Terminal.prototype.registerFilter = function (filter) {
+        this.filters.push(filter);
+    };
     Terminal.prototype.write = function (text) {
-        this.getTerminalOutputElement().innerHTML += text + "\n";
+        var _this = this;
+        var lines = text.split("\n");
+        var outputElement = this.getTerminalOutputElement();
+        var filteredLines = lines.filter(function (line) { return _this.filters.every(function (filter) { return filter(line); }); });
+        var newText = filteredLines.join("\n");
+        outputElement.innerHTML += newText + "\n";
         if (this.onWrite !== null) {
             this.onWrite(text);
         }
@@ -553,6 +580,7 @@ var Playground = /** @class */ (function () {
      */
     function Playground(editorElement) {
         var _this = this;
+        this.runAsTestConsumer = function () { return false; };
         this.queryParams = new QueryParams(window.location.search);
         this.repository = CodeRepositoryManager.selectRepository(this.queryParams);
         this.editor = new Editor(editorElement, this.repository);
@@ -567,7 +595,17 @@ var Playground = /** @class */ (function () {
         });
         this.examplesManager.mount();
         this.helpManager = new HelpManager(editorElement);
+        this.runConfigurationManager = new RunConfigurationManager(this.queryParams);
+        this.runConfigurationManager.registerOnChange(function () { });
+        this.runConfigurationManager.registerOnSelect(function () {
+            _this.runConfigurationManager.toggleConfigurationsList();
+            _this.run();
+        });
+        this.runConfigurationManager.setupConfiguration();
     }
+    Playground.prototype.registerRunAsTestConsumer = function (consumer) {
+        this.runAsTestConsumer = consumer;
+    };
     /**
      * Register a handler for the default or new action.
      * @param name - The name of the action.
@@ -579,6 +617,13 @@ var Playground = /** @class */ (function () {
             throw new Error("Can't find action button with class js-playground__action-".concat(name));
         }
         actionButton.addEventListener("click", callback);
+    };
+    Playground.prototype.run = function () {
+        if (this.runAsTestConsumer()) {
+            this.runTest();
+            return;
+        }
+        this.runCode();
     };
     Playground.prototype.runCode = function () {
         var _this = this;
@@ -593,6 +638,21 @@ var Playground = /** @class */ (function () {
             .catch(function (err) {
             console.log(err);
             _this.writeToTerminal("Can't run code. Please try again.");
+        });
+    };
+    Playground.prototype.runTest = function () {
+        var _this = this;
+        this.clearTerminal();
+        this.writeToTerminal("Running tests...");
+        var code = this.editor.getCode();
+        CodeRunner.runTest(code)
+            .then(function (result) {
+            _this.clearTerminal();
+            _this.writeToTerminal(result.output);
+        })
+            .catch(function (err) {
+            console.log(err);
+            _this.writeToTerminal("Can't run tests. Please try again.");
         });
     };
     Playground.prototype.formatCode = function () {
@@ -656,7 +716,7 @@ var Playground = /** @class */ (function () {
             var isCtrlR = ev.ctrlKey && ev.key === "r";
             var isShiftEnter = ev.shiftKey && ev.key === "Enter";
             if (isCtrlEnter || isCtrlR || isShiftEnter) {
-                _this.runCode();
+                _this.run();
                 ev.preventDefault();
             }
             else if (ev.ctrlKey && ev.key === "l") {
@@ -785,6 +845,107 @@ function copyTextToClipboard(text, onCopy) {
         console.log("Async: Could not copy text: ", err, "fallback to old method");
     });
 }
+var runIcons = "\n<svg width=\"33\" height=\"23\" viewBox=\"0 0 33 23\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path d=\"M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z\"\n          fill=\"#536B8A\"/>\n    <path d=\"M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954 7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635 20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074 3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z\"\n          fill=\"#5D87BF\"/>\n    <path d=\"M28.6948 15.9266L22.5937 19.4338C22.2604 19.6254 21.8446 19.3848 21.8446 19.0003V11.9859C21.8446 11.6014 22.2604 11.3608 22.5937 11.5524L28.6948 15.0596C29.0292 15.2518 29.0292 15.7343 28.6948 15.9266Z\"\n          fill=\"#659360\" stroke=\"#659360\"/>\n</svg>\n";
+var testIcons = "\n<svg width=\"33\" height=\"23\" viewBox=\"0 0 33 23\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <g clip-path=\"url(#clip0_15_68)\">\n        <path d=\"M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z\" fill=\"#536B8A\"/>\n        <path d=\"M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954 7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635 20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074 3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z\" fill=\"#5D87BF\"/>\n        <path d=\"M28.8408 19.6848L25.184 21.796C24.8506 21.9885 24.434 21.7479 24.434 21.363V17.1405C24.434 16.7556 24.8506 16.515 25.184 16.7075L28.8408 18.8187C29.1742 19.0112 29.1742 19.4923 28.8408 19.6848Z\" fill=\"#659360\" stroke=\"#659360\"/>\n        <mask id=\"mask0_15_68\" style=\"mask-type:alpha\" maskUnits=\"userSpaceOnUse\" x=\"17\" y=\"10\" width=\"14\" height=\"14\">\n            <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M30.5961 10H17.4721V15.4917H17V23.5298H23.4782V21.4835H24.4442L24.6447 16.4403L30.5961 19.843V10Z\" fill=\"#D9D9D9\"/>\n        </mask>\n        <g mask=\"url(#mask0_15_68)\">\n            <circle cx=\"22.9543\" cy=\"15.8554\" r=\"4.91558\" fill=\"#659360\" fill-opacity=\"0.2\"/>\n            <circle cx=\"22.9543\" cy=\"15.8554\" r=\"4.41558\" stroke=\"#659360\"/>\n            <path d=\"M20.9171 13.7626H24.9312V14.4554H23.2962V18.8948H22.5557V14.4554H20.9171V13.7626Z\" fill=\"#659360\"/>\n        </g>\n    </g>\n    <defs>\n        <clipPath id=\"clip0_15_68\">\n            <rect width=\"33\" height=\"23\" fill=\"white\"/>\n        </clipPath>\n    </defs>\n</svg>\n";
+var RunConfigurationType;
+(function (RunConfigurationType) {
+    RunConfigurationType["Run"] = "Run";
+    RunConfigurationType["Test"] = "Test";
+})(RunConfigurationType || (RunConfigurationType = {}));
+function getRunConfigurationTypeByString(runConfigurationType) {
+    switch (runConfigurationType) {
+        case "Run":
+            return RunConfigurationType.Run;
+        case "Test":
+            return RunConfigurationType.Test;
+        default:
+            throw new Error("Unknown run configuration type: ".concat(runConfigurationType));
+    }
+}
+var RunConfigurationManager = /** @class */ (function () {
+    function RunConfigurationManager(queryParams) {
+        this.currentConfiguration = RunConfigurationType.Run;
+        this.fromQueryParam = false;
+        this.runButton = document.querySelector(".js-playground__action-run");
+        this.runButtonLabel = document.querySelector(".js-playground__action-run .label");
+        this.openRunButton = document.querySelector(".js-open-run-select");
+        this.configurationsList = document.querySelector(".js-run-configurations-list");
+        this.configurations = document.querySelectorAll(".js-configuration");
+        this.onChange = function () { };
+        this.onSelect = function () { };
+        this.queryParams = queryParams;
+        this.mount();
+    }
+    RunConfigurationManager.prototype.registerOnChange = function (callback) {
+        this.onChange = callback;
+    };
+    RunConfigurationManager.prototype.registerOnSelect = function (callback) {
+        this.onSelect = callback;
+    };
+    RunConfigurationManager.prototype.toggleConfigurationsList = function () {
+        this.configurationsList.classList.toggle("hidden");
+    };
+    RunConfigurationManager.prototype.setupConfiguration = function () {
+        var configurationFromQuery = this.queryParams.getURLParameter(RunConfigurationManager.QUERY_PARAM_NAME);
+        if (configurationFromQuery !== null && configurationFromQuery !== undefined) {
+            this.fromQueryParam = true;
+            this.useConfiguration(getRunConfigurationTypeByString(configurationFromQuery));
+            return;
+        }
+        var configurationFromLocalStorage = window.localStorage.getItem(RunConfigurationManager.LOCAL_STORAGE_KEY);
+        if (configurationFromLocalStorage !== null && configurationFromLocalStorage !== undefined) {
+            this.useConfiguration(getRunConfigurationTypeByString(configurationFromLocalStorage));
+            return;
+        }
+        this.useConfiguration(RunConfigurationType.Run);
+    };
+    RunConfigurationManager.prototype.useConfiguration = function (runConfigurationType) {
+        this.currentConfiguration = runConfigurationType;
+        this.onChange(runConfigurationType);
+        var runConfigurationAsString = RunConfigurationType[runConfigurationType];
+        this.runButton.setAttribute("data-type", runConfigurationAsString);
+        this.runButtonLabel.textContent = runConfigurationAsString;
+        if (!this.fromQueryParam) {
+            // Don't update saved theme state if we're loading from query param.
+            window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_KEY, runConfigurationAsString);
+        }
+        if (this.fromQueryParam) {
+            // We update the query param only if we loaded from it.
+            // If we don't change, then the user can change the configuration and then reload the page.
+            // In this case, the page will load with the configuration from the URL, and the user
+            // will think that his configuration change has not been saved (and will not be saved
+            // until he removes the configuration from the URL).
+            // To avoid this, we update the URL if the user changes configuration.
+            this.queryParams.updateURLParameter(RunConfigurationManager.QUERY_PARAM_NAME, runConfigurationAsString);
+        }
+        this.setIconForV(runConfigurationType);
+    };
+    RunConfigurationManager.prototype.setIconForV = function (runConfigurationType) {
+        var icon = runIcons;
+        if (runConfigurationType != RunConfigurationType.Run) {
+            icon = testIcons;
+        }
+        document.querySelector(".title-v-part").innerHTML = icon;
+    };
+    RunConfigurationManager.prototype.mount = function () {
+        var _this = this;
+        this.openRunButton.addEventListener("click", function () {
+            _this.toggleConfigurationsList();
+        });
+        this.configurations.forEach(function (configuration) {
+            configuration.addEventListener("click", function () {
+                var _a;
+                var configurationTypeString = (_a = configuration.getAttribute("data-type")) !== null && _a !== void 0 ? _a : "Run";
+                var configurationType = getRunConfigurationTypeByString(configurationTypeString);
+                _this.useConfiguration(configurationType);
+                _this.onSelect(configurationType);
+            });
+        });
+    };
+    RunConfigurationManager.QUERY_PARAM_NAME = "runConfiguration";
+    RunConfigurationManager.LOCAL_STORAGE_KEY = "run-configuration";
+    return RunConfigurationManager;
+}());
 /**
  * ThemeManager is responsible for managing the theme of the playground.
  * It will register a callback to the change theme button and will update the
