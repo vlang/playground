@@ -4,7 +4,7 @@
 class LocalCodeRepository implements CodeRepository {
     private static readonly LOCAL_STORAGE_KEY = "code"
 
-    // language=v
+    // language=V
     public static readonly WELCOME_CODE = `
 // Welcome to the V Playground!
 // Here you can edit, run, and share V code.
@@ -13,12 +13,12 @@ println('Hello, Playground!')
 
 // To run the code, click the "Run" button or just press Ctrl + R.
 // To format the code, click the "Format" button or just press Ctrl + L.
-// Congratulations, you just ran your first V program inside Playground!
 
 // More examples are available in right dropdown list.
 // You can find Help for shortcuts in the bottom right corner or just press Ctrl + I.
 // See also change theme button in the top right corner. 
 // If you want to learn more about V, visit https://vlang.io
+// Join us on Discord: https://discord.gg/vlang
 // Enjoy!
 `.trimStart()
 

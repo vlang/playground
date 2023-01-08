@@ -10,10 +10,78 @@ const examples: IExample[] = [
         code: LocalCodeRepository.WELCOME_CODE
     },
     {
+        name: "String interpolation",
+        // language=V
+        code: `
+// In V you can define array of string with the following syntax:
+areas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']
+
+for area in areas {
+    // V uses the \${} notation to interpolate a variable or expression right on the string.
+    // You can find the details in the documentation: https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
+    println('Hello, \${area} developers!')
+}
+        `,
+    },
+    {
+        name: "Structs and embedded structs",
+        // language=V
+        code: `
+// Structs are a way to define a new type with a set of fields.
+// You can define a struct with the following syntax:
+// Learn more about structs in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#structs
+struct Size {
+// mut keyword is used to define mutable fields
+// pub keyword is used to define public fields
+// 
+// By default, all fields are private and immutable.
+pub mut:
+	width  int
+	height int
+}
+
+// Structs can have methods.
+fn (s &Size) area() int {
+	return s.width * s.height
+}
+
+// Structs can be embedded in other structs.
+struct Button {
+	Size
+	title string
+}
+
+mut button := Button{
+	title: 'Click me'
+	height: 2
+}
+
+button.width = 3
+
+// With embedding, the struct Button will automatically have get all the 
+// fields and methods from the struct Size, which allows you to do:
+assert button.area() == 6
+// If you need to access embedded structs directly, use an explicit 
+// reference like \`button.Size\`:
+assert button.Size.area() == 6
+// Conceptually, embedded structs are similar to mixins in OOP, not base classes.
+
+print(button)
+`
+    },
+    {
         name: "Fibonacci",
         // language=v
         code: `
+// As in other languages, you can define functions in V.
+// Learn more about functions in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#functions
 fn fib(n int) int {
+    // To define a array of specific type, use the following syntax.
+    // Here we define an array of int with the length of n + 2.
+    // Learn more about arrays in the documentation:
+    // https://github.com/vlang/v/blob/master/doc/docs.md#arrays
 	mut f := []int{len: n + 2}
 	f[0] = 0
 	f[1] = 1
@@ -25,6 +93,9 @@ fn fib(n int) int {
 	return f[n]
 }
 
+// main function is the entry point of the program.
+// See note about the main function in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#hello-world
 fn main() {
 	for i in 0 .. 30 {
 		println(fib(i))
@@ -33,18 +104,47 @@ fn main() {
 `,
     },
     {
-        name: "String interpolation",
-        // language=v
+        name: "Sum types",
+        // language=V
         code: `
-// In V you can define array of string with the following syntax:
-areas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']
+struct Empty {}
 
-for area in areas {
-	// V uses the \${} notation to interpolate a variable or expression right on the string.
-	// You can find the details in the documentation: https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
-	println('Hello, \${area} developers!')
+struct Node {
+	value f64
+	left  Tree
+	right Tree
 }
-`,
+
+// Sum types are a way to define a type that can be one of several types.
+// In V, sum types are defined with following syntax.
+// Learn more about sum types in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#sum-types
+type Tree = Empty | Node
+
+// Let's calculate the sum of all values in the tree.
+fn main() {
+    // Here we just define a tree with some values.
+	left := Node{0.2, Empty{}, Empty{}}
+	right := Node{0.3, Empty{}, Node{0.4, Empty{}, Empty{}}}
+	tree := Node{0.5, left, right}
+
+    // And call the sum function.
+	println(sum(tree)) // 0.2 + 0.3 + 0.4 + 0.5 = 1.4
+}
+
+// sum up all node values
+fn sum(tree Tree) f64 {
+    // In V, you can use \`match\` expression to match a value against a sum type.
+    // Learn more about match expression in the documentation:
+    // https://github.com/vlang/v/blob/master/doc/docs.md#match
+	return match tree {
+	    // if the value has type Empty, return 0
+		Empty { 0 }
+		// if the value has type Node, return the sum of the node value and the sum of the left and right subtrees
+		Node { tree.value + sum(tree.left) + sum(tree.right) }
+	}
+}
+`
     },
     {
         name: "JSON Encoding/Decoding",
@@ -65,7 +165,7 @@ struct User {
 mut:
     // We can use the \`mut\` keyword to make the field mutable.
     // Without it, there is no way to change the field value.
-	is_registered bool
+    is_registered bool
 }
 
 fn main() {
@@ -141,6 +241,7 @@ fn (mut u User) register() {
     },
     {
         name: "Filter Log file",
+        // language=v
         code: `
 // Print file lines that start with "DEBUG:"
 import os
@@ -230,42 +331,6 @@ fn get_int(data string, field string) int {
 `,
     },
     {
-        name: "Embedded structs",
-        code: `
-// https://github.com/vlang/v/blob/master/doc/docs.md#embedded-structs
-
-struct Size {
-mut:
-	width  int
-	height int
-}
-
-fn (s &Size) area() int {
-	return s.width * s.height
-}
-
-struct Button {
-	Size
-	title string
-}
-
-mut button := Button{
-	title: 'Click me'
-	height: 2
-}
-
-button.width = 3
-
-// With embedding, the struct Button will automatically have get all the fields and methods from the struct Size, which allows you to do:
-assert button.area() == 6
-// If you need to access embedded structs directly, use an explicit reference like button.Size:
-assert button.Size.area() == 6
-// Conceptually, embedded structs are similar to mixins in OOP, not base classes.
-
-print(button)
-`
-    },
-    {
         name: "Anonymous & higher order functions",
         code: `
 // https://github.com/vlang/v/blob/master/doc/docs.md#anonymous--higher-order-functions
@@ -311,38 +376,6 @@ fn main() {
 		'cube': cube
 	}
 	println(fns_map['cube'](2)) // "8"
-}
-`
-    },
-    {
-        name: "Sum types",
-        code: `
-// https://github.com/vlang/v/blob/master/doc/docs.md#sum-types
-
-struct Empty {}
-
-struct Node {
-	value f64
-	left  Tree
-	right Tree
-}
-
-type Tree = Empty | Node
-
-// sum up all node values
-fn sum(tree Tree) f64 {
-	return match tree {
-		Empty { 0 }
-		Node { tree.value + sum(tree.left) + sum(tree.right) }
-	}
-}
-
-fn main() {
-	left := Node{0.2, Empty{}, Empty{}}
-	right := Node{0.3, Empty{}, Node{0.4, Empty{}, Empty{}}}
-	tree := Node{0.5, left, right}
-
-	println(sum(tree)) // 0.2 + 0.3 + 0.4 + 0.5 = 1.4
 }
 `
     },
@@ -449,6 +482,7 @@ fn test_hello() {
     return example
 })
 
+// language=V
 const codeIfSharedLinkBroken = `
 // Oops, the shared link is broken.
 // Please recheck the link and try again.
