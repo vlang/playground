@@ -24,8 +24,10 @@ fn fib(n int) int {
 	return f[n]
 }
 
-for i in 0 .. 30 {
-	println(fib(i))
+fn main() {
+	for i in 0 .. 30 {
+		println(fib(i))
+	}
 }
 `,
     },
@@ -222,6 +224,11 @@ fn run(value int, op fn (int) int) int {
 }
 
 fn main() {
+	// Anonymous functions can be called immediately:
+	fn () {
+		println('Anonymous function')
+	}()
+
 	// Functions can be passed to other functions
 	println(run(5, sqr)) // "25"
 
@@ -240,7 +247,6 @@ fn main() {
 	// You can even have an array/map of functions:
 	fns := [sqr, cube]
 	println(fns[0](10)) // "100"
-
 	fns_map := {
 		'sqr':  sqr
 		'cube': cube

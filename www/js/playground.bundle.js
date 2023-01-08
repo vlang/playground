@@ -272,7 +272,7 @@ var examples = [
     },
     {
         name: "Fibonacci",
-        code: "\nfn fib(n int) int {\n\tmut f := []int{len: n + 2}\n\tf[0] = 0\n\tf[1] = 1\n\n\tfor i := 2; i <= n; i++ {\n\t\tf[i] = f[i - 1] + f[i - 2]\n\t}\n\n\treturn f[n]\n}\n\nfor i in 0 .. 30 {\n\tprintln(fib(i))\n}\n",
+        code: "\nfn fib(n int) int {\n\tmut f := []int{len: n + 2}\n\tf[0] = 0\n\tf[1] = 1\n\n\tfor i := 2; i <= n; i++ {\n\t\tf[i] = f[i - 1] + f[i - 2]\n\t}\n\n\treturn f[n]\n}\n\nfn main() {\n\tfor i in 0 .. 30 {\n\t\tprintln(fib(i))\n\t}\n}\n",
     },
     {
         name: "String interpolation",
@@ -296,7 +296,7 @@ var examples = [
     },
     {
         name: "Anonymous & higher order functions",
-        code: "\nfn sqr(n int) int {\n\treturn n * n\n}\n\nfn cube(n int) int {\n\treturn n * n * n\n}\n\nfn run(value int, op fn (int) int) int {\n\treturn op(value)\n}\n\nfn main() {\n\t// Functions can be passed to other functions\n\tprintln(run(5, sqr)) // \"25\"\n\n\t// Anonymous functions can be declared inside other functions:\n\tdouble_fn := fn (n int) int {\n\t\treturn n + n\n\t}\n\tprintln(run(5, double_fn)) // \"10\"\n\n\t// Functions can be passed around without assigning them to variables:\n\tres := run(5, fn (n int) int {\n\t\treturn n + n\n\t})\n\tprintln(res) // \"10\"\n\n\t// You can even have an array/map of functions:\n\tfns := [sqr, cube]\n\tprintln(fns[0](10)) // \"100\"\n\n\tfns_map := {\n\t\t'sqr':  sqr\n\t\t'cube': cube\n\t}\n\tprintln(fns_map['cube'](2)) // \"8\"\n}\n"
+        code: "\nfn sqr(n int) int {\n\treturn n * n\n}\n\nfn cube(n int) int {\n\treturn n * n * n\n}\n\nfn run(value int, op fn (int) int) int {\n\treturn op(value)\n}\n\nfn main() {\n\t// Anonymous functions can be called immediately:\n\tfn () {\n\t\tprintln('Anonymous function')\n\t}()\n\n\t// Functions can be passed to other functions\n\tprintln(run(5, sqr)) // \"25\"\n\n\t// Anonymous functions can be declared inside other functions:\n\tdouble_fn := fn (n int) int {\n\t\treturn n + n\n\t}\n\tprintln(run(5, double_fn)) // \"10\"\n\n\t// Functions can be passed around without assigning them to variables:\n\tres := run(5, fn (n int) int {\n\t\treturn n + n\n\t})\n\tprintln(res) // \"10\"\n\n\t// You can even have an array/map of functions:\n\tfns := [sqr, cube]\n\tprintln(fns[0](10)) // \"100\"\n\tfns_map := {\n\t\t'sqr':  sqr\n\t\t'cube': cube\n\t}\n\tprintln(fns_map['cube'](2)) // \"8\"\n}\n"
     },
     {
         name: "Sum types",
