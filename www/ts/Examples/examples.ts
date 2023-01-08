@@ -13,8 +13,8 @@ println('Hello, world!')
     {
         name: "Fibonacci",
         code: `
-fn fib(n int) int {
-    mut f := []int{len: n + 2}
+fn fib(n int) u64 {
+    mut f := []u64{len: n + 2}
     f[0] = 0
     f[1] = 1
     for i := 2; i <= n; i++ {
