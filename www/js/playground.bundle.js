@@ -268,6 +268,30 @@ var examples = [
         name: "Compile-time Reflection",
         code: "\nstruct User {\n\tname string\n\tage  int\n}\n\nfn main() {\n\tdata := 'name=Alice\\nage=18'\n\tuser := decode[User](data)\n\tprintln(user)\n}\n\nfn decode[T](data string) T {\n\tmut result := T{}\n\t// compile-time `for` loop\n\t// T.fields gives an array of a field metadata type\n\t$for field in T.fields {\n\t\t$if field.typ is string {\n\t\t\t// $(string_expr) produces an identifier\n\t\t\tresult.$(field.name) = get_string(data, field.name)\n\t\t} $else $if field.typ is int {\n\t\t\tresult.$(field.name) = get_int(data, field.name)\n\t\t}\n\t}\n\treturn result\n}\n\nfn get_string(data string, field_name string) string {\n\tfor line in data.split_into_lines() {\n\t\tkey_val := line.split('=')\n\t\tif key_val[0] == field_name {\n\t\t\treturn key_val[1]\n\t\t}\n\t}\n\treturn ''\n}\n\nfn get_int(data string, field string) int {\n\treturn get_string(data, field).int()\n}\n\n// `decode[User]` generates:\n// fn decode_User(data string) User {\n//     mut result := User{}\n//     result.name = get_string(data, 'name')\n//     result.age = get_int(data, 'age')\n//     return result\n// }\n",
     },
+    {
+        name: "Embedded structs",
+        code: "\nstruct Size {\nmut:\n\twidth  int\n\theight int\n}\n\nfn (s &Size) area() int {\n\treturn s.width * s.height\n}\n\nstruct Button {\n\tSize\n\ttitle string\n}\n\nmut button := Button{\n\ttitle: 'Click me'\n\theight: 2\n}\n\nbutton.width = 3\n\nassert button.area() == 6\nassert button.Size.area() == 6\n\nprint(button)\n"
+    },
+    {
+        name: "Anonymous & higher order functions",
+        code: "\nfn sqr(n int) int {\n\treturn n * n\n}\n\nfn cube(n int) int {\n\treturn n * n * n\n}\n\nfn run(value int, op fn (int) int) int {\n\treturn op(value)\n}\n\nfn main() {\n\t// Functions can be passed to other functions\n\tprintln(run(5, sqr)) // \"25\"\n\n\t// Anonymous functions can be declared inside other functions:\n\tdouble_fn := fn (n int) int {\n\t\treturn n + n\n\t}\n\tprintln(run(5, double_fn)) // \"10\"\n\n\t// Functions can be passed around without assigning them to variables:\n\tres := run(5, fn (n int) int {\n\t\treturn n + n\n\t})\n\tprintln(res) // \"10\"\n\n\t// You can even have an array/map of functions:\n\tfns := [sqr, cube]\n\tprintln(fns[0](10)) // \"100\"\n\n\tfns_map := {\n\t\t'sqr':  sqr\n\t\t'cube': cube\n\t}\n\tprintln(fns_map['cube'](2)) // \"8\"\n}\n"
+    },
+    {
+        name: "Sum types",
+        code: "\nstruct Empty {}\n\nstruct Node {\n\tvalue f64\n\tleft  Tree\n\tright Tree\n}\n\ntype Tree = Empty | Node\n\n// sum up all node values\nfn sum(tree Tree) f64 {\n\treturn match tree {\n\t\tEmpty { 0 }\n\t\tNode { tree.value + sum(tree.left) + sum(tree.right) }\n\t}\n}\n\nfn main() {\n\tleft := Node{0.2, Empty{}, Empty{}}\n\tright := Node{0.3, Empty{}, Node{0.4, Empty{}, Empty{}}}\n\ttree := Node{0.5, left, right}\n\n\tprintln(sum(tree)) // 0.2 + 0.3 + 0.4 + 0.5 = 1.4\n}\n"
+    },
+    {
+        name: "Concurrency",
+        code: "\nimport time\n\nfn task(id int, duration int) {\n\tprintln('task ${id} begin')\n\ttime.sleep(duration * time.millisecond)\n\tprintln('task ${id} end')\n}\n\nfn main() {\n\tmut threads := []thread{}\n\n\tthreads << spawn task(1, 500)\n\tthreads << spawn task(2, 900)\n\tthreads << spawn task(3, 100)\n\tthreads.wait()\n\n\tprintln('done')\n}\n"
+    },
+    {
+        name: "Channel Select",
+        code: "\nimport time\n\nfn main() {\n\tch := chan f64{}\n\tch2 := chan f64{}\n\tch3 := chan f64{}\n\tmut b := 0.0\n\tc := 1.0\n\n\t// ... setup spawn threads that will send on ch/ch2\n\tspawn fn (the_channel chan f64) {\n\t\ttime.sleep(5 * time.millisecond)\n\t\tthe_channel <- 1.0\n\t}(ch)\n\n\tspawn fn (the_channel chan f64) {\n\t\ttime.sleep(1 * time.millisecond)\n\t\tthe_channel <- 1.0\n\t}(ch2)\n\n\tspawn fn (the_channel chan f64) {\n\t\t_ := <-the_channel\n\t}(ch3)\n\n\tselect {\n\t\ta := <-ch {\n\t\t\t// do something with `a`\n\t\t\teprintln('> a: ${a}')\n\t\t}\n\t\tb = <-ch2 {\n\t\t\t// do something with predeclared variable `b`\n\t\t\teprintln('> b: ${b}')\n\t\t}\n\t\tch3 <- c {\n\t\t\t// do something if `c` was sent\n\t\t\ttime.sleep(5 * time.millisecond)\n\t\t\teprintln('> c: ${c} was send on channel ch3')\n\t\t}\n\t\t500 * time.millisecond {\n\t\t\t// do something if no channel has become ready within 0.5s\n\t\t\teprintln('> more than 0.5s passed without a channel being ready')\n\t\t}\n\t}\n\teprintln('> done')\n}\n"
+    },
+    {
+        name: "Testing",
+        code: "\nfn hello() string {\n\treturn 'Hello world'\n}\n\nfn sum(a int, b int) int {\n\treturn a - b\n}\n\nfn test_hello() {\n\tassert hello() == 'Hello world'\n\n\tassert sum(2, 2) == 4\n}\n"
+    }
 ].map(function (example) {
     example.code = example.code.trim();
     return example;
