@@ -540,6 +540,7 @@ var ExamplesManager = /** @class */ (function () {
     return ExamplesManager;
 }());
 ///<reference path="../Repositories/LocalCodeRepository.ts"/>
+///<reference path="../RunConfigurationManager/RunConfigurationManager.ts"/>
 var examples = [
     {
         name: "Hello, Playground!",
@@ -549,7 +550,7 @@ var examples = [
     {
         name: "String interpolation",
         // language=V
-        code: "\n// In V you can define array of string with the following syntax:\nareas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']\n\nfor area in areas {\n    // V uses the ${} notation to interpolate a variable or expression right on the string.\n    // You can find the details in the documentation: https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation\n    println('Hello, ${area} developers!')\n}\n        ",
+        code: "\n// In V you can define array of string with the following syntax:\nareas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']\n\nfor area in areas {\n    // V uses the ${} notation to interpolate a variable\n    // or expression right on the string.\n    // Learn more about string interpolation in the documentation:\n    // https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation\n    println('Hello, ${area} developers!')\n}\n        ",
         runConfiguration: RunConfigurationType.Run
     },
     {
