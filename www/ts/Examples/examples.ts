@@ -474,9 +474,11 @@ fn main() {
     },
     {
         name: "Concurrency",
+        // language=V
         code: `
+// V's model of concurrency is going to be very similar to Go's.
+// Learn more about concurrency in the documentation:
 // https://github.com/vlang/v/blob/master/doc/docs.md#concurrency
-
 import time
 
 fn task(id int, duration int) {
@@ -486,11 +488,16 @@ fn task(id int, duration int) {
 }
 
 fn main() {
+    // []thread is a special type that represents an array of threads
     mut threads := []thread{}
 
+    // \`spawn\` starts a new thread and returns a \`thread\` object
+    // that can be added in thread array.
     threads << spawn task(1, 500)
     threads << spawn task(2, 900)
     threads << spawn task(3, 100)
+    
+    // \`wait\` is special function that waits for all threads to finish.
     threads.wait()
 
     println('done')
@@ -500,33 +507,44 @@ fn main() {
     },
     {
         name: "Channel Select",
+        // language=V
         code: `
-// https://github.com/vlang/v/blob/master/doc/docs.md#channel-select
-
+// Channels in V very similar to Go's channels.
+// Learn more about channels in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#channels
 import time
 
 fn main() {
+    // Channels is a special type that represents a communication channel between threads.
     ch := chan f64{}
+    //         ^^^ type of data that can be sent or received through the channel
     ch2 := chan f64{}
     ch3 := chan f64{}
     mut b := 0.0
     c := 1.0
 
-    // ... setup spawn threads that will send on ch/ch2
+    // Setup spawn threads that will send on ch/ch2.
     spawn fn (the_channel chan f64) {
         time.sleep(5 * time.millisecond)
-        the_channel <- 1.0
+		// You can push value to channel...
+		the_channel <- 1.0
     }(ch)
 
     spawn fn (the_channel chan f64) {
         time.sleep(1 * time.millisecond)
+        // ...in different threads.
         the_channel <- 1.0
     }(ch2)
 
     spawn fn (the_channel chan f64) {
+        // And read values from channel in other threads
+        // If channel is empty, the thread will wait until a value is pushed to it.
         _ := <-the_channel
     }(ch3)
 
+    // Select is powerful construct that allows you to work for multiple channels.
+    // Learn more about select in the documentation:
+	// https://github.com/vlang/v/blob/master/doc/docs.md#channel-select
     select {
         a := <-ch {
             // do something with \`a\`
@@ -582,7 +600,8 @@ fn sum(a int, b int) int {
 ].map((example: IExample) => {
     example.code = example.code
         .trim()
-        .replaceAll("    ", "\t") + '\n'
+        .replaceAll(/^ {4}/gm, "\t") + "\n";
+
     return example
 })
 
@@ -591,4 +610,4 @@ const codeIfSharedLinkBroken = `
 // Oops, the shared link is broken.
 // Please recheck the link and try again.
 println('Hello, link 404!')
-`.trim()
+`.trimStart()

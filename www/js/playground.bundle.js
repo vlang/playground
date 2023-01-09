@@ -598,12 +598,14 @@ var examples = [
     },
     {
         name: "Concurrency",
-        code: "\n// https://github.com/vlang/v/blob/master/doc/docs.md#concurrency\n\nimport time\n\nfn task(id int, duration int) {\n    println('task ${id} begin')\n    time.sleep(duration * time.millisecond)\n    println('task ${id} end')\n}\n\nfn main() {\n    mut threads := []thread{}\n\n    threads << spawn task(1, 500)\n    threads << spawn task(2, 900)\n    threads << spawn task(3, 100)\n    threads.wait()\n\n    println('done')\n}\n",
+        // language=V
+        code: "\n// V's model of concurrency is going to be very similar to Go's.\n// Learn more about concurrency in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#concurrency\nimport time\n\nfn task(id int, duration int) {\n    println('task ${id} begin')\n    time.sleep(duration * time.millisecond)\n    println('task ${id} end')\n}\n\nfn main() {\n    // []thread is a special type that represents an array of threads\n    mut threads := []thread{}\n\n    // `spawn` starts a new thread and returns a `thread` object\n    // that can be added in thread array.\n    threads << spawn task(1, 500)\n    threads << spawn task(2, 900)\n    threads << spawn task(3, 100)\n    \n    // `wait` is special function that waits for all threads to finish.\n    threads.wait()\n\n    println('done')\n}\n",
         runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Channel Select",
-        code: "\n// https://github.com/vlang/v/blob/master/doc/docs.md#channel-select\n\nimport time\n\nfn main() {\n    ch := chan f64{}\n    ch2 := chan f64{}\n    ch3 := chan f64{}\n    mut b := 0.0\n    c := 1.0\n\n    // ... setup spawn threads that will send on ch/ch2\n    spawn fn (the_channel chan f64) {\n        time.sleep(5 * time.millisecond)\n        the_channel <- 1.0\n    }(ch)\n\n    spawn fn (the_channel chan f64) {\n        time.sleep(1 * time.millisecond)\n        the_channel <- 1.0\n    }(ch2)\n\n    spawn fn (the_channel chan f64) {\n        _ := <-the_channel\n    }(ch3)\n\n    select {\n        a := <-ch {\n            // do something with `a`\n            eprintln('> a: ${a}')\n        }\n        b = <-ch2 {\n            // do something with predeclared variable `b`\n            eprintln('> b: ${b}')\n        }\n        ch3 <- c {\n            // do something if `c` was sent\n            time.sleep(5 * time.millisecond)\n            eprintln('> c: ${c} was send on channel ch3')\n        }\n        500 * time.millisecond {\n            // do something if no channel has become ready within 0.5s\n            eprintln('> more than 0.5s passed without a channel being ready')\n        }\n    }\n    eprintln('> done')\n}\n",
+        // language=V
+        code: "\n// Channels in V very similar to Go's channels.\n// Learn more about channels in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#channels\nimport time\n\nfn main() {\n    // Channels is a special type that represents a communication channel between threads.\n    ch := chan f64{}\n    //         ^^^ type of data that can be sent or received through the channel\n    ch2 := chan f64{}\n    ch3 := chan f64{}\n    mut b := 0.0\n    c := 1.0\n\n    // Setup spawn threads that will send on ch/ch2.\n    spawn fn (the_channel chan f64) {\n        time.sleep(5 * time.millisecond)\n\t\t// You can push value to channel...\n\t\tthe_channel <- 1.0\n    }(ch)\n\n    spawn fn (the_channel chan f64) {\n        time.sleep(1 * time.millisecond)\n        // ...in different threads.\n        the_channel <- 1.0\n    }(ch2)\n\n    spawn fn (the_channel chan f64) {\n        // And read values from channel in other threads\n        // If channel is empty, the thread will wait until a value is pushed to it.\n        _ := <-the_channel\n    }(ch3)\n\n    // Select is powerful construct that allows you to work for multiple channels.\n    // Learn more about select in the documentation:\n\t// https://github.com/vlang/v/blob/master/doc/docs.md#channel-select\n    select {\n        a := <-ch {\n            // do something with `a`\n            eprintln('> a: ${a}')\n        }\n        b = <-ch2 {\n            // do something with predeclared variable `b`\n            eprintln('> b: ${b}')\n        }\n        ch3 <- c {\n            // do something if `c` was sent\n            time.sleep(5 * time.millisecond)\n            eprintln('> c: ${c} was send on channel ch3')\n        }\n        500 * time.millisecond {\n            // do something if no channel has become ready within 0.5s\n            eprintln('> more than 0.5s passed without a channel being ready')\n        }\n    }\n    eprintln('> done')\n}\n",
         runConfiguration: RunConfigurationType.Run
     },
     {
@@ -615,11 +617,11 @@ var examples = [
 ].map(function (example) {
     example.code = example.code
         .trim()
-        .replaceAll("    ", "\t") + '\n';
+        .replaceAll(/^ {4}/gm, "\t") + "\n";
     return example;
 });
 // language=V
-var codeIfSharedLinkBroken = "\n// Oops, the shared link is broken.\n// Please recheck the link and try again.\nprintln('Hello, link 404!')\n".trim();
+var codeIfSharedLinkBroken = "\n// Oops, the shared link is broken.\n// Please recheck the link and try again.\nprintln('Hello, link 404!')\n".trimStart();
 var HelpManager = /** @class */ (function () {
     function HelpManager(containingElement) {
         this.containingElement = containingElement;

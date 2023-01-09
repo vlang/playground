@@ -47,6 +47,8 @@ CodeMirror.defineMode("v", function (config) {
 
     const pseudo_keywords = {
         "sql": true,
+        "chan": true,
+        "thread": true,
     };
 
     const atoms = {
