@@ -233,6 +233,103 @@ fn main() {
         runConfiguration: RunConfigurationType.Run
     },
     {
+        name: "Concurrency",
+        // language=V
+        code: `
+// V's model of concurrency is going to be very similar to Go's.
+// Learn more about concurrency in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#concurrency
+import time
+
+fn task(id int, duration int) {
+    println('task \${id} begin')
+    time.sleep(duration * time.millisecond)
+    println('task \${id} end')
+}
+
+fn main() {
+    // []thread is a special type that represents an array of threads
+    mut threads := []thread{}
+
+    // \`spawn\` starts a new thread and returns a \`thread\` object
+    // that can be added in thread array.
+    threads << spawn task(1, 500)
+    threads << spawn task(2, 900)
+    threads << spawn task(3, 100)
+
+    // \`wait\` is special function that waits for all threads to finish.
+    threads.wait()
+
+    println('done')
+}
+        `,
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Channel Select",
+        // language=V
+        code: `
+// Channels in V very similar to Go's channels.
+// Learn more about channels in the documentation:
+// https://github.com/vlang/v/blob/master/doc/docs.md#channels
+import time
+
+fn main() {
+    // Channels is a special type that represents a communication channel between threads.
+    ch := chan f64{}
+    //         ^^^ type of data that can be sent or received through the channel
+    ch2 := chan f64{}
+    ch3 := chan f64{}
+    mut b := 0.0
+    c := 1.0
+
+    // Setup spawn threads that will send on ch/ch2.
+    spawn fn (the_channel chan f64) {
+        time.sleep(5 * time.millisecond)
+        // You can push value to channel...
+        the_channel <- 1.0
+    }(ch)
+
+    spawn fn (the_channel chan f64) {
+        time.sleep(1 * time.millisecond)
+        // ...in different threads.
+        the_channel <- 1.0
+    }(ch2)
+
+    spawn fn (the_channel chan f64) {
+        // And read values from channel in other threads
+        // If channel is empty, the thread will wait until a value is pushed to it.
+        _ := <-the_channel
+    }(ch3)
+
+    // Select is powerful construct that allows you to work for multiple channels.
+    // Learn more about select in the documentation:
+    // https://github.com/vlang/v/blob/master/doc/docs.md#channel-select
+    select {
+        a := <-ch {
+            // do something with \`a\`
+            eprintln('> a: \${a}')
+        }
+        b = <-ch2 {
+            // do something with predeclared variable \`b\`
+            eprintln('> b: \${b}')
+        }
+        ch3 <- c {
+            // do something if \`c\` was sent
+            time.sleep(5 * time.millisecond)
+            eprintln('> c: \${c} was send on channel ch3')
+        }
+        500 * time.millisecond {
+            // do something if no channel has become ready within 0.5s
+            eprintln('> more than 0.5s passed without a channel being ready')
+        }
+    }
+    eprintln('> done')
+}
+        `,
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
         name: "JSON Encoding/Decoding",
         // language=v
         code: `
@@ -468,103 +565,6 @@ fn main() {
         'cube': cube
     }
     println(fns_map['cube'](2)) // "8"
-}
-`,
-        runConfiguration: RunConfigurationType.Run
-    },
-    {
-        name: "Concurrency",
-        // language=V
-        code: `
-// V's model of concurrency is going to be very similar to Go's.
-// Learn more about concurrency in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#concurrency
-import time
-
-fn task(id int, duration int) {
-    println('task \${id} begin')
-    time.sleep(duration * time.millisecond)
-    println('task \${id} end')
-}
-
-fn main() {
-    // []thread is a special type that represents an array of threads
-    mut threads := []thread{}
-
-    // \`spawn\` starts a new thread and returns a \`thread\` object
-    // that can be added in thread array.
-    threads << spawn task(1, 500)
-    threads << spawn task(2, 900)
-    threads << spawn task(3, 100)
-    
-    // \`wait\` is special function that waits for all threads to finish.
-    threads.wait()
-
-    println('done')
-}
-`,
-        runConfiguration: RunConfigurationType.Run
-    },
-    {
-        name: "Channel Select",
-        // language=V
-        code: `
-// Channels in V very similar to Go's channels.
-// Learn more about channels in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#channels
-import time
-
-fn main() {
-    // Channels is a special type that represents a communication channel between threads.
-    ch := chan f64{}
-    //         ^^^ type of data that can be sent or received through the channel
-    ch2 := chan f64{}
-    ch3 := chan f64{}
-    mut b := 0.0
-    c := 1.0
-
-    // Setup spawn threads that will send on ch/ch2.
-    spawn fn (the_channel chan f64) {
-        time.sleep(5 * time.millisecond)
-		// You can push value to channel...
-		the_channel <- 1.0
-    }(ch)
-
-    spawn fn (the_channel chan f64) {
-        time.sleep(1 * time.millisecond)
-        // ...in different threads.
-        the_channel <- 1.0
-    }(ch2)
-
-    spawn fn (the_channel chan f64) {
-        // And read values from channel in other threads
-        // If channel is empty, the thread will wait until a value is pushed to it.
-        _ := <-the_channel
-    }(ch3)
-
-    // Select is powerful construct that allows you to work for multiple channels.
-    // Learn more about select in the documentation:
-	// https://github.com/vlang/v/blob/master/doc/docs.md#channel-select
-    select {
-        a := <-ch {
-            // do something with \`a\`
-            eprintln('> a: \${a}')
-        }
-        b = <-ch2 {
-            // do something with predeclared variable \`b\`
-            eprintln('> b: \${b}')
-        }
-        ch3 <- c {
-            // do something if \`c\` was sent
-            time.sleep(5 * time.millisecond)
-            eprintln('> c: \${c} was send on channel ch3')
-        }
-        500 * time.millisecond {
-            // do something if no channel has become ready within 0.5s
-            eprintln('> more than 0.5s passed without a channel being ready')
-        }
-    }
-    eprintln('> done')
 }
 `,
         runConfiguration: RunConfigurationType.Run
