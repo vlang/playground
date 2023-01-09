@@ -180,6 +180,9 @@ var Editor = /** @class */ (function () {
     Editor.prototype.setTheme = function (theme) {
         this.editor.setOption("theme", theme.name());
     };
+    Editor.prototype.showCompletion = function () {
+        this.editor.execCommand("autocomplete");
+    };
     Editor.prototype.refresh = function () {
         this.editor.refresh();
     };
@@ -671,6 +674,12 @@ var Playground = /** @class */ (function () {
     };
     Playground.prototype.setupShortcuts = function () {
         var _this = this;
+        this.editor.editor.on("keypress", function (cm, event) {
+            if (!cm.state.completionActive && // Enables keyboard navigation in autocomplete list
+                event.key.length === 1 && event.key.match(/[a-z0-9]/i)) { // Only letters and numbers trigger autocomplete
+                _this.editor.showCompletion();
+            }
+        });
         document.addEventListener("keydown", function (ev) {
             var isCodeFromShareURL = _this.repository instanceof SharedCodeRepository;
             if (isCodeFromShareURL && !ev.ctrlKey && !ev.metaKey) {

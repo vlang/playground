@@ -51,7 +51,7 @@ CodeMirror.defineMode("v", function (config) {
 
     const atoms = {
         "true": true, "false": true, "nil": true, "print": true,
-        "println": true, "exit": true, "panic": true, "error": true,
+        "println": true, "exit": true, "panic": true, "error": true, "dump": true,
     };
 
     const builtinTypes = {
