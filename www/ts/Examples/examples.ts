@@ -1,4 +1,5 @@
 ///<reference path="../Repositories/LocalCodeRepository.ts"/>
+///<reference path="../RunConfigurationManager/RunConfigurationManager.ts"/>
 interface IExample {
     name: string
     code: string
@@ -19,8 +20,10 @@ const examples: IExample[] = [
 areas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']
 
 for area in areas {
-    // V uses the \${} notation to interpolate a variable or expression right on the string.
-    // You can find the details in the documentation: https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
+    // V uses the \${} notation to interpolate a variable
+    // or expression right on the string.
+    // Learn more about string interpolation in the documentation:
+    // https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
     println('Hello, \${area} developers!')
 }
         `,
