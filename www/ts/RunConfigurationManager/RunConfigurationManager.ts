@@ -66,7 +66,7 @@ class RunConfigurationManager {
         this.useConfiguration(RunConfigurationType.Run)
     }
 
-    private useConfiguration(runConfigurationType: RunConfigurationType) {
+    public useConfiguration(runConfigurationType: RunConfigurationType) {
         this.currentConfiguration = runConfigurationType
         this.onChange(runConfigurationType)
 

@@ -47,6 +47,8 @@ CodeMirror.defineMode("v", function (config) {
 
     const pseudo_keywords = {
         "sql": true,
+        "chan": true,
+        "thread": true,
     };
 
     const atoms = {
@@ -164,6 +166,15 @@ CodeMirror.defineMode("v", function (config) {
         const next = stream.peek()
         if (next === '(' || next === '<') {
             return "function";
+        }
+
+        if (next === '[') {
+            stream.next()
+            const after = stream.next()
+            stream.backUp(2)
+            if (after.match(/[A-Z]/i)) {
+                return "function";
+            }
         }
 
         // highlight only last part

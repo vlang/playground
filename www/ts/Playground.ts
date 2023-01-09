@@ -40,6 +40,7 @@ class Playground {
         this.examplesManager = new ExamplesManager()
         this.examplesManager.registerOnSelectHandler((example: IExample): void => {
             this.editor.setCode(example.code)
+            this.runConfigurationManager.useConfiguration(example.runConfiguration)
         })
         this.examplesManager.mount()
 
