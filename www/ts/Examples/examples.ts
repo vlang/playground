@@ -33,12 +33,12 @@ for area in areas {
 // As in other languages, you can define functions in V.
 // Learn more about functions in the documentation:
 // https://github.com/vlang/v/blob/master/doc/docs.md#functions
-fn fib(n int) int {
+fn fib(n int) u64 {
     // To define a array of specific type, use the following syntax.
     // Here we define an array of int with the length of n + 2.
     // Learn more about arrays in the documentation:
     // https://github.com/vlang/v/blob/master/doc/docs.md#arrays
-    mut f := []int{len: n + 2}
+    mut f := []u64{len: n + 2}
     f[0] = 0
     f[1] = 1
 
