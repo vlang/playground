@@ -13,6 +13,7 @@ println('Hello, Playground!')
 
 // To run the code, click the "Run" button or just press Ctrl + R.
 // To format the code, click the "Format" button or just press Ctrl + L.
+// See all shortcuts in the "Help" in the bottom right corner.
 
 // More examples are available in right dropdown list.
 // You can find Help for shortcuts in the bottom right corner or just press Ctrl + I.

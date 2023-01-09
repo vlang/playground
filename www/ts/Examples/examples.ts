@@ -592,7 +592,8 @@ fn hello() string {
 }
 
 fn sum(a int, b int) int {
-    return a - b
+	// oops, this should be \`a + b\`
+	return a - b
 }
 `,
         runConfiguration: RunConfigurationType.Test
