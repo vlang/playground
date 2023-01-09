@@ -5,7 +5,7 @@ const keywords =
 
 const pseudoKeywords = `sql`.split(' ')
 
-const atoms = `true false nil print println exit panic error`.split(' ')
+const atoms = `true false nil print println exit panic error dump`.split(' ')
 
 const builtinTypes = `bool string i8 i16 int i64 i128 u8 u16 u32 u64 u128 rune f32 f64 isize usize voidptr any`.split(' ')
 
