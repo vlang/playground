@@ -1,4 +1,103 @@
 "use strict";
+var RunConfigurationType;
+(function (RunConfigurationType) {
+    RunConfigurationType["Run"] = "Run";
+    RunConfigurationType["Test"] = "Test";
+})(RunConfigurationType || (RunConfigurationType = {}));
+function getRunConfigurationTypeByString(runConfigurationType) {
+    switch (runConfigurationType) {
+        case "Run":
+            return RunConfigurationType.Run;
+        case "Test":
+            return RunConfigurationType.Test;
+        default:
+            throw new Error("Unknown run configuration type: ".concat(runConfigurationType));
+    }
+}
+var RunConfigurationManager = /** @class */ (function () {
+    function RunConfigurationManager(queryParams) {
+        this.currentConfiguration = RunConfigurationType.Run;
+        this.fromQueryParam = false;
+        this.runButton = document.querySelector(".js-playground__action-run");
+        this.runButtonLabel = document.querySelector(".js-playground__action-run .label");
+        this.openRunButton = document.querySelector(".js-open-run-select");
+        this.configurationsList = document.querySelector(".js-run-configurations-list");
+        this.configurations = document.querySelectorAll(".js-configuration");
+        this.onChange = function () { };
+        this.onSelect = function () { };
+        this.queryParams = queryParams;
+        this.mount();
+    }
+    RunConfigurationManager.prototype.registerOnChange = function (callback) {
+        this.onChange = callback;
+    };
+    RunConfigurationManager.prototype.registerOnSelect = function (callback) {
+        this.onSelect = callback;
+    };
+    RunConfigurationManager.prototype.toggleConfigurationsList = function () {
+        this.configurationsList.classList.toggle("hidden");
+    };
+    RunConfigurationManager.prototype.setupConfiguration = function () {
+        var configurationFromQuery = this.queryParams.getURLParameter(RunConfigurationManager.QUERY_PARAM_NAME);
+        if (configurationFromQuery !== null && configurationFromQuery !== undefined) {
+            this.fromQueryParam = true;
+            this.useConfiguration(getRunConfigurationTypeByString(configurationFromQuery));
+            return;
+        }
+        var configurationFromLocalStorage = window.localStorage.getItem(RunConfigurationManager.LOCAL_STORAGE_KEY);
+        if (configurationFromLocalStorage !== null && configurationFromLocalStorage !== undefined) {
+            this.useConfiguration(getRunConfigurationTypeByString(configurationFromLocalStorage));
+            return;
+        }
+        this.useConfiguration(RunConfigurationType.Run);
+    };
+    RunConfigurationManager.prototype.useConfiguration = function (runConfigurationType) {
+        this.currentConfiguration = runConfigurationType;
+        this.onChange(runConfigurationType);
+        var runConfigurationAsString = RunConfigurationType[runConfigurationType];
+        this.runButton.setAttribute("data-type", runConfigurationAsString);
+        this.runButtonLabel.textContent = runConfigurationAsString;
+        if (!this.fromQueryParam) {
+            // Don't update saved theme state if we're loading from query param.
+            window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_KEY, runConfigurationAsString);
+        }
+        if (this.fromQueryParam) {
+            // We update the query param only if we loaded from it.
+            // If we don't change, then the user can change the configuration and then reload the page.
+            // In this case, the page will load with the configuration from the URL, and the user
+            // will think that his configuration change has not been saved (and will not be saved
+            // until he removes the configuration from the URL).
+            // To avoid this, we update the URL if the user changes configuration.
+            this.queryParams.updateURLParameter(RunConfigurationManager.QUERY_PARAM_NAME, runConfigurationAsString);
+        }
+        this.setIconForV(runConfigurationType);
+    };
+    RunConfigurationManager.prototype.setIconForV = function (runConfigurationType) {
+        var icon = runIcons;
+        if (runConfigurationType != RunConfigurationType.Run) {
+            icon = testIcons;
+        }
+        document.querySelector(".title-v-part").innerHTML = icon;
+    };
+    RunConfigurationManager.prototype.mount = function () {
+        var _this = this;
+        this.openRunButton.addEventListener("click", function () {
+            _this.toggleConfigurationsList();
+        });
+        this.configurations.forEach(function (configuration) {
+            configuration.addEventListener("click", function () {
+                var _a;
+                var configurationTypeString = (_a = configuration.getAttribute("data-type")) !== null && _a !== void 0 ? _a : "Run";
+                var configurationType = getRunConfigurationTypeByString(configurationTypeString);
+                _this.useConfiguration(configurationType);
+                _this.onSelect(configurationType);
+            });
+        });
+    };
+    RunConfigurationManager.QUERY_PARAM_NAME = "runConfiguration";
+    RunConfigurationManager.LOCAL_STORAGE_KEY = "run-configuration";
+    return RunConfigurationManager;
+}());
 var RunCodeResult = /** @class */ (function () {
     function RunCodeResult(output) {
         this.output = output;
@@ -189,114 +288,6 @@ var Editor = /** @class */ (function () {
     Editor.FONT_LOCAL_STORAGE_KEY = "editor-font-size";
     return Editor;
 }());
-var ExamplesManager = /** @class */ (function () {
-    function ExamplesManager() {
-        this.onSelectHandler = null;
-        this.selectElement = document.querySelector(".js-examples__select");
-    }
-    ExamplesManager.prototype.registerOnSelectHandler = function (handler) {
-        this.onSelectHandler = handler;
-    };
-    ExamplesManager.prototype.mount = function () {
-        var _this = this;
-        if (this.selectElement === null || this.selectElement === undefined) {
-            return;
-        }
-        var examplesSelectList = this.selectElement.querySelector(".dropdown__list");
-        var examplesButton = this.selectElement.querySelector(".dropdown__button");
-        if (examplesSelectList !== null && examplesButton !== null) {
-            examples.forEach(function (example, index) {
-                examplesSelectList.innerHTML += ExamplesManager.exampleElementListTemplate(example.name, index);
-            });
-            examplesButton.innerHTML = examples[0].name;
-        }
-        var dropdownItems = this.selectElement.querySelectorAll(".dropdown__list-item");
-        dropdownItems.forEach(function (option) {
-            option.addEventListener("click", function () {
-                var exampleName = option.innerText;
-                var example = examples.find(function (example) {
-                    return example.name === exampleName;
-                });
-                if (_this.onSelectHandler !== null && example) {
-                    _this.onSelectHandler(example);
-                }
-            });
-        });
-        var dropdownBtn = this.selectElement.querySelector(".dropdown__button");
-        var dropdownList = this.selectElement.querySelector(".dropdown__list");
-        var dropdownInput = this.selectElement.querySelector(".dropdown__input_hidden");
-        dropdownBtn.addEventListener("click", function () {
-            dropdownList.classList.toggle("dropdown__list_visible");
-            this.classList.toggle("dropdown__button_active");
-        });
-        dropdownItems.forEach(function (option) {
-            option.addEventListener("click", function (e) {
-                var _a;
-                dropdownItems.forEach(function (el) {
-                    el.classList.remove("dropdown__list-item_active");
-                });
-                var target = e.target;
-                target.classList.add("dropdown__list-item_active");
-                dropdownBtn.innerText = this.innerText;
-                dropdownInput.value = (_a = this.dataset.value) !== null && _a !== void 0 ? _a : "";
-                dropdownList.classList.remove("dropdown__list_visible");
-            });
-        });
-        document.addEventListener("click", function (e) {
-            if (e.target !== dropdownBtn) {
-                dropdownBtn.classList.remove("dropdown__button_active");
-                dropdownList.classList.remove("dropdown__list_visible");
-            }
-        });
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Tab" || e.key === "Escape") {
-                dropdownBtn.classList.remove("dropdown__button_active");
-                dropdownList.classList.remove("dropdown__list_visible");
-            }
-        });
-    };
-    ExamplesManager.exampleElementListTemplate = function (name, index) {
-        var className = "";
-        if (index === 0) {
-            className = "dropdown__list-item_active";
-        }
-        return "\n<li class=\"dropdown__list-item ".concat(className, "\" data-value=\"").concat(name, "\">").concat(name, "</li>\n");
-    };
-    return ExamplesManager;
-}());
-var examples = [
-    {
-        name: "Hello, World!",
-        code: "\nprintln('Hello, world!')\n",
-    },
-    {
-        name: "Fibonacci",
-        code: "\nfn fib(n int) int {\n    mut f := []int{len: n + 2}\n    f[0] = 0\n    f[1] = 1\n    for i := 2; i <= n; i++ {\n        f[i] = f[i - 1] + f[i - 2]\n    }\n    return f[n]\n}\n\nfor i in 0 .. 30 {\n    println(fib(i))\n}\n",
-    },
-    {
-        name: "String interpolation",
-        code: "\nareas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']\nfor area in areas {\n    println('Hello, $area developers!')\n}\n",
-    },
-    {
-        name: "JSON Encoding/Decoding",
-        code: "\nimport json\n\nstruct User {\n    name string\n    age  int\nmut:\n    is_registered bool\n}\n\nfn main() {\n    s := '[{\"name\":\"Frodo\", \"age\":25}, {\"name\":\"Bobby\", \"age\":10}]'\n    mut users := json.decode([]User, s) or {\n        eprintln('Failed to parse json')\n        return\n    }\n    for user in users {\n        println('$user.name: $user.age')\n    }\n    println('')\n    for i, mut user in users {\n        println('$i) $user.name')\n        if !user.can_register() {\n            println('Cannot register $user.name, they are too young')\n            continue\n        }\n\n        // `user` is declared as `mut` in the for loop,\n        // modifying it will modify the array\n        user.register()\n    }\n\n    // Let's encode users again just for fun\n    println('')\n    println(json.encode(users))\n}\n\nfn (u User) can_register() bool {\n    return u.age >= 16\n}\n\nfn (mut u User) register() {\n    u.is_registered = true\n}\n",
-    },
-    {
-        name: "Filter Log file",
-        code: "\n// Print file lines that start with \"DEBUG:\"\nimport os\n\n// `write_file` returns a result (`!`), it must be checked\nos.write_file('app.log', '\nERROR: log file not found\nDEBUG: create new file\nDEBUG: write text to log file\nERROR: file not writeable\n') or {\n    // `err` is a special variable that contains the error\n    // in `or {}` blocks\n    eprintln('failed to write the file: $err')\n    return\n}\n\n// `read_file` returns a result (`!string`), it must be checked\ntext := os.read_file('app.log') or {\n    eprintln('failed to read the file: $err')\n    return\n}\n\nlines := text.split_into_lines()\nfor line in lines {\n    if line.starts_with('DEBUG:') {\n        println(line)\n    }\n}\n\n// DEBUG: create new file\n// DEBUG: write text to log file\n",
-    },
-    {
-        name: "Compile-time Reflection",
-        code: "\nstruct User {\n    name string\n    age  int\n}\n\nfn main() {\n    data := 'name=Alice\\nage=18'\n    user := decode&lt;User>(data)\n    println(user)\n}\n\nfn decode&lt;T>(data string) T {\n    mut result := T{}\n    // compile-time `for` loop\n    // T.fields gives an array of a field metadata type\n    $for field in T.fields {\n        $if field.typ is string {\n            // $(string_expr) produces an identifier\n            result.$(field.name) = get_string(data, field.name)\n        } $else $if field.typ is int {\n            result.$(field.name) = get_int(data, field.name)\n        }\n    }\n    return result\n}\n\nfn get_string(data string, field_name string) string {\n    for line in data.split_into_lines() {\n        key_val := line.split('=')\n        if key_val[0] == field_name {\n            return key_val[1]\n        }\n    }\n    return ''\n}\n\nfn get_int(data string, field string) int {\n    return get_string(data, field).int()\n}\n\n// `decode&lt;User>` generates:\n// fn decode_User(data string) User {\n//     mut result := User{}\n//     result.name = get_string(data, 'name')\n//     result.age = get_int(data, 'age')\n//     return result\n// }\n",
-    },
-].map(function (example) {
-    example.code = example.code
-        .replaceAll("    ", "    ")
-        .replaceAll("&lt;", "<")
-        .trim();
-    return example;
-});
-var codeIfSharedLinkBroken = "\n// Oops, the shared link is broken.\n// Please recheck the link and try again.\nprintln('Hello, link 404!')\n".trim();
 /**
  * CodeRepositoryManager is responsible for managing the code repositories.
  */
@@ -348,7 +339,8 @@ var LocalCodeRepository = /** @class */ (function () {
         onReady(localCode);
     };
     LocalCodeRepository.LOCAL_STORAGE_KEY = "code";
-    LocalCodeRepository.WELCOME_CODE = "\n// Welcome to the V Playground!\n// Here you can edit, run, and share V code.\n// Let's start with a simple \"Hello, World!\" example:\nprintln('Hello, World!')\n\n// More examples are available in right dropdown list.\n// You can find Help for shortcuts in the bottom right corner or just press \u2303 + H (Ctrl + H).\n// See also change theme button in the top right corner. \n// If you want to learn more about V, visit https://vlang.io\n// Enjoy!\n".trim();
+    // language=V
+    LocalCodeRepository.WELCOME_CODE = "\n// Welcome to the V Playground!\n// Here you can edit, run, and share V code.\n// Let's start with a simple \"Hello, Playground!\" example:\nprintln('Hello, Playground!')\n\n// To run the code, click the \"Run\" button or just press Ctrl + R.\n// To format the code, click the \"Format\" button or just press Ctrl + L.\n// See all shortcuts in the \"Help\" in the bottom right corner.\n\n// More examples are available in right dropdown list.\n// You can find Help for shortcuts in the bottom right corner or just press Ctrl + I.\n// See also change theme button in the top right corner. \n// If you want to learn more about V, visit https://vlang.io\n// Join us on Discord: https://discord.gg/vlang\n// Enjoy!\n".trimStart();
     return LocalCodeRepository;
 }());
 /**
@@ -472,6 +464,167 @@ var Light = /** @class */ (function () {
     };
     return Light;
 }());
+var ExamplesManager = /** @class */ (function () {
+    function ExamplesManager() {
+        this.onSelectHandler = null;
+        this.selectElement = document.querySelector(".js-examples__select");
+    }
+    ExamplesManager.prototype.registerOnSelectHandler = function (handler) {
+        this.onSelectHandler = handler;
+    };
+    ExamplesManager.prototype.mount = function () {
+        var _this = this;
+        if (this.selectElement === null || this.selectElement === undefined) {
+            return;
+        }
+        var examplesSelectList = this.selectElement.querySelector(".dropdown__list");
+        var examplesButton = this.selectElement.querySelector(".dropdown__button");
+        if (examplesSelectList !== null && examplesButton !== null) {
+            examples.forEach(function (example, index) {
+                examplesSelectList.innerHTML += ExamplesManager.exampleElementListTemplate(example.name, index);
+            });
+            examplesButton.innerHTML = examples[0].name;
+        }
+        var dropdownItems = this.selectElement.querySelectorAll(".dropdown__list-item");
+        dropdownItems.forEach(function (option) {
+            option.addEventListener("click", function () {
+                var exampleName = option.innerText;
+                var example = examples.find(function (example) {
+                    return example.name === exampleName;
+                });
+                if (_this.onSelectHandler !== null && example) {
+                    _this.onSelectHandler(example);
+                }
+            });
+        });
+        var dropdownBtn = this.selectElement.querySelector(".dropdown__button");
+        var dropdownList = this.selectElement.querySelector(".dropdown__list");
+        var dropdownInput = this.selectElement.querySelector(".dropdown__input_hidden");
+        dropdownBtn.addEventListener("click", function () {
+            dropdownList.classList.toggle("dropdown__list_visible");
+            this.classList.toggle("dropdown__button_active");
+        });
+        dropdownItems.forEach(function (option) {
+            option.addEventListener("click", function (e) {
+                var _a;
+                dropdownItems.forEach(function (el) {
+                    el.classList.remove("dropdown__list-item_active");
+                });
+                var target = e.target;
+                target.classList.add("dropdown__list-item_active");
+                dropdownBtn.innerText = this.innerText;
+                dropdownInput.value = (_a = this.dataset.value) !== null && _a !== void 0 ? _a : "";
+                dropdownList.classList.remove("dropdown__list_visible");
+            });
+        });
+        document.addEventListener("click", function (e) {
+            if (e.target !== dropdownBtn) {
+                dropdownBtn.classList.remove("dropdown__button_active");
+                dropdownList.classList.remove("dropdown__list_visible");
+            }
+        });
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Tab" || e.key === "Escape") {
+                dropdownBtn.classList.remove("dropdown__button_active");
+                dropdownList.classList.remove("dropdown__list_visible");
+            }
+        });
+    };
+    ExamplesManager.exampleElementListTemplate = function (name, index) {
+        var className = "";
+        if (index === 0) {
+            className = "dropdown__list-item_active";
+        }
+        return "\n<li class=\"dropdown__list-item ".concat(className, "\" data-value=\"").concat(name, "\">").concat(name, "</li>\n");
+    };
+    return ExamplesManager;
+}());
+///<reference path="../Repositories/LocalCodeRepository.ts"/>
+var examples = [
+    {
+        name: "Hello, Playground!",
+        code: LocalCodeRepository.WELCOME_CODE,
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "String interpolation",
+        // language=V
+        code: "\n// In V you can define array of string with the following syntax:\nareas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']\n\nfor area in areas {\n    // V uses the ${} notation to interpolate a variable or expression right on the string.\n    // You can find the details in the documentation: https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation\n    println('Hello, ${area} developers!')\n}\n        ",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Fibonacci",
+        // language=v
+        code: "\n// As in other languages, you can define functions in V.\n// Learn more about functions in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#functions\nfn fib(n int) u64 {\n    // To define a array of specific type, use the following syntax.\n    // Here we define an array of int with the length of n + 2.\n    // Learn more about arrays in the documentation:\n    // https://github.com/vlang/v/blob/master/doc/docs.md#arrays\n    mut f := []u64{len: n + 2}\n    f[0] = 0\n    f[1] = 1\n\n    for i := 2; i <= n; i++ {\n        f[i] = f[i - 1] + f[i - 2]\n    }\n\n    return f[n]\n}\n\n// main function is the entry point of the program.\n// See note about the main function in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#hello-world\nfn main() {\n    for i in 0 .. 30 {\n        println(fib(i))\n    }\n}\n",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Structs and embedded structs",
+        // language=V
+        code: "\n// Structs are a way to define a new type with a set of fields.\n// You can define a struct with the following syntax:\n// Learn more about structs in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#structs\nstruct Size {\n// mut keyword is used to define mutable fields\n// pub keyword is used to define public fields\n// \n// By default, all fields are private and immutable.\npub mut:\n    width  int\n    height int\n}\n\n// Structs can have methods.\nfn (s &Size) area() int {\n    return s.width * s.height\n}\n\n// Structs can be embedded in other structs.\nstruct Button {\n    Size\n    title string\n}\n\nmut button := Button{\n    title: 'Click me'\n    height: 2\n}\n\nbutton.width = 3\n\n// With embedding, the struct Button will automatically have get all the \n// fields and methods from the struct Size, which allows you to do:\nassert button.area() == 6\n// If you need to access embedded structs directly, use an explicit \n// reference like `button.Size`:\nassert button.Size.area() == 6\n// Conceptually, embedded structs are similar to mixins in OOP, not base classes.\n\nprint(button)\n",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Sum types",
+        // language=V
+        code: "\nstruct Empty {}\n\nstruct Node {\n    value f64\n    left  Tree\n    right Tree\n}\n\n// Sum types are a way to define a type that can be one of several types.\n// In V, sum types are defined with following syntax.\n// Learn more about sum types in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#sum-types\ntype Tree = Empty | Node\n\n// Let's calculate the sum of all values in the tree.\nfn main() {\n    // Here we just define a tree with some values.\n    left := Node{0.2, Empty{}, Empty{}}\n    right := Node{0.3, Empty{}, Node{0.4, Empty{}, Empty{}}}\n    tree := Node{0.5, left, right}\n\n    // And call the sum function.\n    // Since the sum function accepts a Tree, we can pass it any of the\n    // possible types of the Tree sum type.\n    // In this case, we pass it a Node.\n    println(sum(tree)) // 0.2 + 0.3 + 0.4 + 0.5 = 1.4\n}\n\n// sum up all node values\nfn sum(tree Tree) f64 {\n    // In V, you can use `match` expression to match a value against a sum type.\n    // Learn more about match expression in the documentation:\n    // https://github.com/vlang/v/blob/master/doc/docs.md#match\n    return match tree {\n        // if the value has type Empty, return 0\n        Empty { 0 }\n        // if the value has type Node, return the sum of the node value and the sum of the left and right subtrees\n        Node { tree.value + sum(tree.left) + sum(tree.right) }\n    }\n}\n",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Generics",
+        // language=V
+        code: "\n// Sometimes there may be situations where you need code that will \n// work in the same way for different types.\n//\n// For example, in this example, we are creating a `List` that will \n// be able to store elements of any type while maintaining type safety.\n//\n// In V, to define a generic structure, you need to write the generic parameters \n// in square brackets after name. \n// There may be one or more of them, each of them must be named with a \n// single capital letter.\n//\n// Learn more about generics in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#generics\nstruct List[T] {\nmut:\n    data []T\n}\n\n// Since the `List` structure is generic, we can define methods that accept or \n// return the type with which the structure was created.\n//\n// That is, for each `List` with a specific type, its own copy of this structure \n// will be created when V compile code.\n//\n// This means that if you call push on a `List[int]`, then the `push()` function will \n// take an int argument.\nfn (mut l List[T]) push(val T) {\n    l.data << val\n}\n\n// Here everything is the same as with `push()`, however, for `List[int]` the function \n// will return an int value, and not accept it.\nfn (l &List[T]) pop() T {\n    return l.data.last()\n}\n\n// In V, there can be not only structures, but also functions, so the following function \n// creates a generic structure with the type passed to the function.\nfn list_of[T]() List[T] {\n    return List[T]{}\n}\n\nfn main() {\n    // Let's create a new `List` that will contain the strings:\n    mut string_list := List[string]{}\n    //                     ^^^^^^^^ Generic arguments to create a struct\n    // Here we have passed a string as the T parameter to the struct.\n    // We can say that this code is equivalent to `List_string{}`, where \n    // `List_string` has a data field with type `[]string`.\n\n    // Methods are called as usual, the compiler will understand \n    // that `push()` takes a value of type string.\n    string_list.push('hello')\n    string_list.push('world')\n\n    // When you call `pop()`, the compiler will understand that the method returns a string.\n    last_string := string_list.pop()\n    println(last_string)\n\n    // Now let's create a new `List` but which stores bool.\n    // We use our `list_of()` function for this.\n    mut bool_list := list_of[bool]()\n    //                      ^^^^^^ Generic arguments to call the function.\n    // Here, as for `List`, we passed arguments to be used instead of T.\n    // The compiler itself will compute and understand that it is necessary \n    // to create a `List` with the bool type.\n\n    bool_list.push(true)\n    println(bool_list)\n}\n        ",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Concurrency",
+        // language=V
+        code: "\n// V's model of concurrency is going to be very similar to Go's.\n// Learn more about concurrency in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#concurrency\nimport time\n\nfn task(id int, duration int) {\n    println('task ${id} begin')\n    time.sleep(duration * time.millisecond)\n    println('task ${id} end')\n}\n\nfn main() {\n    // []thread is a special type that represents an array of threads\n    mut threads := []thread{}\n\n    // `spawn` starts a new thread and returns a `thread` object\n    // that can be added in thread array.\n    threads << spawn task(1, 500)\n    threads << spawn task(2, 900)\n    threads << spawn task(3, 100)\n\n    // `wait` is special function that waits for all threads to finish.\n    threads.wait()\n\n    println('done')\n}\n        ",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Channel Select",
+        // language=V
+        code: "\n// Channels in V very similar to Go's channels.\n// Learn more about channels in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#channels\nimport time\n\nfn main() {\n    // Channels is a special type that represents a communication channel between threads.\n    ch := chan f64{}\n    //         ^^^ type of data that can be sent or received through the channel\n    ch2 := chan f64{}\n    ch3 := chan f64{}\n    mut b := 0.0\n    c := 1.0\n\n    // Setup spawn threads that will send on ch/ch2.\n    spawn fn (the_channel chan f64) {\n        time.sleep(5 * time.millisecond)\n        // You can push value to channel...\n        the_channel <- 1.0\n    }(ch)\n\n    spawn fn (the_channel chan f64) {\n        time.sleep(1 * time.millisecond)\n        // ...in different threads.\n        the_channel <- 1.0\n    }(ch2)\n\n    spawn fn (the_channel chan f64) {\n        // And read values from channel in other threads\n        // If channel is empty, the thread will wait until a value is pushed to it.\n        _ := <-the_channel\n    }(ch3)\n\n    // Select is powerful construct that allows you to work for multiple channels.\n    // Learn more about select in the documentation:\n    // https://github.com/vlang/v/blob/master/doc/docs.md#channel-select\n    select {\n        a := <-ch {\n            // do something with `a`\n            eprintln('> a: ${a}')\n        }\n        b = <-ch2 {\n            // do something with predeclared variable `b`\n            eprintln('> b: ${b}')\n        }\n        ch3 <- c {\n            // do something if `c` was sent\n            time.sleep(5 * time.millisecond)\n            eprintln('> c: ${c} was send on channel ch3')\n        }\n        500 * time.millisecond {\n            // do something if no channel has become ready within 0.5s\n            eprintln('> more than 0.5s passed without a channel being ready')\n        }\n    }\n    eprintln('> done')\n}\n        ",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "JSON Encoding/Decoding",
+        // language=v
+        code: "\n// V very modular and has a lot of built-in modules.\n// In this example we will use the json module to encode and decode JSON data.\n// If you want to learn more about modules, visit \n// https://github.com/vlang/v/blob/master/doc/docs.md#modules\nimport json\n\n// Since V is statically typed, we need to define a struct to hold the data.\n// Learn more about structs in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#structs\nstruct User {\n    name string\n    age  int\nmut:\n    // We can use the `mut` keyword to make the field mutable.\n    // Without it, there is no way to change the field value.\n    is_registered bool\n}\n\nfn main() {\n    json_data := '[{\"name\":\"Frodo\", \"age\":25}, {\"name\":\"Bobby\", \"age\":10}]'\n    \n    // json.decode() is special function that can decode JSON data.\n    // It takes a type and a json data as arguments and returns a value of passed type.\n    // V tries to decode the data as the passed type. For example, if you pass []User, \n    // it will try to decode the data as an array of User.\n    // \n    // In this case it will return an array of User.\n    // \n    // Learn more about the json module in the documentation:\n    // https://github.com/vlang/v/blob/master/doc/docs.md#json\n    mut users := json.decode([]User, json_data) or {\n        // But if the json data is invalid, it will return an error.\n        // You can handle it with the 'or {}' syntax as in this example.\n        // \n        // err is a special variable that contains the error message.\n        // \n        // Learn more about error handling in documentation: \n        // https://github.com/vlang/v/blob/master/doc/docs.md#optionresult-types-and-error-handling\n        eprintln('Failed to parse json, error: ${err}')\n        return\n    }\n\n    for user in users {\n        // See 'String interpolation' example to learn more about the ${} notation.\n        println('${user.name}: ${user.age}')\n    }\n    println('')\n    \n    for i, mut user in users {\n        println('${i}) ${user.name}')\n        if !user.can_register() {\n            println('Cannot register ${user.name}, they are too young')\n            continue\n        }\n\n        // `user` is declared as `mut` in the for loop,\n        // modifying it will modify the array\n        user.register()\n    }\n\n    println('')\n    \n    // json.encode() is a special function that can encode a value to JSON.\n    // It takes a value and returns a JSON string.\n    // \n    // It always return a string, so you don't need to handle the error.\n    encoded_data := json.encode(users)\n    println(encoded_data)\n}\n\nfn (u User) can_register() bool {\n    return u.age >= 16\n}\n\nfn (mut u User) register() {\n    u.is_registered = true\n}\n\n// Output:\n// Frodo: 25\n// Bobby: 10\n//\n// 0) Frodo\n// 1) Bobby\n// Cannot register Bobby, they are too young\n//\n// [{\"name\":\"Frodo\",\"age\":25,\"is_registered\":true},{\"name\":\"Bobby\",\"age\":10,\"is_registered\":false}]\n",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Filter Log file",
+        // language=v
+        code: "\n// Print file lines that start with \"DEBUG:\"\nimport os\n\n// `write_file` returns a result (`!`), it must be checked\nos.write_file('app.log', '\nERROR: log file not found\nDEBUG: create new file\nDEBUG: write text to log file\nERROR: file not writeable\n') or {\n    // `err` is a special variable that contains the error\n    // in `or {}` blocks\n    eprintln('failed to write the file: ${err}')\n    return\n}\n\n// `read_file` returns a result (`!string`), it must be checked\ntext := os.read_file('app.log') or {\n    eprintln('failed to read the file: ${err}')\n    return\n}\n\nlines := text.split_into_lines()\nfor line in lines {\n    if line.starts_with('DEBUG:') {\n        println(line)\n    }\n}\n\n// Output:\n// DEBUG: create new file\n// DEBUG: write text to log file\n",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Compile-time Reflection",
+        code: "\n// https://github.com/vlang/v/blob/master/doc/docs.md#compile-time-reflection\n\nstruct User {\n    name string\n    age  int\n}\n\nfn main() {\n    data := 'name=Alice\\nage=18'\n    user := decode[User](data)\n    println(user)\n}\n\nfn decode[T](data string) T {\n    mut result := T{}\n    // compile-time `for` loop\n    // T.fields gives an array of a field metadata type\n    $for field in T.fields {\n        $if field.typ is string {\n            // $(string_expr) produces an identifier\n            result.$(field.name) = get_string(data, field.name)\n        } $else $if field.typ is int {\n            result.$(field.name) = get_int(data, field.name)\n        }\n    }\n    return result\n}\n\nfn get_string(data string, field_name string) string {\n    for line in data.split_into_lines() {\n        key_val := line.split('=')\n        if key_val[0] == field_name {\n            return key_val[1]\n        }\n    }\n    return ''\n}\n\nfn get_int(data string, field string) int {\n    return get_string(data, field).int()\n}\n\n// `decode[User]` generates:\n// fn decode_User(data string) User {\n//     mut result := User{}\n//     result.name = get_string(data, 'name')\n//     result.age = get_int(data, 'age')\n//     return result\n// }\n",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Anonymous & higher order functions",
+        // language=V
+        code: "\n// https://github.com/vlang/v/blob/master/doc/docs.md#anonymous--higher-order-functions\n\nfn sqr(n int) int {\n    return n * n\n}\n\nfn cube(n int) int {\n    return n * n * n\n}\n\nfn run(value int, op fn (int) int) int {\n    return op(value)\n}\n\nfn main() {\n    // Anonymous functions can be called immediately:\n    fn () {\n        println('Anonymous function')\n    }()\n\n    // Functions can be passed to other functions\n    println(run(5, sqr)) // \"25\"\n\n    // Anonymous functions can be declared inside other functions:\n    double_fn := fn (n int) int {\n        return n + n\n    }\n    println(run(5, double_fn)) // \"10\"\n\n    // Functions can be passed around without assigning them to variables:\n    res := run(5, fn (n int) int {\n        return n + n\n    })\n    println(res) // \"10\"\n\n    // You can even have an array/map of functions:\n    fns := [sqr, cube]\n    println(fns[0](10)) // \"100\"\n    \n    fns_map := {\n        'sqr':  sqr\n        'cube': cube\n    }\n    println(fns_map['cube'](2)) // \"8\"\n}\n",
+        runConfiguration: RunConfigurationType.Run
+    },
+    {
+        name: "Testing",
+        // language=V
+        code: "\n// Tests in V is very simple.\n// To define a test function, just add `test_` prefix to the function name.\n// Learn more about testing in the documentation:\n// https://github.com/vlang/v/blob/master/doc/docs.md#testing\nfn test_hello() {\n    // Inside test functions you can use `assert` to check if the result is correct.\n    assert hello() == 'Hello world'\n\n    // If the assertion fails, the test will fail.\n    // You can provide optional message to `assert`:\n    assert sum(2, 2) == 4, '2 + 2 should be 4'\n}\n\n// Other functions can be used in tests too.\nfn hello() string {\n    return 'Hello world'\n}\n\nfn sum(a int, b int) int {\n\t// oops, this should be `a + b`\n\treturn a - b\n}\n",
+        runConfiguration: RunConfigurationType.Test
+    }
+].map(function (example) {
+    example.code = example.code
+        .trim()
+        .replaceAll(/^ {4}/gm, "\t") + "\n";
+    return example;
+});
+// language=V
+var codeIfSharedLinkBroken = "\n// Oops, the shared link is broken.\n// Please recheck the link and try again.\nprintln('Hello, link 404!')\n".trimStart();
 var HelpManager = /** @class */ (function () {
     function HelpManager(containingElement) {
         this.containingElement = containingElement;
@@ -559,6 +712,7 @@ var Playground = /** @class */ (function () {
         this.examplesManager = new ExamplesManager();
         this.examplesManager.registerOnSelectHandler(function (example) {
             _this.editor.setCode(example.code);
+            _this.runConfigurationManager.useConfiguration(example.runConfiguration);
         });
         this.examplesManager.mount();
         this.helpManager = new HelpManager(editorElement);
@@ -820,105 +974,6 @@ function copyTextToClipboard(text, onCopy) {
 }
 var runIcons = "\n<svg width=\"33\" height=\"23\" viewBox=\"0 0 33 23\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path d=\"M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z\"\n          fill=\"#536B8A\"/>\n    <path d=\"M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954 7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635 20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074 3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z\"\n          fill=\"#5D87BF\"/>\n    <path d=\"M28.6948 15.9266L22.5937 19.4338C22.2604 19.6254 21.8446 19.3848 21.8446 19.0003V11.9859C21.8446 11.6014 22.2604 11.3608 22.5937 11.5524L28.6948 15.0596C29.0292 15.2518 29.0292 15.7343 28.6948 15.9266Z\"\n          fill=\"#659360\" stroke=\"#659360\"/>\n</svg>\n";
 var testIcons = "\n<svg width=\"33\" height=\"23\" viewBox=\"0 0 33 23\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <g clip-path=\"url(#clip0_15_68)\">\n        <path d=\"M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z\" fill=\"#536B8A\"/>\n        <path d=\"M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954 7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635 20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074 3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z\" fill=\"#5D87BF\"/>\n        <path d=\"M28.8408 19.6848L25.184 21.796C24.8506 21.9885 24.434 21.7479 24.434 21.363V17.1405C24.434 16.7556 24.8506 16.515 25.184 16.7075L28.8408 18.8187C29.1742 19.0112 29.1742 19.4923 28.8408 19.6848Z\" fill=\"#659360\" stroke=\"#659360\"/>\n        <mask id=\"mask0_15_68\" style=\"mask-type:alpha\" maskUnits=\"userSpaceOnUse\" x=\"17\" y=\"10\" width=\"14\" height=\"14\">\n            <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M30.5961 10H17.4721V15.4917H17V23.5298H23.4782V21.4835H24.4442L24.6447 16.4403L30.5961 19.843V10Z\" fill=\"#D9D9D9\"/>\n        </mask>\n        <g mask=\"url(#mask0_15_68)\">\n            <circle cx=\"22.9543\" cy=\"15.8554\" r=\"4.91558\" fill=\"#659360\" fill-opacity=\"0.2\"/>\n            <circle cx=\"22.9543\" cy=\"15.8554\" r=\"4.41558\" stroke=\"#659360\"/>\n            <path d=\"M20.9171 13.7626H24.9312V14.4554H23.2962V18.8948H22.5557V14.4554H20.9171V13.7626Z\" fill=\"#659360\"/>\n        </g>\n    </g>\n    <defs>\n        <clipPath id=\"clip0_15_68\">\n            <rect width=\"33\" height=\"23\" fill=\"white\"/>\n        </clipPath>\n    </defs>\n</svg>\n";
-var RunConfigurationType;
-(function (RunConfigurationType) {
-    RunConfigurationType["Run"] = "Run";
-    RunConfigurationType["Test"] = "Test";
-})(RunConfigurationType || (RunConfigurationType = {}));
-function getRunConfigurationTypeByString(runConfigurationType) {
-    switch (runConfigurationType) {
-        case "Run":
-            return RunConfigurationType.Run;
-        case "Test":
-            return RunConfigurationType.Test;
-        default:
-            throw new Error("Unknown run configuration type: ".concat(runConfigurationType));
-    }
-}
-var RunConfigurationManager = /** @class */ (function () {
-    function RunConfigurationManager(queryParams) {
-        this.currentConfiguration = RunConfigurationType.Run;
-        this.fromQueryParam = false;
-        this.runButton = document.querySelector(".js-playground__action-run");
-        this.runButtonLabel = document.querySelector(".js-playground__action-run .label");
-        this.openRunButton = document.querySelector(".js-open-run-select");
-        this.configurationsList = document.querySelector(".js-run-configurations-list");
-        this.configurations = document.querySelectorAll(".js-configuration");
-        this.onChange = function () { };
-        this.onSelect = function () { };
-        this.queryParams = queryParams;
-        this.mount();
-    }
-    RunConfigurationManager.prototype.registerOnChange = function (callback) {
-        this.onChange = callback;
-    };
-    RunConfigurationManager.prototype.registerOnSelect = function (callback) {
-        this.onSelect = callback;
-    };
-    RunConfigurationManager.prototype.toggleConfigurationsList = function () {
-        this.configurationsList.classList.toggle("hidden");
-    };
-    RunConfigurationManager.prototype.setupConfiguration = function () {
-        var configurationFromQuery = this.queryParams.getURLParameter(RunConfigurationManager.QUERY_PARAM_NAME);
-        if (configurationFromQuery !== null && configurationFromQuery !== undefined) {
-            this.fromQueryParam = true;
-            this.useConfiguration(getRunConfigurationTypeByString(configurationFromQuery));
-            return;
-        }
-        var configurationFromLocalStorage = window.localStorage.getItem(RunConfigurationManager.LOCAL_STORAGE_KEY);
-        if (configurationFromLocalStorage !== null && configurationFromLocalStorage !== undefined) {
-            this.useConfiguration(getRunConfigurationTypeByString(configurationFromLocalStorage));
-            return;
-        }
-        this.useConfiguration(RunConfigurationType.Run);
-    };
-    RunConfigurationManager.prototype.useConfiguration = function (runConfigurationType) {
-        this.currentConfiguration = runConfigurationType;
-        this.onChange(runConfigurationType);
-        var runConfigurationAsString = RunConfigurationType[runConfigurationType];
-        this.runButton.setAttribute("data-type", runConfigurationAsString);
-        this.runButtonLabel.textContent = runConfigurationAsString;
-        if (!this.fromQueryParam) {
-            // Don't update saved theme state if we're loading from query param.
-            window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_KEY, runConfigurationAsString);
-        }
-        if (this.fromQueryParam) {
-            // We update the query param only if we loaded from it.
-            // If we don't change, then the user can change the configuration and then reload the page.
-            // In this case, the page will load with the configuration from the URL, and the user
-            // will think that his configuration change has not been saved (and will not be saved
-            // until he removes the configuration from the URL).
-            // To avoid this, we update the URL if the user changes configuration.
-            this.queryParams.updateURLParameter(RunConfigurationManager.QUERY_PARAM_NAME, runConfigurationAsString);
-        }
-        this.setIconForV(runConfigurationType);
-    };
-    RunConfigurationManager.prototype.setIconForV = function (runConfigurationType) {
-        var icon = runIcons;
-        if (runConfigurationType != RunConfigurationType.Run) {
-            icon = testIcons;
-        }
-        document.querySelector(".title-v-part").innerHTML = icon;
-    };
-    RunConfigurationManager.prototype.mount = function () {
-        var _this = this;
-        this.openRunButton.addEventListener("click", function () {
-            _this.toggleConfigurationsList();
-        });
-        this.configurations.forEach(function (configuration) {
-            configuration.addEventListener("click", function () {
-                var _a;
-                var configurationTypeString = (_a = configuration.getAttribute("data-type")) !== null && _a !== void 0 ? _a : "Run";
-                var configurationType = getRunConfigurationTypeByString(configurationTypeString);
-                _this.useConfiguration(configurationType);
-                _this.onSelect(configurationType);
-            });
-        });
-    };
-    RunConfigurationManager.QUERY_PARAM_NAME = "runConfiguration";
-    RunConfigurationManager.LOCAL_STORAGE_KEY = "run-configuration";
-    return RunConfigurationManager;
-}());
 /**
  * ThemeManager is responsible for managing the theme of the playground.
  * It will register a callback to the change theme button and will update the
