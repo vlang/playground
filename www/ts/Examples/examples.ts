@@ -2,12 +2,14 @@
 interface IExample {
     name: string
     code: string
+    runConfiguration: RunConfigurationType
 }
 
 const examples: IExample[] = [
     {
         name: "Hello, Playground!",
-        code: LocalCodeRepository.WELCOME_CODE
+        code: LocalCodeRepository.WELCOME_CODE,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "String interpolation",
@@ -22,6 +24,7 @@ for area in areas {
     println('Hello, \${area} developers!')
 }
         `,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Fibonacci",
@@ -54,7 +57,8 @@ fn main() {
         println(fib(i))
     }
 }
-        `,
+`,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Structs and embedded structs",
@@ -101,7 +105,8 @@ assert button.Size.area() == 6
 // Conceptually, embedded structs are similar to mixins in OOP, not base classes.
 
 print(button)
-`
+`,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Sum types",
@@ -147,7 +152,8 @@ fn sum(tree Tree) f64 {
 		Node { tree.value + sum(tree.left) + sum(tree.right) }
 	}
 }
-`
+`,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Generics",
@@ -223,7 +229,8 @@ fn main() {
     bool_list.push(true)
     println(bool_list)
 }
-        `
+        `,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "JSON Encoding/Decoding",
@@ -317,6 +324,7 @@ fn (mut u User) register() {
 //
 // [{"name":"Frodo","age":25,"is_registered":true},{"name":"Bobby","age":10,"is_registered":false}]
 `,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Filter Log file",
@@ -355,6 +363,7 @@ for line in lines {
 // DEBUG: create new file
 // DEBUG: write text to log file
 `,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Compile-time Reflection",
@@ -409,6 +418,7 @@ fn get_int(data string, field string) int {
 //     return result
 // }
 `,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Anonymous & higher order functions",
@@ -459,7 +469,8 @@ fn main() {
 	}
 	println(fns_map['cube'](2)) // "8"
 }
-`
+`,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Concurrency",
@@ -484,7 +495,8 @@ fn main() {
 
 	println('done')
 }
-`
+`,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Channel Select",
@@ -536,13 +548,27 @@ fn main() {
 	}
 	eprintln('> done')
 }
-`
+`,
+        runConfiguration: RunConfigurationType.Run
     },
     {
         name: "Testing",
+        // language=V
         code: `
+// Tests in V is very simple.
+// To define a test function, just add \`test_\` prefix to the function name.
+// Learn more about testing in the documentation:
 // https://github.com/vlang/v/blob/master/doc/docs.md#testing
+fn test_hello() {
+    // Inside test functions you can use \`assert\` to check if the result is correct.
+	assert hello() == 'Hello world'
 
+    // If the assertion fails, the test will fail.
+    // You can provide optional message to \`assert\`:
+	assert sum(2, 2) == 4, '2 + 2 should be 4'
+}
+
+// Other functions can be used in tests too.
 fn hello() string {
 	return 'Hello world'
 }
@@ -550,17 +576,11 @@ fn hello() string {
 fn sum(a int, b int) int {
 	return a - b
 }
-
-fn test_hello() {
-	assert hello() == 'Hello world'
-
-	assert sum(2, 2) == 4
-}
-`
+`,
+        runConfiguration: RunConfigurationType.Test
     }
 ].map((example: IExample) => {
-    example.code = example.code.trimStart()
-
+    example.code = example.code.trim() + '\n'
     return example
 })
 

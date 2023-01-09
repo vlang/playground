@@ -13,12 +13,13 @@
     "baseUrl": "."
   },
   "include": [
+    "./RunConfigurationManager",
     "./CodeRunner",
     "./Editor",
-    "./Examples",
     "./Repositories",
     "./Terminal",
     "./themes",
+    "./Examples",
     "./"
   ],
   "exclude": [
