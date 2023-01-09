@@ -74,24 +74,24 @@ struct Size {
 // 
 // By default, all fields are private and immutable.
 pub mut:
-	width  int
-	height int
+    width  int
+    height int
 }
 
 // Structs can have methods.
 fn (s &Size) area() int {
-	return s.width * s.height
+    return s.width * s.height
 }
 
 // Structs can be embedded in other structs.
 struct Button {
-	Size
-	title string
+    Size
+    title string
 }
 
 mut button := Button{
-	title: 'Click me'
-	height: 2
+    title: 'Click me'
+    height: 2
 }
 
 button.width = 3
@@ -115,9 +115,9 @@ print(button)
 struct Empty {}
 
 struct Node {
-	value f64
-	left  Tree
-	right Tree
+    value f64
+    left  Tree
+    right Tree
 }
 
 // Sum types are a way to define a type that can be one of several types.
@@ -129,15 +129,15 @@ type Tree = Empty | Node
 // Let's calculate the sum of all values in the tree.
 fn main() {
     // Here we just define a tree with some values.
-	left := Node{0.2, Empty{}, Empty{}}
-	right := Node{0.3, Empty{}, Node{0.4, Empty{}, Empty{}}}
-	tree := Node{0.5, left, right}
+    left := Node{0.2, Empty{}, Empty{}}
+    right := Node{0.3, Empty{}, Node{0.4, Empty{}, Empty{}}}
+    tree := Node{0.5, left, right}
 
     // And call the sum function.
     // Since the sum function accepts a Tree, we can pass it any of the
     // possible types of the Tree sum type.
     // In this case, we pass it a Node.
-	println(sum(tree)) // 0.2 + 0.3 + 0.4 + 0.5 = 1.4
+    println(sum(tree)) // 0.2 + 0.3 + 0.4 + 0.5 = 1.4
 }
 
 // sum up all node values
@@ -145,12 +145,12 @@ fn sum(tree Tree) f64 {
     // In V, you can use \`match\` expression to match a value against a sum type.
     // Learn more about match expression in the documentation:
     // https://github.com/vlang/v/blob/master/doc/docs.md#match
-	return match tree {
-	    // if the value has type Empty, return 0
-		Empty { 0 }
-		// if the value has type Node, return the sum of the node value and the sum of the left and right subtrees
-		Node { tree.value + sum(tree.left) + sum(tree.right) }
-	}
+    return match tree {
+        // if the value has type Empty, return 0
+        Empty { 0 }
+        // if the value has type Node, return the sum of the node value and the sum of the left and right subtrees
+        Node { tree.value + sum(tree.left) + sum(tree.right) }
+    }
 }
 `,
         runConfiguration: RunConfigurationType.Run
@@ -246,8 +246,8 @@ import json
 // Learn more about structs in the documentation:
 // https://github.com/vlang/v/blob/master/doc/docs.md#structs
 struct User {
-	name string
-	age  int
+    name string
+    age  int
 mut:
     // We can use the \`mut\` keyword to make the field mutable.
     // Without it, there is no way to change the field value.
@@ -255,7 +255,7 @@ mut:
 }
 
 fn main() {
-	json_data := '[{"name":"Frodo", "age":25}, {"name":"Bobby", "age":10}]'
+    json_data := '[{"name":"Frodo", "age":25}, {"name":"Bobby", "age":10}]'
     
     // json.decode() is special function that can decode JSON data.
     // It takes a type and a json data as arguments and returns a value of passed type.
@@ -266,7 +266,7 @@ fn main() {
     // 
     // Learn more about the json module in the documentation:
     // https://github.com/vlang/v/blob/master/doc/docs.md#json
-	mut users := json.decode([]User, json_data) or {
+    mut users := json.decode([]User, json_data) or {
         // But if the json data is invalid, it will return an error.
         // You can handle it with the 'or {}' syntax as in this example.
         // 
@@ -274,27 +274,27 @@ fn main() {
         // 
         // Learn more about error handling in documentation: 
         // https://github.com/vlang/v/blob/master/doc/docs.md#optionresult-types-and-error-handling
-		eprintln('Failed to parse json, error: \${err}')
-		return
-	}
+        eprintln('Failed to parse json, error: \${err}')
+        return
+    }
 
-	for user in users {
+    for user in users {
         // See 'String interpolation' example to learn more about the \${} notation.
-		println('\${user.name}: \${user.age}')
-	}
-	println('')
+        println('\${user.name}: \${user.age}')
+    }
+    println('')
     
-	for i, mut user in users {
-		println('\${i}) \${user.name}')
-		if !user.can_register() {
-			println('Cannot register \${user.name}, they are too young')
-			continue
-		}
+    for i, mut user in users {
+        println('\${i}) \${user.name}')
+        if !user.can_register() {
+            println('Cannot register \${user.name}, they are too young')
+            continue
+        }
 
-		// \`user\` is declared as \`mut\` in the for loop,
-		// modifying it will modify the array
-		user.register()
-	}
+        // \`user\` is declared as \`mut\` in the for loop,
+        // modifying it will modify the array
+        user.register()
+    }
 
     println('')
     
@@ -307,11 +307,11 @@ fn main() {
 }
 
 fn (u User) can_register() bool {
-	return u.age >= 16
+    return u.age >= 16
 }
 
 fn (mut u User) register() {
-	u.is_registered = true
+    u.is_registered = true
 }
 
 // Output:
@@ -340,23 +340,23 @@ DEBUG: create new file
 DEBUG: write text to log file
 ERROR: file not writeable
 ') or {
-	// \`err\` is a special variable that contains the error
-	// in \`or {}\` blocks
-	eprintln('failed to write the file: \${err}')
-	return
+    // \`err\` is a special variable that contains the error
+    // in \`or {}\` blocks
+    eprintln('failed to write the file: \${err}')
+    return
 }
 
 // \`read_file\` returns a result (\`!string\`), it must be checked
 text := os.read_file('app.log') or {
-	eprintln('failed to read the file: \${err}')
-	return
+    eprintln('failed to read the file: \${err}')
+    return
 }
 
 lines := text.split_into_lines()
 for line in lines {
-	if line.starts_with('DEBUG:') {
-		println(line)
-	}
+    if line.starts_with('DEBUG:') {
+        println(line)
+    }
 }
 
 // Output:
@@ -371,43 +371,43 @@ for line in lines {
 // https://github.com/vlang/v/blob/master/doc/docs.md#compile-time-reflection
 
 struct User {
-	name string
-	age  int
+    name string
+    age  int
 }
 
 fn main() {
-	data := 'name=Alice\\nage=18'
-	user := decode[User](data)
-	println(user)
+    data := 'name=Alice\\nage=18'
+    user := decode[User](data)
+    println(user)
 }
 
 fn decode[T](data string) T {
-	mut result := T{}
-	// compile-time \`for\` loop
-	// T.fields gives an array of a field metadata type
-	$for field in T.fields {
-		$if field.typ is string {
-			// $(string_expr) produces an identifier
-			result.$(field.name) = get_string(data, field.name)
-		} $else $if field.typ is int {
-			result.$(field.name) = get_int(data, field.name)
-		}
-	}
-	return result
+    mut result := T{}
+    // compile-time \`for\` loop
+    // T.fields gives an array of a field metadata type
+    $for field in T.fields {
+        $if field.typ is string {
+            // $(string_expr) produces an identifier
+            result.$(field.name) = get_string(data, field.name)
+        } $else $if field.typ is int {
+            result.$(field.name) = get_int(data, field.name)
+        }
+    }
+    return result
 }
 
 fn get_string(data string, field_name string) string {
-	for line in data.split_into_lines() {
-		key_val := line.split('=')
-		if key_val[0] == field_name {
-			return key_val[1]
-		}
-	}
-	return ''
+    for line in data.split_into_lines() {
+        key_val := line.split('=')
+        if key_val[0] == field_name {
+            return key_val[1]
+        }
+    }
+    return ''
 }
 
 fn get_int(data string, field string) int {
-	return get_string(data, field).int()
+    return get_string(data, field).int()
 }
 
 // \`decode[User]\` generates:
@@ -427,47 +427,47 @@ fn get_int(data string, field string) int {
 // https://github.com/vlang/v/blob/master/doc/docs.md#anonymous--higher-order-functions
 
 fn sqr(n int) int {
-	return n * n
+    return n * n
 }
 
 fn cube(n int) int {
-	return n * n * n
+    return n * n * n
 }
 
 fn run(value int, op fn (int) int) int {
-	return op(value)
+    return op(value)
 }
 
 fn main() {
-	// Anonymous functions can be called immediately:
-	fn () {
-		println('Anonymous function')
-	}()
+    // Anonymous functions can be called immediately:
+    fn () {
+        println('Anonymous function')
+    }()
 
-	// Functions can be passed to other functions
-	println(run(5, sqr)) // "25"
+    // Functions can be passed to other functions
+    println(run(5, sqr)) // "25"
 
-	// Anonymous functions can be declared inside other functions:
-	double_fn := fn (n int) int {
-		return n + n
-	}
-	println(run(5, double_fn)) // "10"
+    // Anonymous functions can be declared inside other functions:
+    double_fn := fn (n int) int {
+        return n + n
+    }
+    println(run(5, double_fn)) // "10"
 
-	// Functions can be passed around without assigning them to variables:
-	res := run(5, fn (n int) int {
-		return n + n
-	})
-	println(res) // "10"
+    // Functions can be passed around without assigning them to variables:
+    res := run(5, fn (n int) int {
+        return n + n
+    })
+    println(res) // "10"
 
-	// You can even have an array/map of functions:
-	fns := [sqr, cube]
-	println(fns[0](10)) // "100"
-	
+    // You can even have an array/map of functions:
+    fns := [sqr, cube]
+    println(fns[0](10)) // "100"
+    
     fns_map := {
-		'sqr':  sqr
-		'cube': cube
-	}
-	println(fns_map['cube'](2)) // "8"
+        'sqr':  sqr
+        'cube': cube
+    }
+    println(fns_map['cube'](2)) // "8"
 }
 `,
         runConfiguration: RunConfigurationType.Run
@@ -480,20 +480,20 @@ fn main() {
 import time
 
 fn task(id int, duration int) {
-	println('task \${id} begin')
-	time.sleep(duration * time.millisecond)
-	println('task \${id} end')
+    println('task \${id} begin')
+    time.sleep(duration * time.millisecond)
+    println('task \${id} end')
 }
 
 fn main() {
-	mut threads := []thread{}
+    mut threads := []thread{}
 
-	threads << spawn task(1, 500)
-	threads << spawn task(2, 900)
-	threads << spawn task(3, 100)
-	threads.wait()
+    threads << spawn task(1, 500)
+    threads << spawn task(2, 900)
+    threads << spawn task(3, 100)
+    threads.wait()
 
-	println('done')
+    println('done')
 }
 `,
         runConfiguration: RunConfigurationType.Run
@@ -506,47 +506,47 @@ fn main() {
 import time
 
 fn main() {
-	ch := chan f64{}
-	ch2 := chan f64{}
-	ch3 := chan f64{}
-	mut b := 0.0
-	c := 1.0
+    ch := chan f64{}
+    ch2 := chan f64{}
+    ch3 := chan f64{}
+    mut b := 0.0
+    c := 1.0
 
-	// ... setup spawn threads that will send on ch/ch2
-	spawn fn (the_channel chan f64) {
-		time.sleep(5 * time.millisecond)
-		the_channel <- 1.0
-	}(ch)
+    // ... setup spawn threads that will send on ch/ch2
+    spawn fn (the_channel chan f64) {
+        time.sleep(5 * time.millisecond)
+        the_channel <- 1.0
+    }(ch)
 
-	spawn fn (the_channel chan f64) {
-		time.sleep(1 * time.millisecond)
-		the_channel <- 1.0
-	}(ch2)
+    spawn fn (the_channel chan f64) {
+        time.sleep(1 * time.millisecond)
+        the_channel <- 1.0
+    }(ch2)
 
-	spawn fn (the_channel chan f64) {
-		_ := <-the_channel
-	}(ch3)
+    spawn fn (the_channel chan f64) {
+        _ := <-the_channel
+    }(ch3)
 
-	select {
-		a := <-ch {
-			// do something with \`a\`
-			eprintln('> a: \${a}')
-		}
-		b = <-ch2 {
-			// do something with predeclared variable \`b\`
-			eprintln('> b: \${b}')
-		}
-		ch3 <- c {
-			// do something if \`c\` was sent
-			time.sleep(5 * time.millisecond)
-			eprintln('> c: \${c} was send on channel ch3')
-		}
-		500 * time.millisecond {
-			// do something if no channel has become ready within 0.5s
-			eprintln('> more than 0.5s passed without a channel being ready')
-		}
-	}
-	eprintln('> done')
+    select {
+        a := <-ch {
+            // do something with \`a\`
+            eprintln('> a: \${a}')
+        }
+        b = <-ch2 {
+            // do something with predeclared variable \`b\`
+            eprintln('> b: \${b}')
+        }
+        ch3 <- c {
+            // do something if \`c\` was sent
+            time.sleep(5 * time.millisecond)
+            eprintln('> c: \${c} was send on channel ch3')
+        }
+        500 * time.millisecond {
+            // do something if no channel has become ready within 0.5s
+            eprintln('> more than 0.5s passed without a channel being ready')
+        }
+    }
+    eprintln('> done')
 }
 `,
         runConfiguration: RunConfigurationType.Run
@@ -561,26 +561,28 @@ fn main() {
 // https://github.com/vlang/v/blob/master/doc/docs.md#testing
 fn test_hello() {
     // Inside test functions you can use \`assert\` to check if the result is correct.
-	assert hello() == 'Hello world'
+    assert hello() == 'Hello world'
 
     // If the assertion fails, the test will fail.
     // You can provide optional message to \`assert\`:
-	assert sum(2, 2) == 4, '2 + 2 should be 4'
+    assert sum(2, 2) == 4, '2 + 2 should be 4'
 }
 
 // Other functions can be used in tests too.
 fn hello() string {
-	return 'Hello world'
+    return 'Hello world'
 }
 
 fn sum(a int, b int) int {
-	return a - b
+    return a - b
 }
 `,
         runConfiguration: RunConfigurationType.Test
     }
 ].map((example: IExample) => {
-    example.code = example.code.trim() + '\n'
+    example.code = example.code
+        .trim()
+        .replaceAll("    ", "\t") + '\n'
     return example
 })
 
