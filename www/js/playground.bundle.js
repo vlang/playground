@@ -674,7 +674,7 @@ var Playground = /** @class */ (function () {
     };
     Playground.prototype.setupShortcuts = function () {
         var _this = this;
-        this.editor.editor.on("keyup", function (cm, event) {
+        this.editor.editor.on("keypress", function (cm, event) {
             if (!cm.state.completionActive && // Enables keyboard navigation in autocomplete list
                 event.key.length === 1 && event.key.match(/[a-z0-9]/i)) { // Only letters and numbers trigger autocomplete
                 _this.editor.showCompletion();
