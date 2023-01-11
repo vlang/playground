@@ -79,7 +79,7 @@ fn try_init_sandbox() (string, int) {
 		for box_id in 0 .. 1000 {
 			// TODO: implement --cg when isolate releases v2 support
 			// remove --quota if isolate throws `Cannot identify filesystem which contains /var/local/lib/isolate/0`
-			iso_res := isolate_cmd('isolate --box-id=${box_id} --quota=${block_max_count},${inode_max_count} --init')
+			iso_res := isolate_cmd('isolate --box-id=${box_id} --init')
 			if iso_res.exit_code == 0 {
 				box_path := os.join_path(iso_res.output.trim_string_right('\n'), 'box')
 				return box_path, box_id
