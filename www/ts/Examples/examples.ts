@@ -320,7 +320,7 @@ fn main() {
         ch3 <- c {
             // do something if \`c\` was sent
             time.sleep(5 * time.millisecond)
-            eprintln('> c: \${c} was send on channel ch3')
+            eprintln('> c: \${c} was sent on channel ch3')
         }
         500 * time.millisecond {
             // do something if no channel has become ready within 0.5s
