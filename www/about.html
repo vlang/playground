@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About V Playground</title>
+
+    <meta property="og:title" content="About V Playground"/>
+    <meta property="og:description" content="About V Playground."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://play.vlang.io/about"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="./css/shortcut.css">
+    <link rel="stylesheet" href="./css/about.css">
+</head>
+<body>
+<article>
+    <h1>The V Playground</h1>
+    <p>
+        The V Playground is a official place where you can run, edit and share V code online.
+    </p>
+    <p>
+        ← <a href="index.html">back to playground</a>
+    </p>
+
+    <h2>About</h2>
+    <p>
+        Playground is an
+        <a href="https://github.com/vlang/playground" target="_blank">open source project</a>
+        that you can help develop, or study its source code for yourself.
+    </p>
+    <p>
+        If you find any problems, please let us know by creating a new
+        <a href="https://github.com/vlang/playground/issues/new" target="_blank">issue</a>.
+    </p>
+
+    <h2>Features</h2>
+    <div class="feature">
+        <h3>Formatting code</h3>
+        <div class="feature__description">
+            <p>
+                The playground automatically formats your code when you press
+                <span class="shortcut inline">
+                    <span class="key"><kbd>Ctrl</kbd> + <kbd>R</kbd></span>
+                </span>
+                .
+            </p>
+            <p>
+                You can also format your code by clicking the <b>Format</b> button in header.
+            </p>
+        </div>
+    </div>
+    <div class="feature">
+        <h3>Sharing code</h3>
+        <div class="feature__description">
+            <p>
+                You can share your code by clicking the <b>Share</b> button in header.
+                It's create a new URL to your code and copy it to your clipboard.
+                Created link also available in the <b>Terminal</b>.
+            </p>
+        </div>
+    </div>
+
+    <div class="feature">
+        <h3>Persistence</h3>
+        <div class="feature__description">
+            <p>
+                The playground saves your code in your browser's local storage.
+                So you can close the tab and come back later to continue working on your code.
+            </p>
+            <p>
+                Local storage is a singleton resource, so if you use multiple windows, only
+                the most recently saved code will be persisted.
+            </p>
+        </div>
+    </div>
+
+    <h2>Limitations</h2>
+    <ul>
+        <li>
+            <b>Memory</b>
+            <p>
+                The amount of memory the compiler and resulting executable use is limited.
+            </p>
+        </li>
+        <li>
+            <b>Execution Time</b>
+            <p>
+                The total compilation and execution time is limited.
+            </p>
+        </li>
+        <li>
+            <b>Disk</b>
+            <p>
+                The total disk space available to the compiler and resulting executable is limited.
+            </p>
+        </li>
+    </ul>
+</article>
+</body>
+
+</html>

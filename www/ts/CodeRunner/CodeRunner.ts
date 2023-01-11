@@ -3,9 +3,9 @@ class RunCodeResult {
     }
 }
 
-class FormatCodeResult {
-    public ok: boolean
-    public output: string
+type FormatCodeResult = {
+    ok: boolean
+    output: string
 }
 
 class ShareCodeResult {
@@ -28,6 +28,24 @@ class CodeRunner {
             .then(resp => {
                 if (resp.status != 200) {
                     throw new Error("Can't run code")
+                }
+
+                return resp.text()
+            })
+            .then(output => new RunCodeResult(output))
+    }
+
+    public static runTest(code: string): Promise<RunCodeResult> {
+        const data = new FormData()
+        data.append("code", code)
+
+        return fetch("/run_test", {
+            method: "post",
+            body: data,
+        })
+            .then(resp => {
+                if (resp.status != 200) {
+                    throw new Error("Can't run test")
                 }
 
                 return resp.text()

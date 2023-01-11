@@ -1,8 +1,17 @@
 # V Playground: Run, Edit, Share V Code Online
 
-This repository contains the source code for V's playground (https://play.vlang.io).
+The [V Playground](https://play.vlang.io) is a official place where you can run, edit and share V code online.
 
-![](./docs/images/playground.png)
+![](./docs/images/cover.png)
+
+## Features
+
+- Nice and clean UI
+- Powerful editor with syntax highlighting and auto-completion
+- Easy run code 
+- Easy run tests
+- Easy code formatting
+- Shareable code and editor state via URL or local storage
 
 ## Developing
 

@@ -3,7 +3,7 @@ class Editor {
 
     private wrapperElement: HTMLElement
     private repository: CodeRepository
-    private editor: CodeMirror.Editor
+    public editor: CodeMirror.Editor
     public terminal: Terminal
 
     constructor(wrapper: HTMLElement, repository: CodeRepository) {
@@ -15,7 +15,7 @@ class Editor {
                 "Ctrl-Space": "autocomplete",
                 "Ctrl-/": "toggleComment",
             },
-            indentWithTabs: false,
+            indentWithTabs: true,
             indentUnit: 4,
             autoCloseBrackets: true,
             showHint: true,
@@ -33,7 +33,7 @@ class Editor {
 
         this.wrapperElement = wrapper
 
-        const place = wrapper.querySelector("textarea")
+        const place = wrapper.querySelector("textarea")!
         this.editor = CodeMirror.fromTextArea(place, editorConfig)
         this.repository = repository
         this.repository.getCode((code) => {
@@ -58,6 +58,9 @@ class Editor {
         })
         this.terminal.registerWriteHandler((_) => {
             this.openTerminal()
+        })
+        this.terminal.registerFilter((line) => {
+            return !line.trim().startsWith('Failed command')
         })
         this.terminal.mount()
 
@@ -103,6 +106,12 @@ class Editor {
     }
 
     public saveCode() {
+        const isSharedCodeRepository = this.repository instanceof SharedCodeRepository
+
+        if (isSharedCodeRepository) {
+            this.repository = new LocalCodeRepository()
+        }
+
         this.repository.saveCode(this.getCode())
     }
 
@@ -116,6 +125,10 @@ class Editor {
 
     public setTheme(theme: ITheme) {
         this.editor.setOption("theme", theme.name())
+    }
+
+    public showCompletion() {
+       this.editor.execCommand("autocomplete")
     }
 
     public refresh() {

@@ -1,10 +1,8 @@
 build_ts:
-	cd ./www/ts && npm install
-	tsc -p ./www/ts/tsconfig.json
+	cd ./www/ts && npm ci && npm run build
 
 build_ts_watch:
-	cd ./www/ts && npm install
-	tsc -w -p ./www/ts/tsconfig.json
+	cd ./www/ts && npm ci && npm run watch
 
 build: build_ts
 	v server.v

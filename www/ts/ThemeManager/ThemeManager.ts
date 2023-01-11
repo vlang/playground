@@ -23,14 +23,14 @@ class ThemeManager {
     private static readonly LOCAL_STORAGE_KEY = "theme"
 
     private themes: ITheme[] = [new Dark(), new Light()]
-    private currentTheme: ITheme
+    private currentTheme: ITheme | null = null
     private onChange: ThemeCallback[] = []
     private readonly queryParams: QueryParams
     private readonly changeThemeButton: Element | null = null
-    private readonly predefinedTheme: ITheme = null
+    private readonly predefinedTheme: ITheme | null = null
     private fromQueryParam: boolean = false
 
-    constructor(queryParams: QueryParams, predefinedTheme?: ITheme) {
+    constructor(queryParams: QueryParams, predefinedTheme: ITheme | null = null) {
         this.queryParams = queryParams
         this.predefinedTheme = predefinedTheme
         this.changeThemeButton = document.querySelector(".js-playground__action-change-theme")
@@ -41,7 +41,7 @@ class ThemeManager {
     }
 
     public loadTheme(): void {
-        const themeFromQuery = this.queryParams.params[ThemeManager.QUERY_PARAM_NAME]
+        const themeFromQuery = this.queryParams.getURLParameter(ThemeManager.QUERY_PARAM_NAME)
         if (themeFromQuery !== null && themeFromQuery !== undefined) {
             this.fromQueryParam = true
             const theme = this.findTheme(themeFromQuery)
@@ -87,7 +87,7 @@ class ThemeManager {
             this.changeThemeButton.innerHTML = icon
         }
 
-        const html = document.querySelector("html")
+        const html = document.querySelector("html")!
         html.setAttribute("data-theme", theme.name())
 
         if (!this.fromQueryParam) {
@@ -115,6 +115,10 @@ class ThemeManager {
     }
 
     public toggleTheme(): void {
+        if (!this.currentTheme) {
+            return
+        }
+
         if (this.currentTheme.name() === "light") {
             this.turnDarkTheme()
         } else {
