@@ -48,7 +48,7 @@ mut:
 
 ['/'; get]
 fn (mut app App) index() vweb.Result {
-	file := os.read_file('www/index.html') or { panic(err) }
+	file := os.read_file('www/public/index.html') or { panic(err) }
 	return app.html(file)
 }
 
@@ -309,8 +309,8 @@ fn (mut app App) init_once() {
 		create table CodeStorage
 	}
 	isolate_cmd('isolate --cleanup')
-	app.handle_static('./www', true)
-	app.serve_static('./www/js', 'www/js/')
+	app.handle_static('./www/public', true)
+	app.serve_static('./', 'www/public/')
 }
 
 // precompile_vfmt prepares the vfmt binary in the sandbox.
