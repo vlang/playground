@@ -8,7 +8,7 @@ type FormatCodeResult = {
     output: string
 }
 
-class ShareCodeResult {
+export class ShareCodeResult {
     constructor(public hash: string) {
     }
 }
@@ -16,7 +16,7 @@ class ShareCodeResult {
 /**
  * CodeRunner describes how to run, format and share code.
  */
-class CodeRunner {
+export class CodeRunner {
     public static runCode(code: string): Promise<RunCodeResult> {
         const data = new FormData()
         data.append("code", code)

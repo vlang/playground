@@ -1,4 +1,6 @@
-class ExamplesManager {
+import { IExample, examples } from "./examples";
+
+export class ExamplesManager {
     private readonly selectElement: HTMLElement
     private onSelectHandler: ((example: IExample) => void) | null = null
 

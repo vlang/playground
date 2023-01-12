@@ -1,4 +1,9 @@
-class Editor {
+import { CodeRepository, SharedCodeRepository, LocalCodeRepository } from "../Repositories";
+import { Terminal } from "../Terminal/Terminal";
+import { ITheme } from "../themes/interface";
+import { codeIfSharedLinkBroken } from "../Examples/examples";
+
+export class Editor {
     private static readonly FONT_LOCAL_STORAGE_KEY = "editor-font-size"
 
     private wrapperElement: HTMLElement

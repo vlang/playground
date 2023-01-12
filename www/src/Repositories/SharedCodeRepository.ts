@@ -1,7 +1,9 @@
+import { CodeRepository } from "./interface";
+
 /**
  * Shared code repository using the server side SQL storage.
  */
-class SharedCodeRepository implements CodeRepository {
+export class SharedCodeRepository implements CodeRepository {
     public static readonly QUERY_PARAM_NAME = "query"
     public static readonly CODE_NOT_FOUND = "Not found."
 

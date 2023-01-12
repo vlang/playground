@@ -309,7 +309,7 @@ CodeMirror.defineMode("v", function (config) {
         return "comment";
     }
 
-    function Context(indented, column, type, align, prev) {
+    function Context(indented, column, type, align, prev?: any) {
         this.indented = indented;
         this.column = column;
         this.type = type;
@@ -335,10 +335,10 @@ CodeMirror.defineMode("v", function (config) {
     }
 
     return {
-        startState: function (basecolumn) {
+        startState: function () {
             return {
                 tokenize: null,
-                context: new Context((basecolumn || 0) - indentUnit, 0, "top", false),
+                context: new Context(indentUnit, 0, "top", false),
                 indented: 0,
                 startOfLine: true
             };

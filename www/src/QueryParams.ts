@@ -7,7 +7,7 @@
  * queryParams.updateURLParameter('theme', 'dark')
  * // The URL will be updated to: http://localhost:8080/?theme=dark
  */
-class QueryParams {
+export class QueryParams {
     public readonly params: URLSearchParams
 
     /**

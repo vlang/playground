@@ -1,4 +1,4 @@
-class HelpManager {
+export class HelpManager {
     // TODO: don't know other way to detect macOS...
     // noinspection JSDeprecatedSymbols
     static isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0

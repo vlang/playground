@@ -23,7 +23,7 @@ function fallbackCopyTextToClipboard(text: string): void {
     document.body.removeChild(textArea)
 }
 
-function copyTextToClipboard(text: string, onCopy: () => void): void {
+export function copyTextToClipboard(text: string, onCopy: () => void): void {
     if (!navigator.clipboard) {
         fallbackCopyTextToClipboard(text)
         return

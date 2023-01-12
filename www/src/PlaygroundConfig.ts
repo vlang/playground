@@ -1,7 +1,9 @@
+import { ITheme } from "./themes";
+
 /**
  * TODO: For future customizations.
  */
-interface PlaygroundConfig {
+export interface PlaygroundConfig {
     embed: boolean
     theme: ITheme
     codeHash: string

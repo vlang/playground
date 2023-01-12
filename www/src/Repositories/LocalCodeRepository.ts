@@ -1,7 +1,9 @@
+import { CodeRepository } from "./interface";
+
 /**
  * Local code repository using the browser's local storage.
  */
-class LocalCodeRepository implements CodeRepository {
+export class LocalCodeRepository implements CodeRepository {
     private static readonly LOCAL_STORAGE_KEY = "code"
 
     // language=V

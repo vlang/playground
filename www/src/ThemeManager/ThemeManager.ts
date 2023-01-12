@@ -1,3 +1,7 @@
+import { QueryParams } from "../QueryParams";
+import { ITheme, Dark, Light } from "../themes";
+import { moonIcon, sunIcon } from "./icons";
+
 type ThemeCallback = (newTheme: ITheme) => void;
 
 /**
@@ -18,7 +22,7 @@ type ThemeCallback = (newTheme: ITheme) => void;
  *   // Do something with the theme
  * })
  */
-class ThemeManager {
+export class ThemeManager {
     private static readonly QUERY_PARAM_NAME = "theme"
     private static readonly LOCAL_STORAGE_KEY = "theme"
 

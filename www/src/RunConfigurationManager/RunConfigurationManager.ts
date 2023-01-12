@@ -1,4 +1,7 @@
-enum RunConfigurationType {
+import { QueryParams } from "../QueryParams";
+import { runIcons, testIcons } from "../icons";
+
+export enum RunConfigurationType {
     Run = "Run",
     Test = "Test",
 }
@@ -14,7 +17,7 @@ function getRunConfigurationTypeByString(runConfigurationType: string): RunConfi
     }
 }
 
-class RunConfigurationManager {
+export class RunConfigurationManager {
     private static readonly QUERY_PARAM_NAME = "runConfiguration"
     private static readonly LOCAL_STORAGE_KEY = "run-configuration"
 

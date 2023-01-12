@@ -1,4 +1,6 @@
-class TextCodeRepository implements CodeRepository {
+import { CodeRepository } from "./interface";
+
+export class TextCodeRepository implements CodeRepository {
     constructor(private text: string) {
     }
 

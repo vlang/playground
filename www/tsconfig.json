@@ -1,27 +1,17 @@
 {
   "compilerOptions": {
-    "module": "none",
-    "target": "es5",
-    "outFile": "../js/playground.bundle.js",
+    "module": "ESNext",
+    "target": "ES2020",
     "moduleResolution": "Node",
     "lib": [
       "dom",
-      "esnext"
+      "esnext",
     ],
     "strict": true,
     "skipLibCheck": true,
     "baseUrl": "."
   },
-  "include": [
-    "./RunConfigurationManager",
-    "./CodeRunner",
-    "./Editor",
-    "./Repositories",
-    "./Terminal",
-    "./themes",
-    "./Examples",
-    "./"
-  ],
+  "files": ["src/main.ts"],
   "exclude": [
     "node_modules"
   ]

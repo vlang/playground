@@ -2,7 +2,7 @@ type OnCloseCallback = () => void
 type OnWriteCallback = (text: string) => void
 type FilterCallback = (text: string) => boolean
 
-class Terminal {
+export class Terminal {
     private readonly element: HTMLElement
     private onClose: OnCloseCallback | null = null
     private onWrite: OnWriteCallback | null = null

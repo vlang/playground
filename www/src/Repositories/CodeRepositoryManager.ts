@@ -1,7 +1,15 @@
+import { CodeRepository } from "./interface";
+import { SharedCodeRepository } from "./SharedCodeRepository";
+import { TextCodeRepository } from "./TextCodeRepository";
+import { LocalCodeRepository } from "./LocalCodeRepository";
+
+import { QueryParams } from "../QueryParams";
+import { PlaygroundConfig } from "../PlaygroundConfig";
+
 /**
  * CodeRepositoryManager is responsible for managing the code repositories.
  */
-class CodeRepositoryManager {
+export class CodeRepositoryManager {
 
     /**
      * Base on `params` tries to select the appropriate repository to get the code.

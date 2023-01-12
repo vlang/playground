@@ -1,7 +1,20 @@
+import { CodeRepository, CodeRepositoryManager, SharedCodeRepository } from "./Repositories";
+import { QueryParams } from "./QueryParams";
+import { HelpManager } from "./HelpManager";
+import { ITheme } from "./themes";
+import { IExample } from "./Examples";
+import { copyTextToClipboard } from "./clipboard_util";
+
+import { Editor } from "./Editor/Editor";
+import { ThemeManager } from "./ThemeManager/ThemeManager"
+import { ExamplesManager } from "./Examples/ExamplesManager";
+import { RunConfigurationManager } from "./RunConfigurationManager/RunConfigurationManager";
+import { CodeRunner, ShareCodeResult } from "./CodeRunner/CodeRunner";
+
 /**
  * PlaygroundDefaultAction describes the default action of a playground.
  */
-enum PlaygroundDefaultAction {
+export enum PlaygroundDefaultAction {
     RUN = "run",
     FORMAT = "format",
     SHARE = "share",
@@ -13,7 +26,7 @@ const CODE_UNSAVED_KEY = "unsaved";
 /**
  * Playground is responsible for managing the all playground.
  */
-class Playground {
+export class Playground {
     private runAsTestConsumer: () => boolean = () => false
     private readonly queryParams: QueryParams
     private readonly repository: CodeRepository

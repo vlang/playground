@@ -1,12 +1,13 @@
-///<reference path="../Repositories/LocalCodeRepository.ts"/>
-///<reference path="../RunConfigurationManager/RunConfigurationManager.ts"/>
-interface IExample {
+import { LocalCodeRepository } from "../Repositories";
+import { RunConfigurationType } from "../RunConfigurationManager/RunConfigurationManager";
+
+export interface IExample {
     name: string
     code: string
     runConfiguration: RunConfigurationType
 }
 
-const examples: IExample[] = [
+export const examples: IExample[] = [
     {
         name: "Hello, Playground!",
         code: LocalCodeRepository.WELCOME_CODE,
@@ -604,13 +605,13 @@ fn sum(a int, b int) int {
 ].map((example: IExample) => {
     example.code = example.code
         .trim()
-        .replaceAll(/^ {4}/gm, "\t") + "\n";
+        .replace(/^ {4}/gm, "\t") + "\n";
 
     return example
 })
 
 // language=V
-const codeIfSharedLinkBroken = `
+export const codeIfSharedLinkBroken = `
 // Oops, the shared link is broken.
 // Please recheck the link and try again.
 println('Hello, link 404!')

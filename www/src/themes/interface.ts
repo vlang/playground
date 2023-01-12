@@ -1,3 +1,3 @@
-interface ITheme {
+export interface ITheme {
     name(): string
 }
