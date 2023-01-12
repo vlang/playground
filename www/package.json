@@ -2,16 +2,17 @@
   "name": "ts",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w"
+    "build": "node esbuild.config.js",
+    "watch": "tsc --noEmit -w"
   },
   "dependencies": {
-    "@codemirror/language": "^6.2.1"
+    "@codemirror/language": "^6.2.1",
+    "esbuild": "^0.16.17"
   },
   "devDependencies": {
-    "typescript": "~4.9.4",
     "@types/codemirror": "^5.60.5",
     "@types/estree": "^1.0.0",
-    "@types/tern": "^0.23.4"
+    "@types/tern": "^0.23.4",
+    "typescript": "~4.9.4"
   }
 }
