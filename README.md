@@ -44,7 +44,7 @@ Done. And your system will remain "clean".
 
 ![vscode-open-in-container](https://user-images.githubusercontent.com/17727170/197407889-88fe33b0-8e95-47fe-b2db-598fd307140e.gif)
 
-Then just run
+Then just run:
 
 ```sh
 make run
@@ -53,8 +53,6 @@ make run
 then access the playground at <http://localhost:5555>
 
 ### Run the playground locally
-
-Just run:
 
 ```bash
 make local_run
