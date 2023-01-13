@@ -62,10 +62,10 @@ fn (mut app App) shared_code(hash string) vweb.Result {
 
 fn isolate_cmd(raw_cmd string) os.Result {
 	cmd := raw_cmd
-	.strip_margin()
-	.trim(' \n\r')
-	.replace('\r', '')
-	.replace('\n', ' ')
+		.strip_margin()
+		.trim(' \n\r')
+		.replace('\r', '')
+		.replace('\n', ' ')
 
 	$if local ? {
 		// run all after -- in a command
