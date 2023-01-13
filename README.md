@@ -75,7 +75,7 @@ make isolate isolate-check-environment
 make install
 ```
 
-### Run the server
+#### Run the server
 
 ```bash
 make run
