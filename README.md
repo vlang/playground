@@ -60,6 +60,8 @@ Just run:
 make local_run
 ```
 
+then access the playground at <http://localhost:5555>
+
 ### Run the playground locally inside isolate (as on play,vlang.io)
 
 > NOTE: Only works on Linux, since it uses `isolate`.
