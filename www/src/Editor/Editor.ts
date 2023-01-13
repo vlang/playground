@@ -1,7 +1,7 @@
-import { CodeRepository, SharedCodeRepository, LocalCodeRepository } from "../Repositories";
-import { Terminal } from "../Terminal/Terminal";
-import { ITheme } from "../themes/interface";
-import { codeIfSharedLinkBroken } from "../Examples/examples";
+import {CodeRepository, LocalCodeRepository, SharedCodeRepository} from "../Repositories"
+import {Terminal} from "../Terminal/Terminal"
+import {ITheme} from "../themes/interface"
+import {codeIfSharedLinkBroken} from "../Examples/examples"
 
 export class Editor {
     private static readonly FONT_LOCAL_STORAGE_KEY = "editor-font-size"
@@ -39,6 +39,7 @@ export class Editor {
         this.wrapperElement = wrapper
 
         const place = wrapper.querySelector("textarea")!
+        // @ts-ignore
         this.editor = CodeMirror.fromTextArea(place, editorConfig)
         this.repository = repository
         this.repository.getCode((code) => {
