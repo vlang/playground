@@ -1,3 +1,0 @@
-interface ITheme {
-    name(): string
-}
