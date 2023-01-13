@@ -79,6 +79,12 @@ body.dragging {
     user-select: none;
 }
 
+body.dragging {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .v-playground {
     position: relative;
     max-height: calc(100vh - 70px);
