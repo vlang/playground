@@ -8,20 +8,25 @@ The [V Playground](https://play.vlang.io) is a official place where you can run,
 
 - Nice and clean UI
 - Powerful editor with syntax highlighting and auto-completion
-- Easy run code 
+- Easy run code
 - Easy run tests
 - Easy code formatting
 - Shareable code and editor state via URL or local storage
 
 ## Developing
 
+First clone the repository:
+
+```bash
+git clone https://github.com/vlang/playground
+cd playground
+```
+
 ### Quick, containerized local development (recommended)
 
 #### Using Docker Compose
 
 ```bash
-git clone https://github.com/vlang/playground
-cd playground
 docker-compose up -d
 ```
 
@@ -47,9 +52,17 @@ make run
 
 then access the playground at <http://localhost:5555>
 
-### Run the playground locally (not recommended)
+### Run the playground locally
 
-> NOTE: This is not recommended, as it requires you to install V and all of its dependencies manually. Only works on Linux.
+Just run:
+
+```bash
+make local_run
+```
+
+### Run the playground locally inside isolate (as on play,vlang.io)
+
+> NOTE: Only works on Linux, since it uses `isolate`.
 
 #### Install Dependencies
 
@@ -65,8 +78,6 @@ make install
 ### Run the server
 
 ```bash
-git clone https://github.com/vlang/playground
-cd playground
 make run
 ```
 
