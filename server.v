@@ -67,6 +67,16 @@ fn isolate_cmd(raw_cmd string) os.Result {
 		.replace('\r', '')
 		.replace('\n', ' ')
 
+	$if local ? {
+		// run all after -- in a command
+		two_dash_index := cmd.index('-- ') or { -1 }
+		if two_dash_index != -1 {
+			local_cmd := cmd[two_dash_index + 3..]
+			eprintln('> cmd: ${local_cmd}')
+			return os.execute(local_cmd)
+		}
+	}
+
 	$if debug {
 		eprintln('> cmd: ${cmd}')
 	}
@@ -75,6 +85,10 @@ fn isolate_cmd(raw_cmd string) os.Result {
 }
 
 fn try_init_sandbox() (string, int) {
+	$if local ? {
+		return './', -1
+	}
+
 	for {
 		for box_id in 0 .. 1000 {
 			// TODO: implement --cg when isolate releases v2 support
@@ -130,15 +144,15 @@ fn run_in_sandbox(code string, as_test bool) string {
 
 	if as_test {
 		run_res := isolate_cmd('
-			|isolate 
-			| --box-id=${box_id} 
-			| --dir=${vexeroot} 
-			| --env=HOME=/box 
-			| --processes=${max_run_processes_and_threads} 
-			| --mem=${max_compiler_memory_in_kb} 
-			| --wall-time=${wall_time_in_seconds} 
-			| --run 
-			| -- 
+			|isolate
+			| --box-id=${box_id}
+			| --dir=${vexeroot}
+			| --env=HOME=/box
+			| --processes=${max_run_processes_and_threads}
+			| --mem=${max_compiler_memory_in_kb}
+			| --wall-time=${wall_time_in_seconds}
+			| --run
+			| --
 			|
 			| ${vexeroot}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g test ${file}
 		')
@@ -150,15 +164,15 @@ fn run_in_sandbox(code string, as_test bool) string {
 	}
 
 	build_res := isolate_cmd('
-		|isolate 
-		| --box-id=${box_id} 
-		| --dir=${vexeroot} 
-		| --env=HOME=/box 
-		| --processes=${max_run_processes_and_threads} 
-		| --mem=${max_compiler_memory_in_kb} 
-		| --wall-time=${wall_time_in_seconds} 
-		| --run 
-		| -- 
+		|isolate
+		| --box-id=${box_id}
+		| --dir=${vexeroot}
+		| --env=HOME=/box
+		| --processes=${max_run_processes_and_threads}
+		| --mem=${max_compiler_memory_in_kb}
+		| --wall-time=${wall_time_in_seconds}
+		| --run
+		| --
 		|
 		| ${vexeroot}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g ${file}
 	')
@@ -171,16 +185,16 @@ fn run_in_sandbox(code string, as_test bool) string {
 	}
 
 	run_res := isolate_cmd('
-		|isolate 
-		| --box-id=${box_id} 
-		| --dir=${vexeroot} 
-		| --env=HOME=/box 
-		| --processes=${max_run_processes_and_threads} 
-		| --mem=${max_run_memory_in_kb} 
-		| --time=${run_time_in_seconds} 
-		| --wall-time=${wall_time_in_seconds} 
-		| --run 
-		| -- 
+		|isolate
+		| --box-id=${box_id}
+		| --dir=${vexeroot}
+		| --env=HOME=/box
+		| --processes=${max_run_processes_and_threads}
+		| --mem=${max_run_memory_in_kb}
+		| --time=${run_time_in_seconds}
+		| --wall-time=${wall_time_in_seconds}
+		| --run
+		| --
 		| ./code
 	')
 
@@ -260,15 +274,15 @@ fn vfmt_code(code string) (string, bool) {
 	}
 
 	vfmt_res := isolate_cmd('
-		|isolate 
-		| --box-id=${box_id} 
-		| --dir=${vexeroot} 
-		| --env=HOME=/box 
-		| --processes=3 
-		| --mem=100000 
-		| --wall-time=2 
-		| --run 
-		| -- 
+		|isolate
+		| --box-id=${box_id}
+		| --dir=${vexeroot}
+		| --env=HOME=/box
+		| --processes=3
+		| --mem=100000
+		| --wall-time=2
+		| --run
+		| --
 		| ${vexeroot}/v fmt code.v
 	')
 

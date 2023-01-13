@@ -7,7 +7,13 @@ build_ts_watch:
 build: build_ts
 	v server.v
 
+local_build:
+	v -g -d local server.v
+
 run: build
+	./server
+
+local_run: local_build
 	./server
 
 run_docker:
