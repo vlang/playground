@@ -1,179 +1,243 @@
-CodeMirror.defineMode("v", function (config) {
-    const indentUnit = config.indentUnit;
+import {EditorConfiguration, Mode, StringStream} from "codemirror"
 
-    const keywords = {
-        "as": true,
-        "asm": true,
-        "assert": true,
-        "atomic": true,
-        "break": true,
-        "const": true,
-        "continue": true,
-        "defer": true,
-        "else": true,
-        "enum": true,
-        "fn": true,
-        "for": true,
-        "go": true,
-        "goto": true,
-        "if": true,
-        "import": true,
-        "in": true,
-        "interface": true,
-        "is": true,
-        "isreftype": true,
-        "lock": true,
-        "match": true,
-        "module": true,
-        "mut": true,
-        "none": true,
-        "or": true,
-        "pub": true,
-        "return": true,
-        "rlock": true,
-        "select": true,
-        "shared": true,
-        "sizeof": true,
-        "static": true,
-        "struct": true,
-        "spawn": true,
-        "type": true,
-        "typeof": true,
-        "union": true,
-        "unsafe": true,
-        "volatile": true,
-        "__offsetof": true,
-    };
+type Quota = "'" | "\"" | "`"
+type Tokenizer = (stream: StringStream, state: ModeState) => string | null
 
-    const pseudo_keywords = {
-        "sql": true,
-        "chan": true,
-        "thread": true,
-    };
-
-    const atoms = {
-        "true": true, "false": true, "nil": true, "print": true,
-        "println": true, "exit": true, "panic": true, "error": true, "dump": true,
-    };
-
-    const builtinTypes = {
-        "bool": true,
-        "string": true,
-        "i8": true,
-        "i16": true,
-        "int": true,
-        "i64": true,
-        "i128": true,
-        "u8": true,
-        "u16": true,
-        "u32": true,
-        "u64": true,
-        "u128": true,
-        "rune": true,
-        "f32": true,
-        "f64": true,
-        "isize": true,
-        "usize": true,
-        "voidptr": true,
-        "any": true,
-    };
-
-    const isOperatorChar = /[+\-*&^%:=<>!|\/]/;
-
-    let curPunc;
+interface ModeState {
+    context: Context
 
     /**
-     * @param stream
-     * @returns {string}
+     * Current tokenizer function or null.
      */
-    function eatIdentifier(stream) {
-        stream.eatWhile(/[\w\$_\xa1-\uffff]/);
-        return stream.current();
+    tokenize: Tokenizer | null
+
+    /**
+     * Current indentation level.
+     */
+    indention: number
+
+    /**
+     * Whenever current position is a start of line.
+     */
+    startOfLine: boolean
+}
+
+class Context {
+    constructor(
+        public indentation: number,
+        public column: number,
+        public type: string,
+        public align: boolean | null,
+        public prev?: Context) {
     }
 
-    function tokenBase(stream, state) {
-        const ch = stream.next();
+    /**
+     * Whenever current position inside a string.
+     */
+    insideString: boolean = false
 
-        if (state.context.insideString && ch === '}') {
-            stream.eat('}');
-            state.tokenize = tokenString(state.context.stringQuote);
-            return 'end-interpolation';
+    /**
+     * Current quotation mark.
+     * Valid only when insideString is true.
+     */
+    stringQuote: Quota | null = null
+
+    /**
+     * Whenever next token expected to be an import name.
+     * Used for highlighting import names in import statements.
+     */
+    expectedImportName: boolean = false
+
+    /**
+     * Set of imports in current context.
+     * Used for highlighting import names in code.
+     */
+    knownImports: Set<string> = new Set()
+}
+
+// @ts-ignore
+CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
+    const indentUnit = config.indentUnit ?? 0
+
+    const keywords: Set<string> = new Set<string>([
+        "as",
+        "asm",
+        "assert",
+        "atomic",
+        "break",
+        "const",
+        "continue",
+        "defer",
+        "else",
+        "enum",
+        "fn",
+        "for",
+        "go",
+        "goto",
+        "if",
+        "import",
+        "in",
+        "interface",
+        "is",
+        "isreftype",
+        "lock",
+        "match",
+        "module",
+        "mut",
+        "none",
+        "or",
+        "pub",
+        "return",
+        "rlock",
+        "select",
+        "shared",
+        "sizeof",
+        "static",
+        "struct",
+        "spawn",
+        "type",
+        "typeof",
+        "union",
+        "unsafe",
+        "volatile",
+        "__offsetof",
+    ])
+
+    const pseudo_keywords: Set<string> = new Set<string>([
+        "sql",
+        "chan",
+        "thread",
+    ])
+
+    const atoms: Set<string> = new Set<string>([
+        "true",
+        "false",
+        "nil",
+        "print",
+        "println",
+        "exit",
+        "panic",
+        "error",
+        "dump",
+    ])
+
+    const builtinTypes: Set<string> = new Set<string>([
+        "bool",
+        "string",
+        "i8",
+        "i16",
+        "int",
+        "i64",
+        "i128",
+        "u8",
+        "u16",
+        "u32",
+        "u64",
+        "u128",
+        "rune",
+        "f32",
+        "f64",
+        "isize",
+        "usize",
+        "voidptr",
+        "any",
+    ])
+
+    const isOperatorChar = /[+\-*&^%:=<>!|\/]/
+
+    let curPunc: string | null = null
+
+    function eatIdentifier(stream: StringStream): string {
+        stream.eatWhile(/[\w$_\xa1-\uffff]/)
+        return stream.current()
+    }
+
+    function tokenBase(stream: StringStream, state: ModeState): string | null {
+        const ch = stream.next()
+        if (ch === null) {
+            return null
         }
 
-        if (ch === '"' || ch === "'" || ch === "`") {
-            state.tokenize = tokenString(ch);
-            return state.tokenize(stream, state);
+        if (state.context.insideString && ch === "}") {
+            stream.eat("}")
+            state.tokenize = tokenString(state.context.stringQuote)
+            return "end-interpolation"
+        }
+
+        if (ch === "\"" || ch === "'" || ch === "`") {
+            state.tokenize = tokenString(ch)
+            return state.tokenize(stream, state)
         }
         if (/[\d.]/.test(ch)) {
             if (ch === ".") {
                 if (!stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/)) {
-                    return "operator";
+                    return "operator"
                 }
             } else if (ch === "0") {
-                stream.match(/^[xX][0-9a-fA-F]+/) || stream.match(/^0[0-7]+/);
+                stream.match(/^[xX][0-9a-fA-F]+/) || stream.match(/^0[0-7]+/)
             } else {
-                stream.match(/^[0-9]*\.?[0-9]*([eE][\-+]?[0-9]+)?/);
+                stream.match(/^[0-9]*\.?[0-9]*([eE][\-+]?[0-9]+)?/)
             }
-            return "number";
+            return "number"
         }
-        if (/[\[\]{}\(\),;\:\.]/.test(ch)) {
-            curPunc = ch;
-            return null;
+        if (/[\[\]{}(),;:.]/.test(ch)) {
+            curPunc = ch
+            return null
         }
         if (ch === "/") {
             if (stream.eat("*")) {
-                state.tokenize = tokenComment;
-                return tokenComment(stream, state);
+                state.tokenize = tokenComment
+                return tokenComment(stream, state)
             }
             if (stream.eat("/")) {
-                stream.skipToEnd();
-                return "comment";
+                stream.skipToEnd()
+                return "comment"
             }
         }
         if (isOperatorChar.test(ch)) {
-            stream.eatWhile(isOperatorChar);
-            return "operator";
+            stream.eatWhile(isOperatorChar)
+            return "operator"
         }
 
-        if (ch === '@') {
-            eatIdentifier(stream);
-            return "at-identifier";
+        if (ch === "@") {
+            eatIdentifier(stream)
+            return "at-identifier"
         }
 
-        if (ch === '$') {
-            const ident = eatIdentifier(stream).slice(1);
-            if (keywords.propertyIsEnumerable(ident)) {
-                return "keyword";
+        if (ch === "$") {
+            const ident = eatIdentifier(stream).slice(1)
+            if (keywords.has(ident)) {
+                return "keyword"
             }
 
-            return "compile-time-identifier";
+            return "compile-time-identifier"
         }
 
-        const cur = eatIdentifier(stream);
+        const cur = eatIdentifier(stream)
         if (cur === "import") {
-            state.expectedImportName = true;
+            state.context.expectedImportName = true
         }
 
-        if (keywords.propertyIsEnumerable(cur)) return "keyword";
-        if (pseudo_keywords.propertyIsEnumerable(cur)) return "keyword";
-        if (atoms.propertyIsEnumerable(cur)) return "atom";
-        if (builtinTypes.propertyIsEnumerable(cur)) return "builtin";
+        if (keywords.has(cur)) return "keyword"
+        if (pseudo_keywords.has(cur)) return "keyword"
+        if (atoms.has(cur)) return "atom"
+        if (builtinTypes.has(cur)) return "builtin"
 
         if (cur[0].toUpperCase() === cur[0]) {
-            return "type";
+            return "type"
         }
 
         const next = stream.peek()
-        if (next === '(' || next === '<') {
-            return "function";
+        if (next === "(" || next === "<") {
+            return "function"
         }
 
-        if (next === '[') {
+        if (next === "[") {
             stream.next()
             const after = stream.next()
             stream.backUp(2)
-            if (after.match(/[A-Z]/i)) {
-                return "function";
+            if (after != null && after.match(/[A-Z]/i)) {
+                return "function"
             }
         }
 
@@ -181,13 +245,13 @@ CodeMirror.defineMode("v", function (config) {
         // example:
         //   import foo.boo
         //              ^^^ - only this part will be highlighted
-        if (state.expectedImportName && !stream.peek(".")) {
-            state.expectedImportName = false;
-            if (state.knownImports === undefined) {
-                state.knownImports = {};
+        if (state.context.expectedImportName && stream.peek() != ".") {
+            state.context.expectedImportName = false
+            if (state.context.knownImports === undefined) {
+                state.context.knownImports = new Set()
             }
-            state.knownImports[cur] = true;
-            return "import-name";
+            state.context.knownImports.add(cur)
+            return "import-name"
         }
 
         // highlight only identifier with dot after it
@@ -197,196 +261,196 @@ CodeMirror.defineMode("v", function (config) {
         //
         //   foo.bar
         //   ^^^ - only this part will be highlighted
-        if (state.knownImports !== undefined && state.knownImports[cur] && stream.peek(".")) {
-            return "import-name";
-        }
-
-        return "variable";
-    }
-
-    function tokenLongInterpolation(stream, state) {
-        if (stream.match("}")) {
-            state.tokenize = tokenString(state.context.stringQuote);
-            return 'end-interpolation';
-        }
-        state.tokenize = tokenBase;
-        return state.tokenize(stream, state);
-    }
-
-    function tokenShortInterpolation(stream, state) {
-        const ch = stream.next();
-        if (ch === ' ') {
-            state.context.afterDotInsideInterpolation = false;
-            state.tokenize = tokenString(state.context.stringQuote);
-            return state.tokenize(stream, state);
-        }
-        if (ch === '.') {
-            return "operator";
-        }
-
-        const ident = eatIdentifier(stream);
-        if (ident[0].toLowerCase() === ident[0].toUpperCase()) {
-            state.tokenize = tokenString(state.context.stringQuote);
-            return state.tokenize(stream, state);
-        }
-
-        const next = stream.next();
-        stream.backUp(1)
-        if (next === '.') {
-            state.tokenize = tokenShortInterpolation;
-            state.context.afterDotInsideInterpolation = true
-        } else {
-            state.tokenize = tokenString(state.context.stringQuote);
-        }
-
-        if (state.context.afterDotInsideInterpolation) {
-            return "property";
+        if (state.context.knownImports.has(cur) && stream.peek() == ".") {
+            return "import-name"
         }
 
         return "variable"
     }
 
-    function tokenNextInterpolation(stream, state) {
-        let next = stream.next()
-        if (next === '$' && stream.eat('{')) {
-            state.tokenize = tokenLongInterpolation;
-            return "start-interpolation";
+    function tokenLongInterpolation(stream: StringStream, state: ModeState) {
+        if (stream.match("}")) {
+            state.tokenize = tokenString(state.context.stringQuote)
+            return "end-interpolation"
         }
-        if (next === '$') {
-            state.tokenize = tokenShortInterpolation;
-            return "start-interpolation";
-        }
-
-        return "string";
+        state.tokenize = tokenBase
+        return state.tokenize(stream, state)
     }
 
-    function tokenString(quote) {
-        return function (stream, state) {
-            state.context.insideString = true;
-            state.context.stringQuote = quote;
+    function tokenShortInterpolation(stream: StringStream, state: ModeState) {
+        const ch = stream.next()
+        if (ch === " ") {
+            state.tokenize = tokenString(state.context.stringQuote)
+            return state.tokenize(stream, state)
+        }
+        if (ch === ".") {
+            return "operator"
+        }
 
-            let escaped = false;
-            let next = '';
-            let end = false;
+        const ident = eatIdentifier(stream)
+        if (ident[0].toLowerCase() === ident[0].toUpperCase()) {
+            state.tokenize = tokenString(state.context.stringQuote)
+            return state.tokenize(stream, state)
+        }
+
+        const next = stream.next()
+        stream.backUp(1)
+        if (next === ".") {
+            state.tokenize = tokenShortInterpolation
+        } else {
+            state.tokenize = tokenString(state.context.stringQuote)
+        }
+
+        return "variable"
+    }
+
+    function tokenNextInterpolation(stream: StringStream, state: ModeState) {
+        let next = stream.next()
+        if (next === "$" && stream.eat("{")) {
+            state.tokenize = tokenLongInterpolation
+            return "start-interpolation"
+        }
+        if (next === "$") {
+            state.tokenize = tokenShortInterpolation
+            return "start-interpolation"
+        }
+
+        return "string"
+    }
+
+    function tokenString(quote: Quota | null) {
+        return function (stream: StringStream, state: ModeState) {
+            state.context.insideString = true
+            state.context.stringQuote = quote
+
+            let next: string | null = ""
+            let escaped = false
+            let end = false
 
             while ((next = stream.next()) != null) {
                 if (next === quote && !escaped) {
-                    end = true;
-                    break;
+                    end = true
+                    break
                 }
-                if (next === '$' && !escaped && stream.eat('{')) {
-                    state.tokenize = tokenNextInterpolation;
+                if (next === "$" && !escaped && stream.eat("{")) {
+                    state.tokenize = tokenNextInterpolation
                     stream.backUp(2)
-                    return "string";
+                    return "string"
                 }
-                if (next === '$' && !escaped) {
-                    state.tokenize = tokenNextInterpolation;
+                if (next === "$" && !escaped) {
+                    state.tokenize = tokenNextInterpolation
                     stream.backUp(1)
-                    return "string";
+                    return "string"
                 }
-                escaped = !escaped && next === "\\";
+                escaped = !escaped && next === "\\"
             }
 
             if (end || escaped) {
-                state.tokenize = tokenBase;
+                state.tokenize = tokenBase
             }
 
-            state.context.insideString = false;
-            state.context.stringQuote = null;
-            return "string";
-        };
+            state.context.insideString = false
+            state.context.stringQuote = null
+            return "string"
+        }
     }
 
-    function tokenComment(stream, state) {
-        let maybeEnd = false, ch;
+    function tokenComment(stream: StringStream, state: ModeState) {
+        let maybeEnd = false
+        let ch: string | null
         while (ch = stream.next()) {
             if (ch === "/" && maybeEnd) {
-                state.tokenize = tokenBase;
-                break;
+                state.tokenize = tokenBase
+                break
             }
-            maybeEnd = (ch === "*");
+            maybeEnd = (ch === "*")
         }
-        return "comment";
+        return "comment"
     }
 
-    function Context(indented, column, type, align, prev?: any) {
-        this.indented = indented;
-        this.column = column;
-        this.type = type;
-        this.align = align;
-        this.prev = prev;
-        this.insideString = false;
-        this.stringQuote = null;
-        this.afterDotInsideInterpolation = true;
-        this.expectedImportName = true;
-        this.knownImports = {"": true};
+    function pushContext(state: ModeState, column: number, type: string) {
+        return state.context = new Context(state.indention, column, type, null, state.context)
     }
 
-    function pushContext(state, col, type) {
-        return state.context = new Context(state.indented, col, type, null, state.context);
-    }
-
-    function popContext(state) {
-        if (!state.context.prev) return;
-        const t = state.context.type;
+    function popContext(state: ModeState) {
+        if (!state.context.prev) return
+        const t = state.context.type
         if (t === ")" || t === "]" || t === "}")
-            state.indented = state.context.indented;
-        return state.context = state.context.prev;
+            state.indention = state.context.indentation
+        state.context = state.context.prev
+        return state.context
     }
 
     return {
-        startState: function () {
+        startState: function (): ModeState {
             return {
                 tokenize: null,
-                context: new Context(indentUnit, 0, "top", false),
-                indented: 0,
-                startOfLine: true
-            };
+                context: new Context(0, 0, "top", false),
+                indention: 0,
+                startOfLine: true,
+            }
         },
 
-        token: function (stream, state) {
-            const ctx = state.context;
+        token: function (stream: StringStream, state: ModeState): string | null {
+            const ctx = state.context
             if (stream.sol()) {
-                if (ctx.align == null) ctx.align = false;
-                state.indented = stream.indentation();
-                state.startOfLine = true;
-                if (ctx.type === "case") ctx.type = "}";
+                if (ctx.align == null) {
+                    ctx.align = false
+                }
+                state.indention = stream.indentation()
+                state.startOfLine = true
             }
-            if (stream.eatSpace()) return null;
-            curPunc = null;
-            const style = (state.tokenize || tokenBase)(stream, state);
-            if (style === "comment") return style;
-            if (ctx.align == null) ctx.align = true;
+            if (stream.eatSpace()) {
+                return null
+            }
+            curPunc = null
+            const style = (state.tokenize || tokenBase)(stream, state)
+            if (style === "comment") {
+                return style
+            }
+            if (ctx.align == null) {
+                ctx.align = true
+            }
 
-            if (curPunc === "{") pushContext(state, stream.column(), "}");
-            else if (curPunc === "[") pushContext(state, stream.column(), "]");
-            else if (curPunc === "(") pushContext(state, stream.column(), ")");
-            else if (curPunc === "case") ctx.type = "case";
-            else if (curPunc === "}" && ctx.type === "}") popContext(state);
-            else if (curPunc === ctx.type) popContext(state);
-            state.startOfLine = false;
-            return style;
+            if (curPunc === "{") pushContext(state, stream.column(), "}")
+            else if (curPunc === "[") pushContext(state, stream.column(), "]")
+            else if (curPunc === "(") pushContext(state, stream.column(), ")")
+            else if (curPunc === "}" && ctx.type === "}") popContext(state)
+            else if (curPunc === ctx.type) popContext(state)
+            state.startOfLine = false
+            return style
         },
 
-        indent: function (state, textAfter) {
-            if (state.tokenize !== tokenBase && state.tokenize != null) return CodeMirror.Pass;
-            const ctx = state.context, firstChar = textAfter && textAfter.charAt(0);
-            if (ctx.type === "case" && /^(?:case|default)\b/.test(textAfter)) {
-                state.context.type = "}";
-                return ctx.indented;
+        indent: function (state: ModeState, textAfter: string): number {
+            if (state.tokenize !== tokenBase && state.tokenize != null) {
+                return 0
             }
-            const closing = firstChar === ctx.type;
-            if (ctx.align) return ctx.column + (closing ? 0 : 1);
-            else return ctx.indented + (closing ? 0 : indentUnit);
+
+            if (state.context.type == "top") {
+                return 0
+            }
+
+            const ctx = state.context
+            const firstChar = textAfter.charAt(0)
+
+            const closing = firstChar === ctx.type
+            if (ctx.align) {
+                return ctx.column + (closing ? 0 : 1)
+            }
+
+            return ctx.indentation + (closing ? 0 : indentUnit)
         },
 
+        // @ts-ignore
         electricChars: "{}):",
+        // @ts-ignore
         closeBrackets: "()[]{}''\"\"``",
         fold: "brace",
         blockCommentStart: "/*",
         blockCommentEnd: "*/",
         lineComment: "//",
-    };
-});
+    }
+})
 
-CodeMirror.defineMIME("text/x-v", "v");
+// @ts-ignore
+CodeMirror.defineMIME("text/x-v", "v")
