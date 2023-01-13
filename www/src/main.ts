@@ -1,5 +1,5 @@
 import "./v"
-import "./v_hint"
+import "./v-hint"
 
 import { Playground, PlaygroundDefaultAction } from "./Playground"
 

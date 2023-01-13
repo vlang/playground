@@ -1,4 +1,611 @@
-"use strict";(()=>{var le=Object.defineProperty;var ue=(a,e,t)=>e in a?le(a,e,{enumerable:!0,configurable:!0,writable:!0,value:t}):a[e]=t;var h=(a,e,t)=>(ue(a,typeof e!="symbol"?e+"":e,t),t);CodeMirror.defineMode("v",function(a){let e=a.indentUnit,t={as:!0,asm:!0,assert:!0,atomic:!0,break:!0,const:!0,continue:!0,defer:!0,else:!0,enum:!0,fn:!0,for:!0,go:!0,goto:!0,if:!0,import:!0,in:!0,interface:!0,is:!0,isreftype:!0,lock:!0,match:!0,module:!0,mut:!0,none:!0,or:!0,pub:!0,return:!0,rlock:!0,select:!0,shared:!0,sizeof:!0,static:!0,struct:!0,spawn:!0,type:!0,typeof:!0,union:!0,unsafe:!0,volatile:!0,__offsetof:!0},n={sql:!0,chan:!0,thread:!0},l={true:!0,false:!0,nil:!0,print:!0,println:!0,exit:!0,panic:!0,error:!0,dump:!0},u={bool:!0,string:!0,i8:!0,i16:!0,int:!0,i64:!0,i128:!0,u8:!0,u16:!0,u32:!0,u64:!0,u128:!0,rune:!0,f32:!0,f64:!0,isize:!0,usize:!0,voidptr:!0,any:!0},o=/[+\-*&^%:=<>!|\/]/,d;function f(i){return i.eatWhile(/[\w\$_\xa1-\uffff]/),i.current()}function g(i,r){let s=i.next();if(r.context.insideString&&s==="}")return i.eat("}"),r.tokenize=T(r.context.stringQuote),"end-interpolation";if(s==='"'||s==="'"||s==="`")return r.tokenize=T(s),r.tokenize(i,r);if(/[\d.]/.test(s)){if(s==="."){if(!i.match(/^[0-9]+([eE][\-+]?[0-9]+)?/))return"operator"}else s==="0"?i.match(/^[xX][0-9a-fA-F]+/)||i.match(/^0[0-7]+/):i.match(/^[0-9]*\.?[0-9]*([eE][\-+]?[0-9]+)?/);return"number"}if(/[\[\]{}\(\),;\:\.]/.test(s))return d=s,null;if(s==="/"){if(i.eat("*"))return r.tokenize=Z,Z(i,r);if(i.eat("/"))return i.skipToEnd(),"comment"}if(o.test(s))return i.eatWhile(o),"operator";if(s==="@")return f(i),"at-identifier";if(s==="$"){let E=f(i).slice(1);return t.propertyIsEnumerable(E)?"keyword":"compile-time-identifier"}let c=f(i);if(c==="import"&&(r.expectedImportName=!0),t.propertyIsEnumerable(c)||n.propertyIsEnumerable(c))return"keyword";if(l.propertyIsEnumerable(c))return"atom";if(u.propertyIsEnumerable(c))return"builtin";if(c[0].toUpperCase()===c[0])return"type";let m=i.peek();if(m==="("||m==="<")return"function";if(m==="["){i.next();let E=i.next();if(i.backUp(2),E.match(/[A-Z]/i))return"function"}return r.expectedImportName&&!i.peek(".")?(r.expectedImportName=!1,r.knownImports===void 0&&(r.knownImports={}),r.knownImports[c]=!0,"import-name"):r.knownImports!==void 0&&r.knownImports[c]&&i.peek(".")?"import-name":"variable"}function b(i,r){return i.match("}")?(r.tokenize=T(r.context.stringQuote),"end-interpolation"):(r.tokenize=g,r.tokenize(i,r))}function P(i,r){let s=i.next();if(s===" ")return r.context.afterDotInsideInterpolation=!1,r.tokenize=T(r.context.stringQuote),r.tokenize(i,r);if(s===".")return"operator";let c=f(i);if(c[0].toLowerCase()===c[0].toUpperCase())return r.tokenize=T(r.context.stringQuote),r.tokenize(i,r);let m=i.next();return i.backUp(1),m==="."?(r.tokenize=P,r.context.afterDotInsideInterpolation=!0):r.tokenize=T(r.context.stringQuote),r.context.afterDotInsideInterpolation?"property":"variable"}function W(i,r){let s=i.next();return s==="$"&&i.eat("{")?(r.tokenize=b,"start-interpolation"):s==="$"?(r.tokenize=P,"start-interpolation"):"string"}function T(i){return function(r,s){s.context.insideString=!0,s.context.stringQuote=i;let c=!1,m="",E=!1;for(;(m=r.next())!=null;){if(m===i&&!c){E=!0;break}if(m==="$"&&!c&&r.eat("{"))return s.tokenize=W,r.backUp(2),"string";if(m==="$"&&!c)return s.tokenize=W,r.backUp(1),"string";c=!c&&m==="\\"}return(E||c)&&(s.tokenize=g),s.context.insideString=!1,s.context.stringQuote=null,"string"}}function Z(i,r){let s=!1,c;for(;c=i.next();){if(c==="/"&&s){r.tokenize=g;break}s=c==="*"}return"comment"}function J(i,r,s,c,m){this.indented=i,this.column=r,this.type=s,this.align=c,this.prev=m,this.insideString=!1,this.stringQuote=null,this.afterDotInsideInterpolation=!0,this.expectedImportName=!0,this.knownImports={"":!0}}function V(i,r,s){return i.context=new J(i.indented,r,s,null,i.context)}function X(i){if(!i.context.prev)return;let r=i.context.type;return(r===")"||r==="]"||r==="}")&&(i.indented=i.context.indented),i.context=i.context.prev}return{startState:function(){return{tokenize:null,context:new J(e,0,"top",!1),indented:0,startOfLine:!0}},token:function(i,r){let s=r.context;if(i.sol()&&(s.align==null&&(s.align=!1),r.indented=i.indentation(),r.startOfLine=!0,s.type==="case"&&(s.type="}")),i.eatSpace())return null;d=null;let c=(r.tokenize||g)(i,r);return c==="comment"||(s.align==null&&(s.align=!0),d==="{"?V(r,i.column(),"}"):d==="["?V(r,i.column(),"]"):d==="("?V(r,i.column(),")"):d==="case"?s.type="case":(d==="}"&&s.type==="}"||d===s.type)&&X(r),r.startOfLine=!1),c},indent:function(i,r){if(i.tokenize!==g&&i.tokenize!=null)return CodeMirror.Pass;let s=i.context,c=r&&r.charAt(0);if(s.type==="case"&&/^(?:case|default)\b/.test(r))return i.context.type="}",s.indented;let m=c===s.type;return s.align?s.column+(m?0:1):s.indented+(m?0:e)},electricChars:"{}):",closeBrackets:"()[]{}''\"\"``",fold:"brace",blockCommentStart:"/*",blockCommentEnd:"*/",lineComment:"//"}});CodeMirror.defineMIME("text/x-v","v");var U=CodeMirror.Pos,ee="as asm assert atomic break const continue defer else enum fn for go goto if import in interface is isreftype lock match module mut none or pub return rlock select shared sizeof static struct spawn type typeof union unsafe volatile __offsetof".split(" "),ce="sql".split(" "),de="true false nil print println exit panic error dump".split(" "),he="bool string i8 i16 int i64 i128 u8 u16 u32 u64 u128 rune f32 f64 isize usize voidptr any".split(" "),me=["arrays","benchmark","bitfield","cli","clipboard","compress","context","crypto","darwin","datatypes","dl","dlmalloc","encoding","eventbus","flag","fontstash","gg","gx","hash","io","js","json","log","math","mssql","mysql","net","orm","os","pg","picoev","picohttpparser","rand","readline","regex","runtime","semver","sokol","sqlite","stbi","strconv","strings","sync","szip","term","time","toml","v","vweb","x"];function pe(a,e){if(!Array.prototype.indexOf){let t=a.length;for(;t--;)if(a[t]===e)return!0;return!1}return a.indexOf(e)!==-1}function fe(a,e,t,n){let l=[],u=a.getCursor(),o=t(a,u);if(o.string.trim()===""){let b=o.string.length,P=t(a,U(u.line,u.ch-b-1));l.push(P)}let d=o.string.length,f=t(a,U(u.line,u.ch-d));if(o.string==="."&&l.push(o),f.string==="."&&l.push(f),/\b(?:string|comment)\b/.test(o.type))return;let g=CodeMirror.innerMode(a.getMode(),o.state);if(g.mode.helperType!=="json")return o.state=g.state,/^[\w$_]*$/.test(o.string)?o.end>u.ch&&(o.end=u.ch,o.string=o.string.slice(0,u.ch-o.start)):o={start:u.ch,end:u.ch,string:"",state:o.state,type:o.string==="."?"property":null},{list:ye(o,l,e,n),from:U(u.line,o.start),to:U(u.line,o.end)}}function ge(a,e){return fe(a,ee,(t,n)=>t.getTokenAt(n),e)}function ye(a,e,t){let n=[],l=a.string;function u(o){let d=o.text;d.lastIndexOf(l,0)===0&&!pe(n,d)&&n.push(o)}if(e&&e.length){let o=e.pop();if(o.type==="keyword"&&o.string==="import")return me.forEach(d=>{u({text:d,displayText:d,className:"completion-module"})}),n;if(o.string===".")return[]}return ee.forEach(o=>{u({text:o,displayText:o,className:"completion-keyword"})}),ce.forEach(o=>{u({text:o,displayText:o,className:"completion-keyword"})}),de.forEach(o=>{u({text:o,displayText:o,className:"completion-atom"})}),he.forEach(o=>{u({text:o,displayText:o,className:"completion-type"})}),n}CodeMirror.registerHelper("hint","v",ge);var p=class{hash;constructor(e){this.hash=e}saveCode(e){}getCode(e){return this.getSharedCode(e)}getSharedCode(e){let t=new FormData;t.append("hash",this.hash),fetch("/query",{method:"post",body:t}).then(n=>n.text()).then(n=>{e(n)}).catch(n=>{console.log(n)})}};h(p,"QUERY_PARAM_NAME","query"),h(p,"CODE_NOT_FOUND","Not found.");var R=class{constructor(e){this.text=e}saveCode(e){}getCode(e){e(this.text)}};var M=class{saveCode(e){window.localStorage.setItem(M.LOCAL_STORAGE_KEY,e)}getCode(e){let t=window.localStorage.getItem(M.LOCAL_STORAGE_KEY);if(t==null){e(M.WELCOME_CODE);return}e(t)}},C=M;h(C,"LOCAL_STORAGE_KEY","code"),h(C,"WELCOME_CODE",`
+"use strict";
+(() => {
+  // src/v.ts
+  var Context = class {
+    constructor(indentation, column, type, align, prev) {
+      this.indentation = indentation;
+      this.column = column;
+      this.type = type;
+      this.align = align;
+      this.prev = prev;
+      /**
+       * Whenever current position inside a string.
+       */
+      this.insideString = false;
+      /**
+       * Current quotation mark.
+       * Valid only when insideString is true.
+       */
+      this.stringQuote = null;
+      /**
+       * Whenever next token expected to be an import name.
+       * Used for highlighting import names in import statements.
+       */
+      this.expectedImportName = false;
+      /**
+       * Set of imports in current context.
+       * Used for highlighting import names in code.
+       */
+      this.knownImports = /* @__PURE__ */ new Set();
+    }
+  };
+  var keywords = /* @__PURE__ */ new Set([
+    "as",
+    "asm",
+    "assert",
+    "atomic",
+    "break",
+    "const",
+    "continue",
+    "defer",
+    "else",
+    "enum",
+    "fn",
+    "for",
+    "go",
+    "goto",
+    "if",
+    "import",
+    "in",
+    "interface",
+    "is",
+    "isreftype",
+    "lock",
+    "match",
+    "module",
+    "mut",
+    "none",
+    "or",
+    "pub",
+    "return",
+    "rlock",
+    "select",
+    "shared",
+    "sizeof",
+    "static",
+    "struct",
+    "spawn",
+    "type",
+    "typeof",
+    "union",
+    "unsafe",
+    "volatile",
+    "__offsetof"
+  ]);
+  var pseudoKeywords = /* @__PURE__ */ new Set([
+    "sql",
+    "chan",
+    "thread"
+  ]);
+  var atoms = /* @__PURE__ */ new Set([
+    "true",
+    "false",
+    "nil",
+    "print",
+    "println",
+    "exit",
+    "panic",
+    "error",
+    "dump"
+  ]);
+  var builtinTypes = /* @__PURE__ */ new Set([
+    "bool",
+    "string",
+    "i8",
+    "i16",
+    "int",
+    "i64",
+    "i128",
+    "u8",
+    "u16",
+    "u32",
+    "u64",
+    "u128",
+    "rune",
+    "f32",
+    "f64",
+    "isize",
+    "usize",
+    "voidptr",
+    "any"
+  ]);
+  CodeMirror.defineMode("v", (config) => {
+    var _a;
+    const indentUnit = (_a = config.indentUnit) != null ? _a : 0;
+    const isOperatorChar = /[+\-*&^%:=<>!|\/]/;
+    let curPunc = null;
+    function eatIdentifier(stream) {
+      stream.eatWhile(/[\w$_\xa1-\uffff]/);
+      return stream.current();
+    }
+    function tokenBase(stream, state) {
+      const ch = stream.next();
+      if (ch === null) {
+        return null;
+      }
+      if (state.context.insideString && ch === "}") {
+        stream.eat("}");
+        state.tokenize = tokenString(state.context.stringQuote);
+        return "end-interpolation";
+      }
+      if (ch === '"' || ch === "'" || ch === "`") {
+        state.tokenize = tokenString(ch);
+        return state.tokenize(stream, state);
+      }
+      if (/[\d.]/.test(ch)) {
+        if (ch === ".") {
+          if (!stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/)) {
+            return "operator";
+          }
+        } else if (ch === "0") {
+          stream.match(/^[xX][0-9a-fA-F]+/) || stream.match(/^0[0-7]+/);
+        } else {
+          stream.match(/^[0-9]*\.?[0-9]*([eE][\-+]?[0-9]+)?/);
+        }
+        return "number";
+      }
+      if (/[\[\]{}(),;:.]/.test(ch)) {
+        curPunc = ch;
+        return null;
+      }
+      if (ch === "/") {
+        if (stream.eat("*")) {
+          state.tokenize = tokenComment;
+          return tokenComment(stream, state);
+        }
+        if (stream.eat("/")) {
+          stream.skipToEnd();
+          return "comment";
+        }
+      }
+      if (isOperatorChar.test(ch)) {
+        stream.eatWhile(isOperatorChar);
+        return "operator";
+      }
+      if (ch === "@") {
+        eatIdentifier(stream);
+        return "at-identifier";
+      }
+      if (ch === "$") {
+        const ident = eatIdentifier(stream).slice(1);
+        if (keywords.has(ident)) {
+          return "keyword";
+        }
+        return "compile-time-identifier";
+      }
+      const cur = eatIdentifier(stream);
+      if (cur === "import") {
+        state.context.expectedImportName = true;
+      }
+      if (keywords.has(cur))
+        return "keyword";
+      if (pseudoKeywords.has(cur))
+        return "keyword";
+      if (atoms.has(cur))
+        return "atom";
+      if (builtinTypes.has(cur))
+        return "builtin";
+      if (cur[0].toUpperCase() === cur[0]) {
+        return "type";
+      }
+      const next = stream.peek();
+      if (next === "(" || next === "<") {
+        return "function";
+      }
+      if (next === "[") {
+        stream.next();
+        const after = stream.next();
+        stream.backUp(2);
+        if (after != null && after.match(/[A-Z]/i)) {
+          return "function";
+        }
+      }
+      if (state.context.expectedImportName && stream.peek() != ".") {
+        state.context.expectedImportName = false;
+        if (state.context.knownImports === void 0) {
+          state.context.knownImports = /* @__PURE__ */ new Set();
+        }
+        state.context.knownImports.add(cur);
+        return "import-name";
+      }
+      if (state.context.knownImports.has(cur) && stream.peek() == ".") {
+        return "import-name";
+      }
+      return "variable";
+    }
+    function tokenLongInterpolation(stream, state) {
+      if (stream.match("}")) {
+        state.tokenize = tokenString(state.context.stringQuote);
+        return "end-interpolation";
+      }
+      state.tokenize = tokenBase;
+      return state.tokenize(stream, state);
+    }
+    function tokenShortInterpolation(stream, state) {
+      const ch = stream.next();
+      if (ch === " ") {
+        state.tokenize = tokenString(state.context.stringQuote);
+        return state.tokenize(stream, state);
+      }
+      if (ch === ".") {
+        return "operator";
+      }
+      const ident = eatIdentifier(stream);
+      if (ident[0].toLowerCase() === ident[0].toUpperCase()) {
+        state.tokenize = tokenString(state.context.stringQuote);
+        return state.tokenize(stream, state);
+      }
+      const next = stream.next();
+      stream.backUp(1);
+      if (next === ".") {
+        state.tokenize = tokenShortInterpolation;
+      } else {
+        state.tokenize = tokenString(state.context.stringQuote);
+      }
+      return "variable";
+    }
+    function tokenNextInterpolation(stream, state) {
+      let next = stream.next();
+      if (next === "$" && stream.eat("{")) {
+        state.tokenize = tokenLongInterpolation;
+        return "start-interpolation";
+      }
+      if (next === "$") {
+        state.tokenize = tokenShortInterpolation;
+        return "start-interpolation";
+      }
+      return "string";
+    }
+    function tokenString(quote) {
+      return function(stream, state) {
+        state.context.insideString = true;
+        state.context.stringQuote = quote;
+        let next = "";
+        let escaped = false;
+        let end = false;
+        while ((next = stream.next()) != null) {
+          if (next === quote && !escaped) {
+            end = true;
+            break;
+          }
+          if (next === "$" && !escaped && stream.eat("{")) {
+            state.tokenize = tokenNextInterpolation;
+            stream.backUp(2);
+            return "string";
+          }
+          if (next === "$" && !escaped) {
+            state.tokenize = tokenNextInterpolation;
+            stream.backUp(1);
+            return "string";
+          }
+          escaped = !escaped && next === "\\";
+        }
+        if (end || escaped) {
+          state.tokenize = tokenBase;
+        }
+        state.context.insideString = false;
+        state.context.stringQuote = null;
+        return "string";
+      };
+    }
+    function tokenComment(stream, state) {
+      let maybeEnd = false;
+      let ch;
+      while (ch = stream.next()) {
+        if (ch === "/" && maybeEnd) {
+          state.tokenize = tokenBase;
+          break;
+        }
+        maybeEnd = ch === "*";
+      }
+      return "comment";
+    }
+    function pushContext(state, column, type) {
+      return state.context = new Context(state.indention, column, type, null, state.context);
+    }
+    function popContext(state) {
+      if (!state.context.prev)
+        return;
+      const t = state.context.type;
+      if (t === ")" || t === "]" || t === "}")
+        state.indention = state.context.indentation;
+      state.context = state.context.prev;
+      return state.context;
+    }
+    return {
+      startState: function() {
+        return {
+          tokenize: null,
+          context: new Context(0, 0, "top", false),
+          indention: 0,
+          startOfLine: true
+        };
+      },
+      token: function(stream, state) {
+        const ctx = state.context;
+        if (stream.sol()) {
+          if (ctx.align == null) {
+            ctx.align = false;
+          }
+          state.indention = stream.indentation();
+          state.startOfLine = true;
+        }
+        if (stream.eatSpace()) {
+          return null;
+        }
+        curPunc = null;
+        const style = (state.tokenize || tokenBase)(stream, state);
+        if (style === "comment") {
+          return style;
+        }
+        if (ctx.align == null) {
+          ctx.align = true;
+        }
+        if (curPunc === "{")
+          pushContext(state, stream.column(), "}");
+        else if (curPunc === "[")
+          pushContext(state, stream.column(), "]");
+        else if (curPunc === "(")
+          pushContext(state, stream.column(), ")");
+        else if (curPunc === "}" && ctx.type === "}")
+          popContext(state);
+        else if (curPunc === ctx.type)
+          popContext(state);
+        state.startOfLine = false;
+        return style;
+      },
+      indent: function(state, textAfter) {
+        if (state.tokenize !== tokenBase && state.tokenize != null) {
+          return 0;
+        }
+        if (state.context.type == "top") {
+          return 0;
+        }
+        const ctx = state.context;
+        const firstChar = textAfter.charAt(0);
+        const closing = firstChar === ctx.type;
+        if (ctx.align) {
+          return ctx.column + (closing ? 0 : 1);
+        }
+        return ctx.indentation + (closing ? 0 : indentUnit);
+      },
+      // @ts-ignore
+      electricChars: "{}):",
+      // @ts-ignore
+      closeBrackets: "()[]{}''\"\"``",
+      fold: "brace",
+      blockCommentStart: "/*",
+      blockCommentEnd: "*/",
+      lineComment: "//"
+    };
+  });
+  CodeMirror.defineMIME("text/x-v", "v");
+
+  // src/v-hint.ts
+  var Pos = CodeMirror.Pos;
+  var baseModules = [
+    "arrays",
+    "benchmark",
+    "bitfield",
+    "cli",
+    "clipboard",
+    "compress",
+    "context",
+    "crypto",
+    "darwin",
+    "datatypes",
+    "dl",
+    "dlmalloc",
+    "encoding",
+    "eventbus",
+    "flag",
+    "fontstash",
+    "gg",
+    "gx",
+    "hash",
+    "io",
+    "js",
+    "json",
+    "log",
+    "math",
+    "mssql",
+    "mysql",
+    "net",
+    "orm",
+    "os",
+    "pg",
+    "picoev",
+    "picohttpparser",
+    "rand",
+    "readline",
+    "regex",
+    "runtime",
+    "semver",
+    "sokol",
+    "sqlite",
+    "stbi",
+    "strconv",
+    "strings",
+    "sync",
+    "szip",
+    "term",
+    "time",
+    "toml",
+    "v",
+    "vweb",
+    "x"
+  ];
+  function computeCompletionVariants(editor) {
+    var _a;
+    let context = [];
+    const cur = editor.getCursor();
+    let token = editor.getTokenAt(cur);
+    const knownImports = /* @__PURE__ */ new Set();
+    for (let i = 0; i < Math.min(editor.lineCount(), 10); i++) {
+      const lineTokens2 = editor.getLineTokens(i).filter((tkn) => tkn.type != null);
+      if (lineTokens2.length > 0 && lineTokens2[0].string === "import") {
+        knownImports.add(lineTokens2[lineTokens2.length - 1].string);
+      }
+    }
+    const lineTokens = editor.getLineTokens(cur.line);
+    if (lineTokens.length > 0 && lineTokens[0].string === "import") {
+      context.push(lineTokens[0]);
+    }
+    const len = token.string.length;
+    const prevToken = editor.getTokenAt(Pos(cur.line, cur.ch - len));
+    if (token.string === ".") {
+      context.push(token);
+    }
+    if (prevToken.string === ".") {
+      context.push(prevToken);
+    }
+    if (/\b(?:string|comment)\b/.test((_a = token.type) != null ? _a : ""))
+      return null;
+    if (!/^[\w$_]*$/.test(token.string)) {
+      token = {
+        start: cur.ch,
+        end: cur.ch,
+        string: "",
+        state: token.state,
+        type: token.string === "." ? "property" : null
+      };
+    } else if (token.end > cur.ch) {
+      token.end = cur.ch;
+      token.string = token.string.slice(0, cur.ch - token.start);
+    }
+    return {
+      list: getCompletions(token, knownImports, context),
+      from: Pos(cur.line, token.start),
+      to: Pos(cur.line, token.end)
+    };
+  }
+  function getCompletions(token, knownImports, context) {
+    const variants = [];
+    const tokenValue = token.string;
+    function addCompletionVariant(variant) {
+      const variantText = variant.text;
+      if (variantText.indexOf(tokenValue) === -1) {
+        return;
+      }
+      const alreadyContains = variants.find((f) => f.text === variantText);
+      if (!alreadyContains) {
+        variants.push(variant);
+      }
+    }
+    if (context && context.length) {
+      const lastToken = context.pop();
+      if (lastToken !== void 0) {
+        if (lastToken.type === "keyword" && lastToken.string === "import") {
+          baseModules.forEach((text) => {
+            addCompletionVariant({
+              text,
+              displayText: text,
+              className: "completion-module"
+            });
+          });
+          return variants;
+        }
+        if (lastToken.string === ".") {
+          return [];
+        }
+      }
+    }
+    knownImports.forEach((text) => {
+      addCompletionVariant({
+        text,
+        displayText: text,
+        className: "completion-module"
+      });
+    });
+    keywords.forEach((text) => {
+      addCompletionVariant({
+        text: text + " ",
+        displayText: text,
+        className: "completion-keyword"
+      });
+    });
+    pseudoKeywords.forEach((text) => {
+      addCompletionVariant({
+        text: text + " ",
+        displayText: text,
+        className: "completion-keyword"
+      });
+    });
+    atoms.forEach((text) => {
+      addCompletionVariant({
+        text,
+        displayText: text,
+        className: "completion-atom"
+      });
+    });
+    builtinTypes.forEach((text) => {
+      addCompletionVariant({
+        text,
+        displayText: text,
+        className: "completion-type"
+      });
+    });
+    return variants;
+  }
+  var hintHelper = (editor) => computeCompletionVariants(editor);
+  CodeMirror.registerHelper("hint", "v", hintHelper);
+
+  // src/Repositories/SharedCodeRepository.ts
+  var SharedCodeRepository = class {
+    constructor(hash) {
+      this.hash = hash;
+    }
+    saveCode(_) {
+    }
+    getCode(onReady) {
+      return this.getSharedCode(onReady);
+    }
+    getSharedCode(onReady) {
+      const data = new FormData();
+      data.append("hash", this.hash);
+      fetch("/query", {
+        method: "post",
+        body: data
+      }).then((resp) => resp.text()).then((data2) => {
+        onReady(data2);
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
+  };
+  SharedCodeRepository.QUERY_PARAM_NAME = "query";
+  SharedCodeRepository.CODE_NOT_FOUND = "Not found.";
+
+  // src/Repositories/TextCodeRepository.ts
+  var TextCodeRepository = class {
+    constructor(text) {
+      this.text = text;
+    }
+    saveCode(_) {
+    }
+    getCode(onReady) {
+      onReady(this.text);
+    }
+  };
+
+  // src/Repositories/LocalCodeRepository.ts
+  var _LocalCodeRepository = class {
+    saveCode(code) {
+      window.localStorage.setItem(_LocalCodeRepository.LOCAL_STORAGE_KEY, code);
+    }
+    getCode(onReady) {
+      const localCode = window.localStorage.getItem(_LocalCodeRepository.LOCAL_STORAGE_KEY);
+      if (localCode === null || localCode === void 0) {
+        onReady(_LocalCodeRepository.WELCOME_CODE);
+        return;
+      }
+      onReady(localCode);
+    }
+  };
+  var LocalCodeRepository = _LocalCodeRepository;
+  LocalCodeRepository.LOCAL_STORAGE_KEY = "code";
+  // language=V
+  LocalCodeRepository.WELCOME_CODE = `
 // Welcome to the V Playground!
 // Here you can edit, run, and share V code.
 // Let's start with a simple "Hello, Playground!" example:
@@ -14,10 +621,217 @@ println('Hello, Playground!')
 // If you want to learn more about V, visit https://vlang.io
 // Join us on Discord: https://discord.gg/vlang
 // Enjoy!
-`.trimStart());var B=class{static selectRepository(e,t){if(t!==void 0&&t.codeHash!==null&&t.codeHash!==void 0)return new p(t.codeHash);if(t!==void 0&&t.code!==null&&t.code!==void 0)return new R(t.code);if(t!==void 0&&t.embed!==null&&t.embed!==void 0&&t.embed)return new R("");let n=new C,l=e.getURLParameter(p.QUERY_PARAM_NAME);return l!=null?new p(l):n}};var L=class{params;constructor(e){this.params=new URLSearchParams(e)}updateURLParameter(e,t){let n=L.updateURLParameter(window.location.href,e,t);window.history.replaceState({},"",n)}getURLParameter(e){return this.params.get(e)}static updateURLParameter(e,t,n){let l=new URL(e);return n?l.searchParams.set(t,n):l.searchParams.delete(t),l.toString()}};var D=class{containingElement;element;helpOverlay;showHelpButton;closeHelpButton;constructor(e){this.containingElement=e,this.element=e.getElementsByClassName("js-help-wrapper")[0],!(this.element===null||this.element===void 0)&&(this.helpOverlay=this.element.querySelector(".js-help-overlay"),this.showHelpButton=this.element.querySelector(".js-show-help"),this.closeHelpButton=this.element.querySelector(".js-close-help"),this.mount())}mount(){this.showHelpButton!==void 0&&this.showHelpButton.addEventListener("click",()=>{this.toggleHelp()}),this.helpOverlay!==void 0&&this.helpOverlay.addEventListener("click",()=>{this.toggleHelp()}),this.closeHelpButton!==void 0&&this.closeHelpButton.addEventListener("click",()=>{this.toggleHelp()}),D.isMac||document.querySelectorAll(".js-shortcut kbd.ctrl").forEach(function(t){t.innerText="Ctrl"})}closeHelp(){this.helpOverlay.classList.contains("opened")&&this.toggleHelp()}toggleHelp(){this.containingElement.getElementsByClassName("js-help")[0].classList.toggle("opened"),this.helpOverlay.classList.toggle("opened")}},H=D;h(H,"isMac",navigator.platform.toUpperCase().indexOf("MAC")>=0);function te(a){let e=document.createElement("textarea");e.value=a,e.style.top="0",e.style.left="0",e.style.position="fixed",document.body.appendChild(e),e.focus(),e.select();try{let n=document.execCommand("copy")?"successful":"unsuccessful";console.log("Fallback: Copying text command was "+n)}catch(t){console.log("Fallback: Oops, unable to copy",t)}document.body.removeChild(e)}function ne(a,e){if(!navigator.clipboard){te(a);return}navigator.clipboard.writeText(a).then(function(){console.log("Async: Copying to clipboard was successful!"),e()},function(t){te(a),console.log("Async: Could not copy text: ",t,"fallback to old method")})}var N=class{element;onClose=null;onWrite=null;filters=[];constructor(e){this.element=e,this.attachResizeHandler(e)}registerCloseHandler(e){this.onClose=e}registerWriteHandler(e){this.onWrite=e}registerFilter(e){this.filters.push(e)}write(e){let t=e.split(`
-`),n=this.getTerminalOutputElement(),u=t.filter(o=>this.filters.every(d=>d(o))).join(`
-`);n.innerHTML+=u+`
-`,this.onWrite!==null&&this.onWrite(e)}clear(){this.getTerminalOutputElement().innerHTML=""}mount(){let e=this.element.querySelector(".js-terminal__close-buttom");e==null||this.onClose===null||e.addEventListener("click",this.onClose)}getTerminalOutputElement(){return this.element.querySelector(".js-terminal__output")}attachResizeHandler(e){let t=e.querySelector(".header");if(!t)return;let n=!1;t.addEventListener("mousedown",()=>{n=!0,document.body.classList.add("dragging")}),document.addEventListener("mousemove",l=>{n&&(e.style.height=`${document.body.clientHeight-l.clientY+t.clientHeight/2}px`)}),document.addEventListener("mouseup",()=>{n=!1,document.body.classList.remove("dragging")})}};var re=`
+`.trimStart();
+
+  // src/Repositories/CodeRepositoryManager.ts
+  var CodeRepositoryManager = class {
+    /**
+     * Base on `params` tries to select the appropriate repository to get the code.
+     *
+     * @param params The query parameters.
+     * @param config The playground configuration.
+     * @returns {CodeRepository}
+     */
+    static selectRepository(params, config) {
+      if (config !== void 0 && config.codeHash !== null && config.codeHash !== void 0) {
+        return new SharedCodeRepository(config.codeHash);
+      }
+      if (config !== void 0 && config.code !== null && config.code !== void 0) {
+        return new TextCodeRepository(config.code);
+      }
+      if (config !== void 0 && config.embed !== null && config.embed !== void 0 && config.embed) {
+        return new TextCodeRepository("");
+      }
+      const repository = new LocalCodeRepository();
+      const hash = params.getURLParameter(SharedCodeRepository.QUERY_PARAM_NAME);
+      if (hash !== null && hash !== void 0) {
+        return new SharedCodeRepository(hash);
+      }
+      return repository;
+    }
+  };
+
+  // src/QueryParams.ts
+  var QueryParams = class {
+    /**
+     * @param path - The path to parse (usually `window.location.search`).
+     */
+    constructor(path) {
+      this.params = new URLSearchParams(path);
+    }
+    /**
+     * Update the URL with the new param.
+     * @param param The param to update.
+     * @param value The new value of the param.
+     */
+    updateURLParameter(param, value) {
+      const url = QueryParams.updateURLParameter(window.location.href, param, value);
+      window.history.replaceState({}, "", url);
+    }
+    getURLParameter(param) {
+      return this.params.get(param);
+    }
+    static updateURLParameter(url, param, value) {
+      const parsedUrl = new URL(url);
+      if (value) {
+        parsedUrl.searchParams.set(param, value);
+      } else {
+        parsedUrl.searchParams.delete(param);
+      }
+      return parsedUrl.toString();
+    }
+  };
+
+  // src/HelpManager.ts
+  var _HelpManager = class {
+    constructor(containingElement) {
+      this.containingElement = containingElement;
+      this.element = containingElement.getElementsByClassName("js-help-wrapper")[0];
+      if (this.element === null || this.element === void 0) {
+        return;
+      }
+      this.helpOverlay = this.element.querySelector(".js-help-overlay");
+      this.showHelpButton = this.element.querySelector(".js-show-help");
+      this.closeHelpButton = this.element.querySelector(".js-close-help");
+      this.mount();
+    }
+    mount() {
+      if (this.showHelpButton !== void 0) {
+        this.showHelpButton.addEventListener("click", () => {
+          this.toggleHelp();
+        });
+      }
+      if (this.helpOverlay !== void 0) {
+        this.helpOverlay.addEventListener("click", () => {
+          this.toggleHelp();
+        });
+      }
+      if (this.closeHelpButton !== void 0) {
+        this.closeHelpButton.addEventListener("click", () => {
+          this.toggleHelp();
+        });
+      }
+      if (!_HelpManager.isMac) {
+        const shortcuts = document.querySelectorAll(".js-shortcut kbd.ctrl");
+        shortcuts.forEach(function(shortcut) {
+          shortcut.innerText = "Ctrl";
+        });
+      }
+    }
+    closeHelp() {
+      if (!this.helpOverlay.classList.contains("opened")) {
+        return;
+      }
+      this.toggleHelp();
+    }
+    toggleHelp() {
+      const help = this.containingElement.getElementsByClassName("js-help")[0];
+      help.classList.toggle("opened");
+      this.helpOverlay.classList.toggle("opened");
+    }
+  };
+  var HelpManager = _HelpManager;
+  // TODO: don't know other way to detect macOS...
+  // noinspection JSDeprecatedSymbols
+  HelpManager.isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+
+  // src/clipboard_util.ts
+  function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand("copy");
+      const msg = successful ? "successful" : "unsuccessful";
+      console.log("Fallback: Copying text command was " + msg);
+    } catch (err) {
+      console.log("Fallback: Oops, unable to copy", err);
+    }
+    document.body.removeChild(textArea);
+  }
+  function copyTextToClipboard(text, onCopy) {
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(text);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+      console.log("Async: Copying to clipboard was successful!");
+      onCopy();
+    }, function(err) {
+      fallbackCopyTextToClipboard(text);
+      console.log("Async: Could not copy text: ", err, "fallback to old method");
+    });
+  }
+
+  // src/Terminal/Terminal.ts
+  var Terminal = class {
+    constructor(element) {
+      this.onClose = null;
+      this.onWrite = null;
+      this.filters = [];
+      this.element = element;
+      this.attachResizeHandler(element);
+    }
+    registerCloseHandler(handler) {
+      this.onClose = handler;
+    }
+    registerWriteHandler(handler) {
+      this.onWrite = handler;
+    }
+    registerFilter(filter) {
+      this.filters.push(filter);
+    }
+    write(text) {
+      const lines = text.split("\n");
+      const outputElement = this.getTerminalOutputElement();
+      const filteredLines = lines.filter((line) => this.filters.every((filter) => filter(line)));
+      const newText = filteredLines.join("\n");
+      outputElement.innerHTML += newText + "\n";
+      if (this.onWrite !== null) {
+        this.onWrite(text);
+      }
+    }
+    clear() {
+      this.getTerminalOutputElement().innerHTML = "";
+    }
+    mount() {
+      const closeButton = this.element.querySelector(".js-terminal__close-buttom");
+      if (closeButton === null || closeButton === void 0 || this.onClose === null) {
+        return;
+      }
+      closeButton.addEventListener("click", this.onClose);
+    }
+    getTerminalOutputElement() {
+      return this.element.querySelector(".js-terminal__output");
+    }
+    attachResizeHandler(element) {
+      const header = element.querySelector(".header");
+      if (!header)
+        return;
+      let mouseDown = false;
+      header.addEventListener("mousedown", () => {
+        mouseDown = true;
+        document.body.classList.add("dragging");
+      });
+      document.addEventListener("mousemove", (e) => {
+        if (!mouseDown)
+          return;
+        element.style.height = `${document.body.clientHeight - e.clientY + header.clientHeight / 2}px`;
+      });
+      document.addEventListener("mouseup", () => {
+        mouseDown = false;
+        document.body.classList.remove("dragging");
+      });
+    }
+  };
+
+  // src/icons.ts
+  var runIcons = `
 <svg width="33" height="23" viewBox="0 0 33 23" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z"
           fill="#536B8A"/>
@@ -26,7 +840,8 @@ println('Hello, Playground!')
     <path d="M28.6948 15.9266L22.5937 19.4338C22.2604 19.6254 21.8446 19.3848 21.8446 19.0003V11.9859C21.8446 11.6014 22.2604 11.3608 22.5937 11.5524L28.6948 15.0596C29.0292 15.2518 29.0292 15.7343 28.6948 15.9266Z"
           fill="#659360" stroke="#659360"/>
 </svg>
-`,ie=`
+`;
+  var testIcons = `
 <svg width="33" height="23" viewBox="0 0 33 23" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#clip0_15_68)">
         <path d="M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z" fill="#536B8A"/>
@@ -47,7 +862,114 @@ println('Hello, Playground!')
         </clipPath>
     </defs>
 </svg>
-`;var Q=(t=>(t.Run="Run",t.Test="Test",t))(Q||{});function $(a){switch(a){case"Run":return"Run";case"Test":return"Test";default:throw new Error(`Unknown run configuration type: ${a}`)}}var x=class{queryParams;currentConfiguration="Run";fromQueryParam=!1;runButton=document.querySelector(".js-playground__action-run");runButtonLabel=document.querySelector(".js-playground__action-run .label");openRunButton=document.querySelector(".js-open-run-select");configurationsList=document.querySelector(".js-run-configurations-list");configurations=document.querySelectorAll(".js-configuration");onChange=()=>{};onSelect=()=>{};constructor(e){this.queryParams=e,this.mount()}registerOnChange(e){this.onChange=e}registerOnSelect(e){this.onSelect=e}toggleConfigurationsList(){this.configurationsList.classList.toggle("hidden")}setupConfiguration(){let e=this.queryParams.getURLParameter(x.QUERY_PARAM_NAME);if(e!=null){this.fromQueryParam=!0,this.useConfiguration($(e));return}let t=window.localStorage.getItem(x.LOCAL_STORAGE_KEY);if(t!=null){this.useConfiguration($(t));return}this.useConfiguration("Run")}useConfiguration(e){this.currentConfiguration=e,this.onChange(e);let t=Q[e];this.runButton.setAttribute("data-type",t),this.runButtonLabel.textContent=t,this.fromQueryParam||window.localStorage.setItem(x.LOCAL_STORAGE_KEY,t),this.fromQueryParam&&this.queryParams.updateURLParameter(x.QUERY_PARAM_NAME,t),this.setIconForV(e)}setIconForV(e){let t=re;e!="Run"&&(t=ie),document.querySelector(".title-v-part").innerHTML=t}mount(){this.openRunButton.addEventListener("click",()=>{this.toggleConfigurationsList()}),this.configurations.forEach(e=>{e.addEventListener("click",()=>{let t=e.getAttribute("data-type")??"Run",n=$(t);this.useConfiguration(n),this.onSelect(n)})})}},_=x;h(_,"QUERY_PARAM_NAME","runConfiguration"),h(_,"LOCAL_STORAGE_KEY","run-configuration");var F=[{name:"Hello, Playground!",code:C.WELCOME_CODE,runConfiguration:"Run"},{name:"String interpolation",code:`
+`;
+
+  // src/RunConfigurationManager/RunConfigurationManager.ts
+  var RunConfigurationType = /* @__PURE__ */ ((RunConfigurationType2) => {
+    RunConfigurationType2["Run"] = "Run";
+    RunConfigurationType2["Test"] = "Test";
+    return RunConfigurationType2;
+  })(RunConfigurationType || {});
+  function getRunConfigurationTypeByString(runConfigurationType) {
+    switch (runConfigurationType) {
+      case "Run":
+        return "Run" /* Run */;
+      case "Test":
+        return "Test" /* Test */;
+      default:
+        throw new Error(`Unknown run configuration type: ${runConfigurationType}`);
+    }
+  }
+  var _RunConfigurationManager = class {
+    constructor(queryParams) {
+      this.currentConfiguration = "Run" /* Run */;
+      this.fromQueryParam = false;
+      this.runButton = document.querySelector(".js-playground__action-run");
+      this.runButtonLabel = document.querySelector(".js-playground__action-run .label");
+      this.openRunButton = document.querySelector(".js-open-run-select");
+      this.configurationsList = document.querySelector(".js-run-configurations-list");
+      this.configurations = document.querySelectorAll(".js-configuration");
+      this.onChange = () => {
+      };
+      this.onSelect = () => {
+      };
+      this.queryParams = queryParams;
+      this.mount();
+    }
+    registerOnChange(callback) {
+      this.onChange = callback;
+    }
+    registerOnSelect(callback) {
+      this.onSelect = callback;
+    }
+    toggleConfigurationsList() {
+      this.configurationsList.classList.toggle("hidden");
+    }
+    setupConfiguration() {
+      const configurationFromQuery = this.queryParams.getURLParameter(_RunConfigurationManager.QUERY_PARAM_NAME);
+      if (configurationFromQuery !== null && configurationFromQuery !== void 0) {
+        this.fromQueryParam = true;
+        this.useConfiguration(getRunConfigurationTypeByString(configurationFromQuery));
+        return;
+      }
+      const configurationFromLocalStorage = window.localStorage.getItem(_RunConfigurationManager.LOCAL_STORAGE_KEY);
+      if (configurationFromLocalStorage !== null && configurationFromLocalStorage !== void 0) {
+        this.useConfiguration(getRunConfigurationTypeByString(configurationFromLocalStorage));
+        return;
+      }
+      this.useConfiguration("Run" /* Run */);
+    }
+    useConfiguration(runConfigurationType) {
+      this.currentConfiguration = runConfigurationType;
+      this.onChange(runConfigurationType);
+      const runConfigurationAsString = RunConfigurationType[runConfigurationType];
+      this.runButton.setAttribute("data-type", runConfigurationAsString);
+      this.runButtonLabel.textContent = runConfigurationAsString;
+      if (!this.fromQueryParam) {
+        window.localStorage.setItem(_RunConfigurationManager.LOCAL_STORAGE_KEY, runConfigurationAsString);
+      }
+      if (this.fromQueryParam) {
+        this.queryParams.updateURLParameter(_RunConfigurationManager.QUERY_PARAM_NAME, runConfigurationAsString);
+      }
+      this.setIconForV(runConfigurationType);
+    }
+    setIconForV(runConfigurationType) {
+      let icon = runIcons;
+      if (runConfigurationType != "Run" /* Run */) {
+        icon = testIcons;
+      }
+      document.querySelector(".title-v-part").innerHTML = icon;
+    }
+    mount() {
+      this.openRunButton.addEventListener("click", () => {
+        this.toggleConfigurationsList();
+      });
+      this.configurations.forEach((configuration) => {
+        configuration.addEventListener("click", () => {
+          var _a;
+          const configurationTypeString = (_a = configuration.getAttribute("data-type")) != null ? _a : "Run";
+          const configurationType = getRunConfigurationTypeByString(configurationTypeString);
+          this.useConfiguration(configurationType);
+          this.onSelect(configurationType);
+        });
+      });
+    }
+  };
+  var RunConfigurationManager = _RunConfigurationManager;
+  RunConfigurationManager.QUERY_PARAM_NAME = "runConfiguration";
+  RunConfigurationManager.LOCAL_STORAGE_KEY = "run-configuration";
+
+  // src/Examples/examples.ts
+  var examples = [
+    {
+      name: "Hello, Playground!",
+      code: LocalCodeRepository.WELCOME_CODE,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "String interpolation",
+      // language=V
+      code: `
 // In V you can define array of string with the following syntax:
 areas := ['game', 'web', 'tools', 'science', 'systems', 'embedded', 'drivers', 'GUI', 'mobile']
 
@@ -58,7 +980,13 @@ for area in areas {
     // https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
     println('Hello, \${area} developers!')
 }
-        `,runConfiguration:"Run"},{name:"Fibonacci",code:`
+        `,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Fibonacci",
+      // language=v
+      code: `
 // As in other languages, you can define functions in V.
 // Learn more about functions in the documentation:
 // https://github.com/vlang/v/blob/master/doc/docs.md#functions
@@ -86,7 +1014,13 @@ fn main() {
         println(fib(i))
     }
 }
-`,runConfiguration:"Run"},{name:"Structs and embedded structs",code:`
+`,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Structs and embedded structs",
+      // language=V
+      code: `
 // Structs are a way to define a new type with a set of fields.
 // You can define a struct with the following syntax:
 // Learn more about structs in the documentation:
@@ -128,7 +1062,13 @@ assert button.Size.area() == 6
 // Conceptually, embedded structs are similar to mixins in OOP, not base classes.
 
 print(button)
-`,runConfiguration:"Run"},{name:"Sum types",code:`
+`,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Sum types",
+      // language=V
+      code: `
 struct Empty {}
 
 struct Node {
@@ -169,7 +1109,13 @@ fn sum(tree Tree) f64 {
         Node { tree.value + sum(tree.left) + sum(tree.right) }
     }
 }
-`,runConfiguration:"Run"},{name:"Generics",code:`
+`,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Generics",
+      // language=V
+      code: `
 // Sometimes there may be situations where you need code that will 
 // work in the same way for different types.
 //
@@ -240,7 +1186,13 @@ fn main() {
     bool_list.push(true)
     println(bool_list)
 }
-        `,runConfiguration:"Run"},{name:"Concurrency",code:`
+        `,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Concurrency",
+      // language=V
+      code: `
 // V's model of concurrency is going to be very similar to Go's.
 // Learn more about concurrency in the documentation:
 // https://github.com/vlang/v/blob/master/doc/docs.md#concurrency
@@ -267,7 +1219,13 @@ fn main() {
 
     println('done')
 }
-        `,runConfiguration:"Run"},{name:"Channel Select",code:`
+        `,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Channel Select",
+      // language=V
+      code: `
 // Channels in V very similar to Go's channels.
 // Learn more about channels in the documentation:
 // https://github.com/vlang/v/blob/master/doc/docs.md#channels
@@ -325,7 +1283,13 @@ fn main() {
     }
     eprintln('> done')
 }
-        `,runConfiguration:"Run"},{name:"JSON Encoding/Decoding",code:`
+        `,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "JSON Encoding/Decoding",
+      // language=v
+      code: `
 // V very modular and has a lot of built-in modules.
 // In this example we will use the json module to encode and decode JSON data.
 // If you want to learn more about modules, visit 
@@ -413,7 +1377,13 @@ fn (mut u User) register() {
 // Cannot register Bobby, they are too young
 //
 // [{"name":"Frodo","age":25,"is_registered":true},{"name":"Bobby","age":10,"is_registered":false}]
-`,runConfiguration:"Run"},{name:"Filter Log file",code:`
+`,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Filter Log file",
+      // language=v
+      code: `
 // Print file lines that start with "DEBUG:"
 import os
 
@@ -446,7 +1416,12 @@ for line in lines {
 // Output:
 // DEBUG: create new file
 // DEBUG: write text to log file
-`,runConfiguration:"Run"},{name:"Compile-time Reflection",code:`
+`,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Compile-time Reflection",
+      code: `
 // https://github.com/vlang/v/blob/master/doc/docs.md#compile-time-reflection
 
 struct User {
@@ -496,7 +1471,13 @@ fn get_int(data string, field string) int {
 //     result.age = get_int(data, 'age')
 //     return result
 // }
-`,runConfiguration:"Run"},{name:"Anonymous & higher order functions",code:`
+`,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Anonymous & higher order functions",
+      // language=V
+      code: `
 // https://github.com/vlang/v/blob/master/doc/docs.md#anonymous--higher-order-functions
 
 fn sqr(n int) int {
@@ -542,7 +1523,13 @@ fn main() {
     }
     println(fns_map['cube'](2)) // "8"
 }
-`,runConfiguration:"Run"},{name:"Testing",code:`
+`,
+      runConfiguration: "Run" /* Run */
+    },
+    {
+      name: "Testing",
+      // language=V
+      code: `
 // Tests in V is very simple.
 // To define a test function, just add \`test_\` prefix to the function name.
 // Learn more about testing in the documentation:
@@ -565,17 +1552,155 @@ fn sum(a int, b int) int {
 	// oops, this should be \`a + b\`
 	return a - b
 }
-`,runConfiguration:"Test"}].map(a=>(a.code=a.code.trim().replace(/^ {4}/gm,"	")+`
-`,a)),oe=`
+`,
+      runConfiguration: "Test" /* Test */
+    }
+  ].map((example) => {
+    example.code = example.code.trim().replace(/^ {4}/gm, "	") + "\n";
+    return example;
+  });
+  var codeIfSharedLinkBroken = `
 // Oops, the shared link is broken.
 // Please recheck the link and try again.
 println('Hello, link 404!')
-`.trimStart();var q=class{wrapperElement;repository;editor;terminal;constructor(e,t){let n={mode:"v",lineNumbers:!0,matchBrackets:!0,extraKeys:{"Ctrl-Space":"autocomplete","Ctrl-/":"toggleComment"},indentWithTabs:!0,indentUnit:4,autoCloseBrackets:!0,showHint:!0,lint:{async:!0,lintOnChange:!0,delay:20},toggleLineComment:{indent:!0,padding:" "},theme:"dark"};this.wrapperElement=e;let l=e.querySelector("textarea");this.editor=CodeMirror.fromTextArea(l,n),this.repository=t,this.repository.getCode(o=>{if(o===p.CODE_NOT_FOUND){this.setCode(oe),this.terminal.write("Code for shared link not found.");return}this.setCode(o)});let u=e.querySelector(".js-terminal");if(u==null)throw new Error("Terminal not found, please check that terminal inside editor element");this.terminal=new N(u),this.terminal.registerCloseHandler(()=>{this.closeTerminal(),this.editor.refresh()}),this.terminal.registerWriteHandler(o=>{this.openTerminal()}),this.terminal.registerFilter(o=>!o.trim().startsWith("Failed command")),this.terminal.mount(),this.initFont()}initFont(){let e=window.localStorage.getItem(q.FONT_LOCAL_STORAGE_KEY);e!==null&&this.setEditorFontSize(e)}changeEditorFontSize(e){let t=document.getElementsByClassName("CodeMirror")[0],n=window.getComputedStyle(t,null).getPropertyValue("font-size");if(n){let l=parseInt(n)+e;t.style.fontSize=l+"px",window.localStorage.setItem(q.FONT_LOCAL_STORAGE_KEY,l.toString()),this.editor.refresh()}}setEditorFontSize(e){let t=document.getElementsByClassName("CodeMirror")[0];t.style.fontSize=e+"px",this.refresh()}setCode(e,t=!1){let n=this.editor.getCursor();this.editor.setValue(e),this.repository.saveCode(e),t&&this.editor.setCursor(n)}getCode(){return this.editor.getValue()}saveCode(){this.repository instanceof p&&(this.repository=new C),this.repository.saveCode(this.getCode())}openTerminal(){this.wrapperElement.classList.remove("closed-terminal")}closeTerminal(){this.wrapperElement.classList.add("closed-terminal")}setTheme(e){this.editor.setOption("theme",e.name())}showCompletion(){this.editor.execCommand("autocomplete")}refresh(){this.editor.refresh()}},A=q;h(A,"FONT_LOCAL_STORAGE_KEY","editor-font-size");var w=class{name(){return"dark"}};var I=class{name(){return"light"}};var se=`<span class="icon">
+`.trimStart();
+
+  // src/Editor/Editor.ts
+  var _Editor = class {
+    constructor(wrapper, repository) {
+      const editorConfig = {
+        mode: "v",
+        lineNumbers: true,
+        matchBrackets: true,
+        extraKeys: {
+          "Ctrl-Space": "autocomplete",
+          "Ctrl-/": "toggleComment"
+        },
+        indentWithTabs: true,
+        indentUnit: 4,
+        autoCloseBrackets: true,
+        showHint: true,
+        lint: {
+          async: true,
+          lintOnChange: true,
+          delay: 20
+        },
+        toggleLineComment: {
+          indent: true,
+          padding: " "
+        },
+        theme: "dark"
+      };
+      this.wrapperElement = wrapper;
+      const place = wrapper.querySelector("textarea");
+      this.editor = CodeMirror.fromTextArea(place, editorConfig);
+      this.repository = repository;
+      this.repository.getCode((code) => {
+        if (code === SharedCodeRepository.CODE_NOT_FOUND) {
+          this.setCode(codeIfSharedLinkBroken);
+          this.terminal.write("Code for shared link not found.");
+          return;
+        }
+        this.setCode(code);
+      });
+      const terminalElement = wrapper.querySelector(".js-terminal");
+      if (terminalElement === null || terminalElement === void 0) {
+        throw new Error("Terminal not found, please check that terminal inside editor element");
+      }
+      this.terminal = new Terminal(terminalElement);
+      this.terminal.registerCloseHandler(() => {
+        this.closeTerminal();
+        this.editor.refresh();
+      });
+      this.terminal.registerWriteHandler((_) => {
+        this.openTerminal();
+      });
+      this.terminal.registerFilter((line) => {
+        return !line.trim().startsWith("Failed command");
+      });
+      this.terminal.mount();
+      this.initFont();
+    }
+    initFont() {
+      const fontSize = window.localStorage.getItem(_Editor.FONT_LOCAL_STORAGE_KEY);
+      if (fontSize !== null) {
+        this.setEditorFontSize(fontSize);
+      }
+    }
+    changeEditorFontSize(delta) {
+      const cm = document.getElementsByClassName("CodeMirror")[0];
+      const fontSize = window.getComputedStyle(cm, null).getPropertyValue("font-size");
+      if (fontSize) {
+        const newFontSize = parseInt(fontSize) + delta;
+        cm.style.fontSize = newFontSize + "px";
+        window.localStorage.setItem(_Editor.FONT_LOCAL_STORAGE_KEY, newFontSize.toString());
+        this.editor.refresh();
+      }
+    }
+    setEditorFontSize(size) {
+      const cm = document.getElementsByClassName("CodeMirror")[0];
+      cm.style.fontSize = size + "px";
+      this.refresh();
+    }
+    setCode(code, preserveCursor = false) {
+      const cursor = this.editor.getCursor();
+      this.editor.setValue(code);
+      this.repository.saveCode(code);
+      if (preserveCursor) {
+        this.editor.setCursor(cursor);
+      }
+    }
+    getCode() {
+      return this.editor.getValue();
+    }
+    saveCode() {
+      const isSharedCodeRepository = this.repository instanceof SharedCodeRepository;
+      if (isSharedCodeRepository) {
+        this.repository = new LocalCodeRepository();
+      }
+      this.repository.saveCode(this.getCode());
+    }
+    openTerminal() {
+      this.wrapperElement.classList.remove("closed-terminal");
+    }
+    closeTerminal() {
+      this.wrapperElement.classList.add("closed-terminal");
+    }
+    setTheme(theme) {
+      this.editor.setOption("theme", theme.name());
+    }
+    showCompletion() {
+      this.editor.execCommand("autocomplete");
+    }
+    refresh() {
+      this.editor.refresh();
+    }
+  };
+  var Editor = _Editor;
+  Editor.FONT_LOCAL_STORAGE_KEY = "editor-font-size";
+
+  // src/themes/Dark.ts
+  var Dark = class {
+    name() {
+      return "dark";
+    }
+  };
+
+  // src/themes/Light.ts
+  var Light = class {
+    name() {
+      return "light";
+    }
+  };
+
+  // src/ThemeManager/icons.ts
+  var moonIcon = `<span class="icon">
 <svg class="theme-icon"  width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M27.1371 20.5912C25.7519 21.0833 24.2605 21.3512 22.7065 21.3512C15.3985 21.3512 9.47424 15.4269 9.47424 8.11889C9.47424 6.10409 9.92454 4.19447 10.73 2.48517C5.60094 4.30725 1.92825 9.20347 1.92825 14.9575C1.92825 22.2655 7.85255 28.1898 15.1605 28.1898C20.4537 28.1898 25.021 25.0818 27.1371 20.5912Z" fill="white"/>
 </svg>
 </span>
-`,ae=`<span class="icon">
+`;
+  var sunIcon = `<span class="icon">
 <svg class="theme-icon" width="30" height="30" viewBox="0 0 30 30" fill="none"xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#clip0_4_47)">
     <path d="M14.9854 1.92059C14.7382 1.92445 14.5026 2.02624 14.3304 2.20361C14.1581 2.38099 14.0633 2.61946 14.0667 2.86668V5.66668C14.0649 5.79036 14.0878 5.91315 14.1339 6.02792C14.18 6.14269 14.2485 6.24715 14.3353 6.33523C14.4222 6.42331 14.5256 6.49325 14.6398 6.54098C14.7539 6.58872 14.8763 6.61331 15 6.61331C15.1237 6.61331 15.2462 6.58872 15.3603 6.54098C15.4744 6.49325 15.5778 6.42331 15.6647 6.33523C15.7515 6.24715 15.82 6.14269 15.8661 6.02792C15.9122 5.91315 15.9351 5.79036 15.9333 5.66668V2.86668C15.935 2.74181 15.9117 2.61786 15.8646 2.50219C15.8176 2.38651 15.7478 2.28145 15.6594 2.19323C15.571 2.10501 15.4658 2.03542 15.35 1.98859C15.2343 1.94176 15.1103 1.91863 14.9854 1.92059ZM6.41042 5.47892C6.2249 5.47933 6.04372 5.53501 5.88999 5.63885C5.73626 5.7427 5.61696 5.89 5.54732 6.06195C5.47768 6.2339 5.46086 6.4227 5.499 6.60425C5.53714 6.7858 5.62852 6.95187 5.76146 7.08126L7.74115 9.06095C7.82715 9.15052 7.93016 9.22204 8.04415 9.2713C8.15814 9.32056 8.28081 9.34659 8.40498 9.34785C8.52915 9.34912 8.65232 9.32559 8.76728 9.27865C8.88225 9.23172 8.98669 9.16231 9.0745 9.07451C9.1623 8.9867 9.23171 8.88226 9.27864 8.76729C9.32558 8.65233 9.34911 8.52915 9.34784 8.40498C9.34658 8.28081 9.32056 8.15814 9.27129 8.04416C9.22203 7.93017 9.15051 7.82716 9.06094 7.74116L7.08125 5.76147C6.99406 5.67184 6.88975 5.60065 6.77451 5.55211C6.65928 5.50357 6.53546 5.47868 6.41042 5.47892V5.47892ZM23.5604 5.47892C23.3179 5.48614 23.0878 5.58748 22.9188 5.76147L20.9391 7.74116C20.8495 7.82716 20.778 7.93017 20.7287 8.04416C20.6795 8.15814 20.6534 8.28081 20.6522 8.40498C20.6509 8.52915 20.6744 8.65233 20.7214 8.76729C20.7683 8.88225 20.8377 8.9867 20.9255 9.0745C21.0133 9.16231 21.1178 9.23171 21.2327 9.27865C21.3477 9.32558 21.4709 9.34911 21.595 9.34785C21.7192 9.34659 21.8419 9.32056 21.9559 9.2713C22.0698 9.22203 22.1729 9.15052 22.2589 9.06095L24.2385 7.08126C24.3734 6.95016 24.4655 6.78138 24.5028 6.59703C24.5401 6.41268 24.5209 6.22136 24.4476 6.04814C24.3742 5.87493 24.2503 5.7279 24.092 5.62633C23.9337 5.52475 23.7484 5.47337 23.5604 5.47892ZM15 8.46668C13.2673 8.46668 11.6055 9.15501 10.3802 10.3802C9.155 11.6055 8.46667 13.2673 8.46667 15C8.46667 16.7328 9.155 18.3945 10.3802 19.6198C11.6055 20.845 13.2673 21.5333 15 21.5333C16.7328 21.5333 18.3945 20.845 19.6198 19.6198C20.845 18.3945 21.5333 16.7328 21.5333 15C21.5333 13.2673 20.845 11.6055 19.6198 10.3802C18.3945 9.15501 16.7328 8.46668 15 8.46668V8.46668ZM2.86667 14.0667C2.74299 14.0649 2.6202 14.0878 2.50543 14.1339C2.39066 14.18 2.2862 14.2485 2.19812 14.3353C2.11004 14.4222 2.0401 14.5257 1.99237 14.6398C1.94463 14.7539 1.92004 14.8763 1.92004 15C1.92004 15.1237 1.94463 15.2462 1.99237 15.3603C2.0401 15.4744 2.11004 15.5779 2.19812 15.6647C2.2862 15.7515 2.39066 15.82 2.50543 15.8661C2.6202 15.9122 2.74299 15.9351 2.86667 15.9333H5.66667C5.79035 15.9351 5.91314 15.9122 6.02791 15.8661C6.14268 15.82 6.24714 15.7515 6.33522 15.6647C6.4233 15.5779 6.49324 15.4744 6.54098 15.3603C6.58871 15.2462 6.6133 15.1237 6.6133 15C6.6133 14.8763 6.58871 14.7539 6.54098 14.6398C6.49324 14.5257 6.4233 14.4222 6.33522 14.3353C6.24714 14.2485 6.14268 14.18 6.02791 14.1339C5.91314 14.0878 5.79035 14.0649 5.66667 14.0667H2.86667ZM24.3333 14.0667C24.2097 14.0649 24.0869 14.0878 23.9721 14.1339C23.8573 14.18 23.7529 14.2485 23.6648 14.3353C23.5767 14.4222 23.5068 14.5257 23.459 14.6398C23.4113 14.7539 23.3867 14.8763 23.3867 15C23.3867 15.1237 23.4113 15.2462 23.459 15.3603C23.5068 15.4744 23.5767 15.5779 23.6648 15.6647C23.7529 15.7515 23.8573 15.82 23.9721 15.8661C24.0869 15.9122 24.2097 15.9351 24.3333 15.9333H27.1333C27.257 15.9351 27.3798 15.9122 27.4946 15.8661C27.6093 15.82 27.7138 15.7515 27.8019 15.6647C27.89 15.5779 27.9599 15.4744 28.0076 15.3603C28.0554 15.2462 28.08 15.1237 28.08 15C28.08 14.8763 28.0554 14.7539 28.0076 14.6398C27.9599 14.5257 27.89 14.4222 27.8019 14.3353C27.7138 14.2485 27.6093 14.18 27.4946 14.1339C27.3798 14.0878 27.257 14.0649 27.1333 14.0667H24.3333ZM8.38282 20.6565C8.14034 20.6637 7.9102 20.7651 7.74115 20.9391L5.76146 22.9188C5.67189 23.0048 5.60038 23.1078 5.55111 23.2218C5.50185 23.3357 5.47582 23.4584 5.47456 23.5826C5.4733 23.7068 5.49683 23.8299 5.54376 23.9449C5.5907 24.0599 5.6601 24.1643 5.74791 24.2521C5.83572 24.3399 5.94016 24.4093 6.05512 24.4563C6.17009 24.5032 6.29326 24.5267 6.41743 24.5255C6.5416 24.5242 6.66427 24.4982 6.77825 24.4489C6.89224 24.3996 6.99525 24.3281 7.08125 24.2386L9.06094 22.2589C9.19581 22.1278 9.28793 21.959 9.32522 21.7746C9.36252 21.5903 9.34325 21.399 9.26995 21.2257C9.19664 21.0525 9.07272 20.9055 8.91442 20.8039C8.75612 20.7024 8.57082 20.651 8.38282 20.6565ZM21.5898 20.6565C21.4042 20.6566 21.2227 20.712 21.0687 20.8157C20.9147 20.9194 20.7951 21.0667 20.7253 21.2387C20.6554 21.4107 20.6384 21.5997 20.6765 21.7814C20.7146 21.9631 20.806 22.1294 20.9391 22.2589L22.9188 24.2386C23.0048 24.3281 23.1078 24.3996 23.2218 24.4489C23.3357 24.4982 23.4584 24.5242 23.5826 24.5254C23.7067 24.5267 23.8299 24.5032 23.9449 24.4562C24.0598 24.4093 24.1643 24.3399 24.2521 24.2521C24.3399 24.1643 24.4093 24.0599 24.4562 23.9449C24.5032 23.8299 24.5267 23.7068 24.5254 23.5826C24.5242 23.4584 24.4982 23.3357 24.4489 23.2218C24.3996 23.1078 24.3281 23.0048 24.2385 22.9188L22.2589 20.9391C22.1719 20.8497 22.0679 20.7786 21.953 20.7301C21.8381 20.6815 21.7146 20.6565 21.5898 20.6565V20.6565ZM14.9854 23.3873C14.7382 23.3911 14.5026 23.4929 14.3304 23.6703C14.1581 23.8477 14.0633 24.0861 14.0667 24.3333V27.1333C14.0649 27.257 14.0878 27.3798 14.1339 27.4946C14.18 27.6094 14.2485 27.7138 14.3353 27.8019C14.4222 27.89 14.5256 27.9599 14.6398 28.0077C14.7539 28.0554 14.8763 28.08 15 28.08C15.1237 28.08 15.2462 28.0554 15.3603 28.0077C15.4744 27.9599 15.5778 27.89 15.6647 27.8019C15.7515 27.7138 15.82 27.6094 15.8661 27.4946C15.9122 27.3798 15.9351 27.257 15.9333 27.1333V24.3333C15.935 24.2085 15.9117 24.0845 15.8646 23.9689C15.8176 23.8532 15.7478 23.7481 15.6594 23.6599C15.571 23.5717 15.4658 23.5021 15.35 23.4553C15.2343 23.4084 15.1103 23.3853 14.9854 23.3873V23.3873Z" fill="white"/>
@@ -587,7 +1712,441 @@ println('Hello, link 404!')
     </defs>
 </svg>
 </span>
-`;var S=class{themes=[new w,new I];currentTheme=null;onChange=[];queryParams;changeThemeButton=null;predefinedTheme=null;fromQueryParam=!1;constructor(e,t=null){this.queryParams=e,this.predefinedTheme=t,this.changeThemeButton=document.querySelector(".js-playground__action-change-theme")}registerOnChange(e){this.onChange.push(e)}loadTheme(){let e=this.queryParams.getURLParameter(S.QUERY_PARAM_NAME);if(e!=null){this.fromQueryParam=!0;let n=this.findTheme(e);this.turnTheme(n);return}let t=window.localStorage.getItem(S.LOCAL_STORAGE_KEY);if(t!=null){let n=this.findTheme(t);this.turnTheme(n);return}if(this.predefinedTheme!==null&&this.predefinedTheme!==void 0){this.turnTheme(this.predefinedTheme);return}this.turnTheme(new w)}findTheme(e){let t=this.themes.filter(l=>l.name()===e),n=t[0];return t.length==0&&(n=new w),n}turnTheme(e){this.currentTheme=e,this.onChange.forEach(l=>l(e));let t=se;e.name()==="dark"&&(t=ae),this.changeThemeButton!==null&&(this.changeThemeButton.innerHTML=t),document.querySelector("html").setAttribute("data-theme",e.name()),this.fromQueryParam||window.localStorage.setItem(S.LOCAL_STORAGE_KEY,e.name()),this.fromQueryParam&&this.queryParams.updateURLParameter(S.QUERY_PARAM_NAME,e.name())}turnDarkTheme(){this.turnTheme(new w)}turnLightTheme(){this.turnTheme(new I)}toggleTheme(){this.currentTheme&&(this.currentTheme.name()==="light"?this.turnDarkTheme():this.turnLightTheme())}},k=S;h(k,"QUERY_PARAM_NAME","theme"),h(k,"LOCAL_STORAGE_KEY","theme");var Y=class{selectElement;onSelectHandler=null;constructor(){this.selectElement=document.querySelector(".js-examples__select")}registerOnSelectHandler(e){this.onSelectHandler=e}mount(){if(this.selectElement===null||this.selectElement===void 0)return;let e=this.selectElement.querySelector(".dropdown__list"),t=this.selectElement.querySelector(".dropdown__button");e!==null&&t!==null&&(F.forEach(function(d,f){e.innerHTML+=Y.exampleElementListTemplate(d.name,f)}),t.innerHTML=F[0].name);let n=this.selectElement.querySelectorAll(".dropdown__list-item");n.forEach(d=>{d.addEventListener("click",()=>{let f=d.innerText,g=F.find(b=>b.name===f);this.onSelectHandler!==null&&g&&this.onSelectHandler(g)})});let l=this.selectElement.querySelector(".dropdown__button"),u=this.selectElement.querySelector(".dropdown__list"),o=this.selectElement.querySelector(".dropdown__input_hidden");l.addEventListener("click",function(){u.classList.toggle("dropdown__list_visible"),this.classList.toggle("dropdown__button_active")}),n.forEach(function(d){d.addEventListener("click",function(f){n.forEach(function(b){b.classList.remove("dropdown__list-item_active")}),f.target.classList.add("dropdown__list-item_active"),l.innerText=this.innerText,o.value=this.dataset.value??"",u.classList.remove("dropdown__list_visible")})}),document.addEventListener("click",function(d){d.target!==l&&(l.classList.remove("dropdown__button_active"),u.classList.remove("dropdown__list_visible"))}),document.addEventListener("keydown",function(d){(d.key==="Tab"||d.key==="Escape")&&(l.classList.remove("dropdown__button_active"),u.classList.remove("dropdown__list_visible"))})}},O=Y;h(O,"exampleElementListTemplate",function(e,t){let n="";return t===0&&(n="dropdown__list-item_active"),`
-<li class="dropdown__list-item ${n}" data-value="${e}">${e}</li>
-`});var z=class{constructor(e){this.output=e}},G=class{constructor(e){this.hash=e}},v=class{static runCode(e){let t=new FormData;return t.append("code",e),fetch("/run",{method:"post",body:t}).then(n=>{if(n.status!=200)throw new Error("Can't run code");return n.text()}).then(n=>new z(n))}static runTest(e){let t=new FormData;return t.append("code",e),fetch("/run_test",{method:"post",body:t}).then(n=>{if(n.status!=200)throw new Error("Can't run test");return n.text()}).then(n=>new z(n))}static formatCode(e){let t=new FormData;return t.append("code",e),fetch("/format",{method:"post",body:t}).then(n=>n.json()).then(n=>JSON.parse(n))}static shareCode(e){let t=new FormData;return t.append("code",e),fetch("/share",{method:"post",body:t}).then(n=>{if(n.status!=200)throw new Error("Can't share code");return n.text()}).then(n=>new G(n))}};var K="unsaved",j=class{runAsTestConsumer=()=>!1;queryParams;repository;editor;themeManager;examplesManager;helpManager;runConfigurationManager;constructor(e){this.queryParams=new L(window.location.search),this.repository=B.selectRepository(this.queryParams),this.editor=new A(e,this.repository),this.themeManager=new k(this.queryParams),this.themeManager.registerOnChange(t=>{this.editor.setTheme(t)}),this.themeManager.loadTheme(),this.examplesManager=new O,this.examplesManager.registerOnSelectHandler(t=>{this.editor.setCode(t.code),this.runConfigurationManager.useConfiguration(t.runConfiguration)}),this.examplesManager.mount(),this.helpManager=new H(e),this.runConfigurationManager=new _(this.queryParams),this.runConfigurationManager.registerOnChange(()=>{}),this.runConfigurationManager.registerOnSelect(()=>{this.runConfigurationManager.toggleConfigurationsList(),this.run()}),this.runConfigurationManager.setupConfiguration()}registerRunAsTestConsumer(e){this.runAsTestConsumer=e}registerAction(e,t){let n=document.getElementsByClassName(`js-playground__action-${e}`)[0];if(n===void 0)throw new Error(`Can't find action button with class js-playground__action-${e}`);n.addEventListener("click",t)}run(){if(this.runAsTestConsumer()){this.runTest();return}this.runCode()}runCode(){this.clearTerminal(),this.writeToTerminal("Running code...");let e=this.editor.getCode();v.runCode(e).then(t=>{this.clearTerminal(),this.writeToTerminal(t.output)}).catch(t=>{console.log(t),this.writeToTerminal("Can't run code. Please try again.")})}runTest(){this.clearTerminal(),this.writeToTerminal("Running tests...");let e=this.editor.getCode();v.runTest(e).then(t=>{this.clearTerminal(),this.writeToTerminal(t.output)}).catch(t=>{console.log(t),this.writeToTerminal("Can't run tests. Please try again.")})}formatCode(){this.clearTerminal(),this.writeToTerminal("Formatting code...");let e=this.editor.getCode();v.formatCode(e).then(t=>{if(!t.ok){this.clearTerminal(),this.writeToTerminal(t.output);return}this.editor.setCode(t.output,!0),this.writeToTerminal("Code formatted successfully!")}).catch(t=>{console.log(t),this.writeToTerminal("Can't format code. Please try again.")})}shareCode(){this.clearTerminal();let e=this.editor.getCode();v.shareCode(e).then(t=>{this.writeToTerminal("Code shared successfully!"),this.queryParams.updateURLParameter(p.QUERY_PARAM_NAME,t.hash);let n=this.buildShareLink(t);this.writeToTerminal("Share link: "+n),ne(n,()=>{this.writeToTerminal(`
-Link copied to clipboard.`)}),this.writeToTerminal("Note: current page has changed its own URL, it now links to shared code.")}).catch(t=>{console.log(t),this.writeToTerminal("Can't share code. Please try again.")})}buildShareLink(e){let t=window.location.href.split("?")[0];return t.endsWith("/")||(t+="/"),t+"p/"+e.hash}changeTheme(){this.themeManager.toggleTheme()}setupShortcuts(){this.editor.editor.on("keypress",(e,t)=>{!e.state.completionActive&&t.key.length===1&&t.key.match(/[a-z0-9]/i)&&this.editor.showCompletion()}),document.addEventListener("keydown",e=>{this.repository instanceof p&&!e.ctrlKey&&!e.metaKey&&this.markCodeAsUnsaved();let n=e.ctrlKey&&e.key==="Enter",l=e.ctrlKey&&e.key==="r",u=e.shiftKey&&e.key==="Enter";n||l||u?(this.run(),e.preventDefault()):e.ctrlKey&&e.key==="l"?(this.formatCode(),e.preventDefault()):e.ctrlKey&&e.key==="="?(this.editor.changeEditorFontSize(1),e.preventDefault()):e.ctrlKey&&e.key==="-"?(this.editor.changeEditorFontSize(-1),e.preventDefault()):e.ctrlKey&&e.key==="i"?(this.helpManager.toggleHelp(),e.preventDefault()):(e.ctrlKey||e.metaKey)&&e.key==="s"?(this.editor.saveCode(),e.preventDefault()):e.key==="Escape"?(this.helpManager.closeHelp(),e.preventDefault()):this.editor.saveCode()})}askLoadUnsavedCode(){let e=this.repository instanceof p,t=window.localStorage.getItem(K)!=null;window.localStorage.removeItem(K),e&&t&&confirm("You have previously unsaved changes. Do you want to load it?")&&(this.queryParams.updateURLParameter(p.QUERY_PARAM_NAME,null),window.location.reload())}clearTerminal(){this.editor.terminal.clear()}writeToTerminal(e){this.editor.terminal.write(e)}markCodeAsUnsaved(){window.localStorage.setItem(K,"")}};var Ce=document.querySelector(".js-playground"),y=new j(Ce);y.registerAction("run",()=>{y.run()});y.registerAction("format",()=>{y.formatCode()});y.registerAction("share",()=>{y.shareCode()});y.registerAction("change-theme",()=>{y.changeTheme()});y.registerRunAsTestConsumer(()=>document.querySelector(".js-playground__action-run").getAttribute("data-type")==="Test");y.setupShortcuts();y.askLoadUnsavedCode();window.onload=()=>{let a=document.querySelector("html");a.style.opacity="1"};})();
+`;
+
+  // src/ThemeManager/ThemeManager.ts
+  var _ThemeManager = class {
+    constructor(queryParams, predefinedTheme = null) {
+      this.themes = [new Dark(), new Light()];
+      this.currentTheme = null;
+      this.onChange = [];
+      this.changeThemeButton = null;
+      this.predefinedTheme = null;
+      this.fromQueryParam = false;
+      this.queryParams = queryParams;
+      this.predefinedTheme = predefinedTheme;
+      this.changeThemeButton = document.querySelector(".js-playground__action-change-theme");
+    }
+    registerOnChange(callback) {
+      this.onChange.push(callback);
+    }
+    loadTheme() {
+      const themeFromQuery = this.queryParams.getURLParameter(_ThemeManager.QUERY_PARAM_NAME);
+      if (themeFromQuery !== null && themeFromQuery !== void 0) {
+        this.fromQueryParam = true;
+        const theme = this.findTheme(themeFromQuery);
+        this.turnTheme(theme);
+        return;
+      }
+      const themeFromLocalStorage = window.localStorage.getItem(_ThemeManager.LOCAL_STORAGE_KEY);
+      if (themeFromLocalStorage !== null && themeFromLocalStorage !== void 0) {
+        const theme = this.findTheme(themeFromLocalStorage);
+        this.turnTheme(theme);
+        return;
+      }
+      if (this.predefinedTheme !== null && this.predefinedTheme !== void 0) {
+        this.turnTheme(this.predefinedTheme);
+        return;
+      }
+      this.turnTheme(new Dark());
+    }
+    findTheme(themeFromLocalStorage) {
+      let foundThemes = this.themes.filter((theme2) => theme2.name() === themeFromLocalStorage);
+      let theme = foundThemes[0];
+      if (foundThemes.length == 0) {
+        theme = new Dark();
+      }
+      return theme;
+    }
+    turnTheme(theme) {
+      this.currentTheme = theme;
+      this.onChange.forEach((callback) => callback(theme));
+      let icon = moonIcon;
+      if (theme.name() === "dark") {
+        icon = sunIcon;
+      }
+      if (this.changeThemeButton !== null) {
+        this.changeThemeButton.innerHTML = icon;
+      }
+      const html = document.querySelector("html");
+      html.setAttribute("data-theme", theme.name());
+      if (!this.fromQueryParam) {
+        window.localStorage.setItem(_ThemeManager.LOCAL_STORAGE_KEY, theme.name());
+      }
+      if (this.fromQueryParam) {
+        this.queryParams.updateURLParameter(_ThemeManager.QUERY_PARAM_NAME, theme.name());
+      }
+    }
+    turnDarkTheme() {
+      this.turnTheme(new Dark());
+    }
+    turnLightTheme() {
+      this.turnTheme(new Light());
+    }
+    toggleTheme() {
+      if (!this.currentTheme) {
+        return;
+      }
+      if (this.currentTheme.name() === "light") {
+        this.turnDarkTheme();
+      } else {
+        this.turnLightTheme();
+      }
+    }
+  };
+  var ThemeManager = _ThemeManager;
+  ThemeManager.QUERY_PARAM_NAME = "theme";
+  ThemeManager.LOCAL_STORAGE_KEY = "theme";
+
+  // src/Examples/ExamplesManager.ts
+  var _ExamplesManager = class {
+    constructor() {
+      this.onSelectHandler = null;
+      this.selectElement = document.querySelector(".js-examples__select");
+    }
+    registerOnSelectHandler(handler) {
+      this.onSelectHandler = handler;
+    }
+    mount() {
+      if (this.selectElement === null || this.selectElement === void 0) {
+        return;
+      }
+      const examplesSelectList = this.selectElement.querySelector(".dropdown__list");
+      const examplesButton = this.selectElement.querySelector(".dropdown__button");
+      if (examplesSelectList !== null && examplesButton !== null) {
+        examples.forEach(function(example, index) {
+          examplesSelectList.innerHTML += _ExamplesManager.exampleElementListTemplate(example.name, index);
+        });
+        examplesButton.innerHTML = examples[0].name;
+      }
+      const dropdownItems = this.selectElement.querySelectorAll(".dropdown__list-item");
+      dropdownItems.forEach((option) => {
+        option.addEventListener("click", () => {
+          const exampleName = option.innerText;
+          const example = examples.find((example2) => {
+            return example2.name === exampleName;
+          });
+          if (this.onSelectHandler !== null && example) {
+            this.onSelectHandler(example);
+          }
+        });
+      });
+      const dropdownBtn = this.selectElement.querySelector(".dropdown__button");
+      const dropdownList = this.selectElement.querySelector(".dropdown__list");
+      const dropdownInput = this.selectElement.querySelector(".dropdown__input_hidden");
+      dropdownBtn.addEventListener("click", function() {
+        dropdownList.classList.toggle("dropdown__list_visible");
+        this.classList.toggle("dropdown__button_active");
+      });
+      dropdownItems.forEach(function(option) {
+        option.addEventListener("click", function(e) {
+          var _a;
+          dropdownItems.forEach(function(el) {
+            el.classList.remove("dropdown__list-item_active");
+          });
+          const target = e.target;
+          target.classList.add("dropdown__list-item_active");
+          dropdownBtn.innerText = this.innerText;
+          dropdownInput.value = (_a = this.dataset.value) != null ? _a : "";
+          dropdownList.classList.remove("dropdown__list_visible");
+        });
+      });
+      document.addEventListener("click", function(e) {
+        if (e.target !== dropdownBtn) {
+          dropdownBtn.classList.remove("dropdown__button_active");
+          dropdownList.classList.remove("dropdown__list_visible");
+        }
+      });
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Tab" || e.key === "Escape") {
+          dropdownBtn.classList.remove("dropdown__button_active");
+          dropdownList.classList.remove("dropdown__list_visible");
+        }
+      });
+    }
+  };
+  var ExamplesManager = _ExamplesManager;
+  ExamplesManager.exampleElementListTemplate = function(name, index) {
+    let className = "";
+    if (index === 0) {
+      className = "dropdown__list-item_active";
+    }
+    return `
+<li class="dropdown__list-item ${className}" data-value="${name}">${name}</li>
+`;
+  };
+
+  // src/CodeRunner/CodeRunner.ts
+  var RunCodeResult = class {
+    constructor(output) {
+      this.output = output;
+    }
+  };
+  var ShareCodeResult = class {
+    constructor(hash) {
+      this.hash = hash;
+    }
+  };
+  var CodeRunner = class {
+    static runCode(code) {
+      const data = new FormData();
+      data.append("code", code);
+      return fetch("/run", {
+        method: "post",
+        body: data
+      }).then((resp) => {
+        if (resp.status != 200) {
+          throw new Error("Can't run code");
+        }
+        return resp.text();
+      }).then((output) => new RunCodeResult(output));
+    }
+    static runTest(code) {
+      const data = new FormData();
+      data.append("code", code);
+      return fetch("/run_test", {
+        method: "post",
+        body: data
+      }).then((resp) => {
+        if (resp.status != 200) {
+          throw new Error("Can't run test");
+        }
+        return resp.text();
+      }).then((output) => new RunCodeResult(output));
+    }
+    static formatCode(code) {
+      const data = new FormData();
+      data.append("code", code);
+      return fetch("/format", {
+        method: "post",
+        body: data
+      }).then((resp) => resp.json()).then((data2) => JSON.parse(data2));
+    }
+    static shareCode(code) {
+      const data = new FormData();
+      data.append("code", code);
+      return fetch("/share", {
+        method: "post",
+        body: data
+      }).then((resp) => {
+        if (resp.status != 200) {
+          throw new Error("Can't share code");
+        }
+        return resp.text();
+      }).then((hash) => new ShareCodeResult(hash));
+    }
+  };
+
+  // src/Playground.ts
+  var CODE_UNSAVED_KEY = "unsaved";
+  var Playground = class {
+    /**
+     * @param editorElement - The element that will contain the playground.
+     */
+    constructor(editorElement2) {
+      this.runAsTestConsumer = () => false;
+      this.queryParams = new QueryParams(window.location.search);
+      this.repository = CodeRepositoryManager.selectRepository(this.queryParams);
+      this.editor = new Editor(editorElement2, this.repository);
+      this.themeManager = new ThemeManager(this.queryParams);
+      this.themeManager.registerOnChange((theme) => {
+        this.editor.setTheme(theme);
+      });
+      this.themeManager.loadTheme();
+      this.examplesManager = new ExamplesManager();
+      this.examplesManager.registerOnSelectHandler((example) => {
+        this.editor.setCode(example.code);
+        this.runConfigurationManager.useConfiguration(example.runConfiguration);
+      });
+      this.examplesManager.mount();
+      this.helpManager = new HelpManager(editorElement2);
+      this.runConfigurationManager = new RunConfigurationManager(this.queryParams);
+      this.runConfigurationManager.registerOnChange(() => {
+      });
+      this.runConfigurationManager.registerOnSelect(() => {
+        this.runConfigurationManager.toggleConfigurationsList();
+        this.run();
+      });
+      this.runConfigurationManager.setupConfiguration();
+    }
+    registerRunAsTestConsumer(consumer) {
+      this.runAsTestConsumer = consumer;
+    }
+    /**
+     * Register a handler for the default or new action.
+     * @param name - The name of the action.
+     * @param callback - The callback to be called when the action is triggered.
+     */
+    registerAction(name, callback) {
+      const actionButton = document.getElementsByClassName(`js-playground__action-${name}`)[0];
+      if (actionButton === void 0) {
+        throw new Error(`Can't find action button with class js-playground__action-${name}`);
+      }
+      actionButton.addEventListener("click", callback);
+    }
+    run() {
+      if (this.runAsTestConsumer()) {
+        this.runTest();
+        return;
+      }
+      this.runCode();
+    }
+    runCode() {
+      this.clearTerminal();
+      this.writeToTerminal("Running code...");
+      const code = this.editor.getCode();
+      CodeRunner.runCode(code).then((result) => {
+        this.clearTerminal();
+        this.writeToTerminal(result.output);
+      }).catch((err) => {
+        console.log(err);
+        this.writeToTerminal("Can't run code. Please try again.");
+      });
+    }
+    runTest() {
+      this.clearTerminal();
+      this.writeToTerminal("Running tests...");
+      const code = this.editor.getCode();
+      CodeRunner.runTest(code).then((result) => {
+        this.clearTerminal();
+        this.writeToTerminal(result.output);
+      }).catch((err) => {
+        console.log(err);
+        this.writeToTerminal("Can't run tests. Please try again.");
+      });
+    }
+    formatCode() {
+      this.clearTerminal();
+      this.writeToTerminal("Formatting code...");
+      const code = this.editor.getCode();
+      CodeRunner.formatCode(code).then((result) => {
+        if (!result.ok) {
+          this.clearTerminal();
+          this.writeToTerminal(result.output);
+          return;
+        }
+        this.editor.setCode(result.output, true);
+        this.writeToTerminal("Code formatted successfully!");
+      }).catch((err) => {
+        console.log(err);
+        this.writeToTerminal("Can't format code. Please try again.");
+      });
+    }
+    shareCode() {
+      this.clearTerminal();
+      const code = this.editor.getCode();
+      CodeRunner.shareCode(code).then((result) => {
+        this.writeToTerminal("Code shared successfully!");
+        this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, result.hash);
+        const link = this.buildShareLink(result);
+        this.writeToTerminal("Share link: " + link);
+        copyTextToClipboard(link, () => {
+          this.writeToTerminal("\nLink copied to clipboard.");
+        });
+        this.writeToTerminal("Note: current page has changed its own URL, it now links to shared code.");
+      }).catch((err) => {
+        console.log(err);
+        this.writeToTerminal("Can't share code. Please try again.");
+      });
+    }
+    buildShareLink(result) {
+      let url = window.location.href.split("?")[0];
+      if (!url.endsWith("/")) {
+        url += "/";
+      }
+      return url + "p/" + result.hash;
+    }
+    changeTheme() {
+      this.themeManager.toggleTheme();
+    }
+    setupShortcuts() {
+      this.editor.editor.on("keypress", (cm, event) => {
+        if (!cm.state.completionActive && // Enables keyboard navigation in autocomplete list
+        event.key.length === 1 && event.key.match(/[a-z0-9]/i)) {
+          this.editor.showCompletion();
+        }
+      });
+      document.addEventListener("keydown", (ev) => {
+        const isCodeFromShareURL = this.repository instanceof SharedCodeRepository;
+        if (isCodeFromShareURL && !ev.ctrlKey && !ev.metaKey) {
+          this.markCodeAsUnsaved();
+        }
+        const isCtrlEnter = ev.ctrlKey && ev.key === "Enter";
+        const isCtrlR = ev.ctrlKey && ev.key === "r";
+        const isShiftEnter = ev.shiftKey && ev.key === "Enter";
+        if (isCtrlEnter || isCtrlR || isShiftEnter) {
+          this.run();
+          ev.preventDefault();
+        } else if (ev.ctrlKey && ev.key === "l") {
+          this.formatCode();
+          ev.preventDefault();
+        } else if (ev.ctrlKey && ev.key === "=") {
+          this.editor.changeEditorFontSize(1);
+          ev.preventDefault();
+        } else if (ev.ctrlKey && ev.key === "-") {
+          this.editor.changeEditorFontSize(-1);
+          ev.preventDefault();
+        } else if (ev.ctrlKey && ev.key === "i") {
+          this.helpManager.toggleHelp();
+          ev.preventDefault();
+        } else if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") {
+          this.editor.saveCode();
+          ev.preventDefault();
+        } else if (ev.key === "Escape") {
+          this.helpManager.closeHelp();
+          ev.preventDefault();
+        } else {
+          this.editor.saveCode();
+        }
+      });
+    }
+    askLoadUnsavedCode() {
+      const isCodeFromShareURL = this.repository instanceof SharedCodeRepository;
+      const hasUnsavedCode = window.localStorage.getItem(CODE_UNSAVED_KEY) != null;
+      window.localStorage.removeItem(CODE_UNSAVED_KEY);
+      if (isCodeFromShareURL && hasUnsavedCode) {
+        const yes = confirm("You have previously unsaved changes. Do you want to load it?");
+        if (yes) {
+          this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, null);
+          window.location.reload();
+        }
+      }
+    }
+    clearTerminal() {
+      this.editor.terminal.clear();
+    }
+    writeToTerminal(text) {
+      this.editor.terminal.write(text);
+    }
+    markCodeAsUnsaved() {
+      window.localStorage.setItem(CODE_UNSAVED_KEY, "");
+    }
+  };
+
+  // src/main.ts
+  var editorElement = document.querySelector(".js-playground");
+  var playground = new Playground(editorElement);
+  playground.registerAction("run" /* RUN */, () => {
+    playground.run();
+  });
+  playground.registerAction("format" /* FORMAT */, () => {
+    playground.formatCode();
+  });
+  playground.registerAction("share" /* SHARE */, () => {
+    playground.shareCode();
+  });
+  playground.registerAction("change-theme" /* CHANGE_THEME */, () => {
+    playground.changeTheme();
+  });
+  playground.registerRunAsTestConsumer(() => {
+    const runButton = document.querySelector(".js-playground__action-run");
+    const configurationType = runButton.getAttribute("data-type");
+    return configurationType === "Test";
+  });
+  playground.setupShortcuts();
+  playground.askLoadUnsavedCode();
+  window.onload = () => {
+    const html = document.querySelector("html");
+    html.style.opacity = "1";
+  };
+})();

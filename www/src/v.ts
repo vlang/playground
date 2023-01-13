@@ -55,93 +55,93 @@ class Context {
     knownImports: Set<string> = new Set()
 }
 
+export const keywords: Set<string> = new Set<string>([
+    "as",
+    "asm",
+    "assert",
+    "atomic",
+    "break",
+    "const",
+    "continue",
+    "defer",
+    "else",
+    "enum",
+    "fn",
+    "for",
+    "go",
+    "goto",
+    "if",
+    "import",
+    "in",
+    "interface",
+    "is",
+    "isreftype",
+    "lock",
+    "match",
+    "module",
+    "mut",
+    "none",
+    "or",
+    "pub",
+    "return",
+    "rlock",
+    "select",
+    "shared",
+    "sizeof",
+    "static",
+    "struct",
+    "spawn",
+    "type",
+    "typeof",
+    "union",
+    "unsafe",
+    "volatile",
+    "__offsetof",
+])
+
+export const pseudoKeywords: Set<string> = new Set<string>([
+    "sql",
+    "chan",
+    "thread",
+])
+
+export const atoms: Set<string> = new Set<string>([
+    "true",
+    "false",
+    "nil",
+    "print",
+    "println",
+    "exit",
+    "panic",
+    "error",
+    "dump",
+])
+
+export const builtinTypes: Set<string> = new Set<string>([
+    "bool",
+    "string",
+    "i8",
+    "i16",
+    "int",
+    "i64",
+    "i128",
+    "u8",
+    "u16",
+    "u32",
+    "u64",
+    "u128",
+    "rune",
+    "f32",
+    "f64",
+    "isize",
+    "usize",
+    "voidptr",
+    "any",
+])
+
 // @ts-ignore
 CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
     const indentUnit = config.indentUnit ?? 0
-
-    const keywords: Set<string> = new Set<string>([
-        "as",
-        "asm",
-        "assert",
-        "atomic",
-        "break",
-        "const",
-        "continue",
-        "defer",
-        "else",
-        "enum",
-        "fn",
-        "for",
-        "go",
-        "goto",
-        "if",
-        "import",
-        "in",
-        "interface",
-        "is",
-        "isreftype",
-        "lock",
-        "match",
-        "module",
-        "mut",
-        "none",
-        "or",
-        "pub",
-        "return",
-        "rlock",
-        "select",
-        "shared",
-        "sizeof",
-        "static",
-        "struct",
-        "spawn",
-        "type",
-        "typeof",
-        "union",
-        "unsafe",
-        "volatile",
-        "__offsetof",
-    ])
-
-    const pseudo_keywords: Set<string> = new Set<string>([
-        "sql",
-        "chan",
-        "thread",
-    ])
-
-    const atoms: Set<string> = new Set<string>([
-        "true",
-        "false",
-        "nil",
-        "print",
-        "println",
-        "exit",
-        "panic",
-        "error",
-        "dump",
-    ])
-
-    const builtinTypes: Set<string> = new Set<string>([
-        "bool",
-        "string",
-        "i8",
-        "i16",
-        "int",
-        "i64",
-        "i128",
-        "u8",
-        "u16",
-        "u32",
-        "u64",
-        "u128",
-        "rune",
-        "f32",
-        "f64",
-        "isize",
-        "usize",
-        "voidptr",
-        "any",
-    ])
 
     const isOperatorChar = /[+\-*&^%:=<>!|\/]/
 
@@ -219,7 +219,7 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
         }
 
         if (keywords.has(cur)) return "keyword"
-        if (pseudo_keywords.has(cur)) return "keyword"
+        if (pseudoKeywords.has(cur)) return "keyword"
         if (atoms.has(cur)) return "atom"
         if (builtinTypes.has(cur)) return "builtin"
 
