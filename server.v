@@ -4,7 +4,7 @@ import vweb
 import os
 import time
 import json
-import sqlite
+import db.sqlite
 import crypto.md5
 
 const (
@@ -130,7 +130,12 @@ fn log_code(code string, build_res string) ! {
 	os.write_file(log_file, log_content)!
 }
 
-fn run_in_sandbox(code string, as_test bool) string {
+struct RunResp {
+	output string
+	ok     bool
+}
+
+fn run_in_sandbox(code string, as_test bool) (string, bool) {
 	box_path, box_id := try_init_sandbox()
 	defer {
 		isolate_cmd('isolate --box-id=${box_id} --cleanup')
@@ -139,7 +144,7 @@ fn run_in_sandbox(code string, as_test bool) string {
 	file := if as_test { 'code_test.v' } else { 'code.v' }
 
 	os.write_file(os.join_path(box_path, file), code) or {
-		return 'Failed to write code to sandbox.'
+		return 'Failed to write code to sandbox.', false
 	}
 
 	if as_test {
@@ -160,7 +165,7 @@ fn run_in_sandbox(code string, as_test bool) string {
 
 		log_code(code, run_output) or { eprintln('[WARNING] Failed to log code.') }
 
-		return prettify(run_output)
+		return prettify(run_output), run_res.exit_code == 0
 	}
 
 	build_res := isolate_cmd('
@@ -181,7 +186,7 @@ fn run_in_sandbox(code string, as_test bool) string {
 	log_code(code, build_output) or { eprintln('[WARNING] Failed to log code.') }
 
 	if build_res.exit_code != 0 {
-		return prettify(build_output)
+		return prettify(build_output), false
 	}
 
 	run_res := isolate_cmd('
@@ -204,24 +209,48 @@ fn run_in_sandbox(code string, as_test bool) string {
 		&& run_res.output.contains('GC Warning: Out of Memory!')
 
 	if is_reached_resource_limit || is_out_of_memory {
-		return 'The program reached the resource limit assigned to it.'
+		return 'The program reached the resource limit assigned to it.', false
 	}
 
-	return prettify(run_res.output.trim_right('\n'))
+	return prettify(run_res.output.trim_right('\n')), true
 }
 
 ['/run'; post]
 fn (mut app App) run() vweb.Result {
-	code := app.form['code'] or { return app.text('No code was provided.') }
-	res := run_in_sandbox(code, false)
-	return app.text(res)
+	code := app.form['code'] or {
+		resp := RunResp{
+			output: 'No code was provided.'
+			ok: false
+		}
+		return app.json(json.encode(resp))
+	}
+	res, ok := run_in_sandbox(code, false)
+	resp := RunResp{
+		output: res
+		ok: ok
+	}
+
+	return app.json(json.encode(resp))
 }
 
 ['/run_test'; post]
 fn (mut app App) run_test() vweb.Result {
-	code := app.form['code'] or { return app.text('No code was provided.') }
-	res := run_in_sandbox(code, true)
-	return app.text(res)
+	code := app.form['code'] or {
+		resp := RunResp{
+			output: 'No code was provided.'
+			ok: false
+		}
+		dump(json.encode(resp))
+		return app.json(json.encode(resp))
+	}
+	res, ok := run_in_sandbox(code, true)
+	resp := RunResp{
+		output: res
+		ok: ok
+	}
+
+	dump(json.encode(resp))
+	return app.json(json.encode(resp))
 }
 
 ['/share'; post]
