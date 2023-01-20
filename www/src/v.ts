@@ -170,13 +170,13 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
         }
         if (/[\d.]/.test(ch)) {
             if (ch === ".") {
-                if (!stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/)) {
+                if (!stream.match(/^[0-9_]+([eE][\-+]?[0-9_]+)?/)) {
                     return "operator"
                 }
             } else if (ch === "0") {
-                stream.match(/^[xX][0-9a-fA-F]+/) || stream.match(/^0[0-7]+/)
+                stream.match(/^[xX][0-9a-fA-F_]+/) || stream.match(/^0[0-7_]+/)
             } else {
-                stream.match(/^[0-9]*\.?[0-9]*([eE][\-+]?[0-9]+)?/)
+                stream.match(/^[0-9_]*\.?[0-9_]*([eE][\-+]?[0-9_]+)?/)
             }
             return "number"
         }
