@@ -29,6 +29,7 @@ const codeResult = esbuild.buildSync({
   keepNames: false,
   metafile: true,
   outfile: path.resolve(__dirname, "./public/main.bundle.js"),
+  sourcemap: true,
   platform: "browser",
   target: "esnext",
   external: ["codemirror"],
