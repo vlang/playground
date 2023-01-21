@@ -5,6 +5,7 @@ import { LocalCodeRepository } from "./LocalCodeRepository";
 
 import { QueryParams } from "../QueryParams";
 import { PlaygroundConfig } from "../PlaygroundConfig";
+import {Base64CodeRepository} from "./Base64CodeRepository"
 
 /**
  * CodeRepositoryManager is responsible for managing the code repositories.
@@ -37,6 +38,12 @@ export class CodeRepositoryManager {
         if (hash !== null && hash !== undefined) {
             return new SharedCodeRepository(hash)
         }
+
+        const base64Code = params.getURLParameter(Base64CodeRepository.QUERY_PARAM_NAME)
+        if (base64Code !== null && base64Code !== undefined) {
+            return new Base64CodeRepository(base64Code)
+        }
+
         return repository
     }
 }
