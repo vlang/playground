@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "node esbuild.config.js",
-    "watch": "tsc --noEmit -w"
+    "watch": "node esbuild.watch.config.js"
   },
   "dependencies": {
     "@codemirror/language": "^6.2.1",
