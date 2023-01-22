@@ -143,7 +143,7 @@ body.dragging {
 }
 
 .playground__terminal {
-    height: 350px;
+    height: 270px;
     min-height: 150px;
     max-height: 75vh;
 
@@ -169,6 +169,10 @@ body.dragging .playground__terminal .header {
     border-top: 1px solid var(--terminal-header-border);
     border-bottom: 1px solid var(--terminal-header-border);
     background-color: var(--terminal-header);
+}
+
+.playground__terminal .header:hover {
+    cursor: row-resize;
 }
 
 .playground__terminal .terminal__close-button {
