@@ -257,6 +257,7 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
 
         stream.backUp(2)
         const wasDot = stream.next() === "."
+        stream.next()
 
         const cur = eatIdentifier(stream)
         if (cur === "import") {
