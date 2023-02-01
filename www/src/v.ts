@@ -1,4 +1,11 @@
 import {EditorConfiguration, Mode, StringStream} from "codemirror"
+import {
+    ifAttributesRegexp,
+    keyValueAttributesRegexp,
+    severalSingleKeyValueAttributesRegexp,
+    simpleAttributesRegexp,
+    singleKeyValueAttributesRegexp,
+} from "./v-hint"
 
 type Quota = "'" | "\"" | "`"
 type Tokenizer = (stream: StringStream, state: ModeState) => string | null
@@ -143,7 +150,7 @@ export const builtinTypes: Set<string> = new Set<string>([
 CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
     const indentUnit = config.indentUnit ?? 0
 
-    const isOperatorChar = /[+\-*&^%:=<>!|\/]/
+    const isOperatorChar = /[+\-*&^%:=<>!?|\/]/
 
     let curPunc: string | null = null
 
@@ -168,15 +175,50 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
             state.tokenize = tokenString(ch)
             return state.tokenize(stream, state)
         }
+
+        if (ch === ".") {
+            if (!stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/)) {
+                return "operator"
+            }
+        }
+
+        // probably attribute
+        // [attr]
+        // [attr: value]
+        // [attr1; attr2]
+        if (ch === "[") {
+            // [unsafe]
+            if (stream.match(simpleAttributesRegexp)) {
+                return "attribute"
+            }
+
+            // [sql: foo]
+            if (stream.match(singleKeyValueAttributesRegexp)) {
+                return "attribute"
+            }
+
+            // [sql; foo]
+            if (stream.match(severalSingleKeyValueAttributesRegexp)) {
+                return "attribute"
+            }
+
+            // [attr: value; attr: value]
+            // [attr: value; attr]
+            if (stream.match(keyValueAttributesRegexp)) {
+                return "attribute"
+            }
+
+            // match `[if some ?]`
+            if (stream.match(ifAttributesRegexp)) {
+                return "attribute"
+            }
+        }
+
         if (/[\d.]/.test(ch)) {
-            if (ch === ".") {
-                if (!stream.match(/^[0-9_]+([eE][\-+]?[0-9_]+)?/)) {
-                    return "operator"
-                }
-            } else if (ch === "0") {
-                stream.match(/^[xX][0-9a-fA-F_]+/) || stream.match(/^0[0-7_]+/)
+            if (ch === "0") {
+                stream.match(/^[xX][0-9a-fA-F]+/) || stream.match(/^0[0-7]+/)
             } else {
-                stream.match(/^[0-9_]*\.?[0-9_]*([eE][\-+]?[0-9_]+)?/)
+                stream.match(/^[0-9]*\.?[0-9]*([eE][\-+]?[0-9]+)?/)
             }
             return "number"
         }
@@ -213,6 +255,9 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
             return "compile-time-identifier"
         }
 
+        stream.backUp(2)
+        const wasDot = stream.next() === "."
+
         const cur = eatIdentifier(stream)
         if (cur === "import") {
             state.context.expectedImportName = true
@@ -223,7 +268,7 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
         if (atoms.has(cur)) return "atom"
         if (builtinTypes.has(cur)) return "builtin"
 
-        if (cur[0].toUpperCase() === cur[0]) {
+        if (cur.length > 0 && cur[0].toUpperCase() === cur[0]) {
             return "type"
         }
 
@@ -239,6 +284,10 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
             if (after != null && after.match(/[A-Z]/i)) {
                 return "function"
             }
+        }
+
+        if (wasDot) {
+            return "property"
         }
 
         // highlight only last part

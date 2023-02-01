@@ -5,8 +5,8 @@
 .cm-s-light .cm-at-identifier { color: #708}
 .cm-s-light .cm-def { color: #00f; }
 .cm-s-light .cm-variable,
-.cm-s-light .cm-punctuation,
-.cm-s-light .cm-property,
+.cm-s-light .cm-punctuation {}
+.cm-s-light .cm-property { color: #871094; }
 .cm-s-light .cm-operator {}
 .cm-s-light .cm-variable-2 { color: #05a; }
 .cm-s-light .cm-variable-3, .cm-s-light .cm-type { font-weight: 700; }
@@ -17,7 +17,7 @@
 .cm-s-light .cm-qualifier { color: #555; }
 .cm-s-light .cm-bracket { color: #997; }
 .cm-s-light .cm-tag { color: #170; }
-.cm-s-light .cm-attribute { color: #00c; }
+.cm-s-light .cm-attribute { color: #9E880D !important; }
 .cm-s-light .cm-hr { color: #999; }
 .cm-s-light .cm-link { color: #00c; }
 .cm-s-light .cm-function {}
