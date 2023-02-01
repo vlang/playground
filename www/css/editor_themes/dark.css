@@ -10,8 +10,8 @@
 .cm-s-dark .cm-compile-time-identifier { color: #9876AA}
 .cm-s-dark .cm-def { color: #00f; }
 .cm-s-dark .cm-variable,
-.cm-s-dark .cm-punctuation,
-.cm-s-dark .cm-property,
+.cm-s-dark .cm-punctuation {}
+.cm-s-dark .cm-property { color: #9876AA; }
 .cm-s-dark .cm-operator {}
 .cm-s-dark .cm-variable-2 { color: #05a; }
 .cm-s-dark .cm-variable-3, .cm-s-dark .cm-type { font-weight: 700; }
@@ -22,7 +22,7 @@
 .cm-s-dark .cm-qualifier { color: #555; }
 .cm-s-dark .cm-bracket { color: #997; }
 .cm-s-dark .cm-tag { color: #170; }
-.cm-s-dark .cm-attribute { color: #00c; }
+.cm-s-dark .cm-attribute { color: #BBB529 !important; }
 .cm-s-dark .cm-hr { color: #999; }
 .cm-s-dark .cm-link { color: #00c; }
 .cm-s-dark .cm-function { color: #FFC66D; }
