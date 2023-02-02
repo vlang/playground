@@ -1,6 +1,5 @@
 import { QueryParams } from "../QueryParams";
 import { ITheme, Dark, Light } from "../themes";
-import { moonIcon, sunIcon } from "./icons";
 
 type ThemeCallback = (newTheme: ITheme) => void;
 
@@ -37,7 +36,7 @@ export class ThemeManager {
     constructor(queryParams: QueryParams, predefinedTheme: ITheme | null = null) {
         this.queryParams = queryParams
         this.predefinedTheme = predefinedTheme
-        this.changeThemeButton = document.querySelector(".js-playground__action-change-theme")
+        this.changeThemeButton = document.querySelector(".js-change-theme__action")
     }
 
     public registerOnChange(callback: ThemeCallback): void {
@@ -82,13 +81,16 @@ export class ThemeManager {
         this.currentTheme = theme
         this.onChange.forEach(callback => callback(theme))
 
-        let icon = moonIcon
-        if (theme.name() === "dark") {
-            icon = sunIcon
-        }
-
         if (this.changeThemeButton !== null) {
-            this.changeThemeButton.innerHTML = icon
+            const svgSun = this.changeThemeButton.querySelector(".sun") as HTMLElement
+            const svgMoon = this.changeThemeButton.querySelector(".moon") as HTMLElement
+            if (theme.name() === "dark") {
+                svgSun.style.display = "block"
+                svgMoon.style.display = "none"
+            } else {
+                svgSun.style.display = "none"
+                svgMoon.style.display = "block"
+            }
         }
 
         const html = document.querySelector("html")!

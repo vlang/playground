@@ -23,7 +23,7 @@ playground.registerAction(PlaygroundDefaultAction.CHANGE_THEME, () => {
 })
 
 playground.registerRunAsTestConsumer(() => {
-    const runButton = document.querySelector('.js-playground__action-run') as HTMLButtonElement;
+    const runButton = document.querySelector('.js-run__action') as HTMLButtonElement;
     const configurationType = runButton.getAttribute("data-type");
     return configurationType === "Test"
 })

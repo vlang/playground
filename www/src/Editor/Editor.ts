@@ -69,6 +69,7 @@ export class Editor {
             return !line.trim().startsWith('Failed command')
         })
         this.terminal.mount()
+        this.closeTerminal()
 
         this.initFont()
     }

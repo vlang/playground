@@ -18,6 +18,7 @@ const styleResult = esbuild.build({
   entryPoints: ["./css/index.css"],
   loader: {
     '.svg': 'base64',
+    '.woff2': 'copy',
   },
   watch: {
     onRebuild(error, result) {

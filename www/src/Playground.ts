@@ -78,9 +78,9 @@ export class Playground {
      * @param callback - The callback to be called when the action is triggered.
      */
     public registerAction(name: PlaygroundDefaultAction | string, callback: () => void): void {
-        const actionButton = document.getElementsByClassName(`js-playground__action-${name}`)[0]
+        const actionButton = document.getElementsByClassName(`js-${name}__action`)[0]
         if (actionButton === undefined) {
-            throw new Error(`Can't find action button with class js-playground__action-${name}`)
+            throw new Error(`Can't find action button with class js-${name}__action`)
         }
 
         actionButton.addEventListener("click", callback)

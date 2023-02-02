@@ -25,8 +25,8 @@ export class RunConfigurationManager {
     private currentConfiguration: RunConfigurationType = RunConfigurationType.Run
     private fromQueryParam: boolean = false
 
-    private readonly runButton = document.querySelector(".js-playground__action-run")!
-    private readonly runButtonLabel = document.querySelector(".js-playground__action-run .label")!
+    private readonly runButton = document.querySelector(".js-run__action")!
+    private readonly runButtonLabel = document.querySelector(".js-run__action .label")!
     private readonly openRunButton = document.querySelector(".js-open-run-select")!
     private readonly configurationsList = document.querySelector(".js-run-configurations-list")!
     private readonly configurations = document.querySelectorAll(".js-configuration")!
@@ -91,16 +91,6 @@ export class RunConfigurationManager {
             // To avoid this, we update the URL if the user changes configuration.
             this.queryParams.updateURLParameter(RunConfigurationManager.QUERY_PARAM_NAME, runConfigurationAsString)
         }
-
-        this.setIconForV(runConfigurationType)
-    }
-
-    private setIconForV(runConfigurationType: RunConfigurationType) {
-        let icon = runIcons
-        if (runConfigurationType != RunConfigurationType.Run) {
-            icon = testIcons
-        }
-        document.querySelector(".title-v-part")!.innerHTML = icon
     }
 
     private mount() {

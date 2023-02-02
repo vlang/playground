@@ -17,7 +17,7 @@
 .shortcut .key kbd {
     display: inline-block;
 
-    font-family: Inter, sans-serif;
+    font-family: "JetBrainsSans", Helvetica, Arial, sans-serif;
 
     border: 1px solid #ccc;
     border-radius: 4px;

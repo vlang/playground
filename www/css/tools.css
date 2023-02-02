@@ -1,0 +1,180 @@
+.tools {
+  position: relative;
+  height: 65px;
+  color: #fff;
+  -webkit-backdrop-filter: saturate(50%) blur(5px);
+  backdrop-filter: saturate(50%) blur(5px);
+  background: var(--tools-background-color);
+  border-top: 1px solid var(--tools-border);
+  z-index: 10;
+}
+.tools .container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto max-content;
+  align-items: center;
+  padding: 0 15px 0 40px;
+}
+.tools .container .title {
+  height: 100%;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: 15px;
+  align-content: center;
+  font-size: 22px;
+  color: var(--text-color);
+}
+.tools .container .title .title-v-part {
+  font-weight: 700;
+  color: var(--text-color);
+  text-decoration: none;
+}
+.tools .container .title .title-v-part svg {
+  margin-top: 5px;
+}
+.tools .container .title span {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: 3px;
+  align-items: center;
+}
+.tools .container .buttons {
+  display: grid;
+  height: 100%;
+  grid-template-columns: repeat(4, max-content);
+  align-content: center;
+  grid-column-gap: 8px;
+}
+.tools .container .buttons button {
+  height: 38px;
+  padding: 8px 20px 6px 17px;
+  border: none;
+  border-radius: 12px;
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: 15px;
+  line-height: 1.5;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: 8px;
+  transition: background-color 75ms;
+}
+.tools .container .buttons button:hover {
+  cursor: pointer;
+  background-color: var(--tools-button-hover);
+}
+.tools .container .buttons button .icon {
+  padding-top: 2px;
+}
+.tools .container .buttons button .icon path {
+  fill: var(--text-color);
+}
+.tools .container .buttons button .icon rect {
+  fill: var(--text-color);
+}
+.tools .container .buttons button .icon .run-icon {
+  fill: #fff;
+}
+.tools .container .run-button-select {
+  height: 38px;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.5;
+  display: grid;
+  transition: background-color 150ms ease 100ms;
+  margin-left: 20px;
+  grid-template-columns: max-content max-content max-content;
+}
+.tools .container .run-button-select button {
+  padding: 8px 20px 6px 17px;
+  border-radius: 8px 0 0 8px;
+  background-color: #3474f0;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.5;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: 8px;
+  align-items: center;
+}
+.tools .container .run-button-select button:hover {
+  cursor: pointer;
+  background-color: #2a5ed0;
+}
+.tools .container .run-button-select button .label {
+  margin-top: -2px;
+}
+.tools .container .run-button-select .open-run-select {
+  border-radius: 0 8px 8px 0;
+  padding: 8px 7px 4px 7px;
+  background-color: #3474f0;
+}
+.tools .container .run-button-select .open-run-select:hover {
+  cursor: pointer;
+  background-color: #2a5ed0;
+}
+.tools .container .run-button-select .open-run-select .open-icon {
+  padding: 3px 0 0 0;
+}
+.tools .container .run-button-select .run-configurations-list {
+  width: 250px;
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: var(--tools-background-color);
+  border: 1px solid var(--select-header-border);
+  border-radius: 8px;
+  z-index: 1000;
+  padding: 15px 10px;
+  box-shadow: 0 15px 8px -10px rgba(0, 0, 0, 0.2);
+}
+.tools .container .run-button-select .run-configurations-list h4 {
+  margin: 0 0 5px;
+  padding-left: 10px;
+  color: #6e737b;
+  font-size: 13px;
+  font-weight: 700;
+}
+.tools .container .run-button-select .run-configurations-list .configuration {
+  padding: 5px 7px 2px;
+  border-radius: 6px;
+  font-size: 15px;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: 8px;
+}
+.tools .container .run-button-select .run-configurations-list .configuration:hover {
+  cursor: pointer;
+  background-color: var(--configuration-item-hover);
+}
+.tools .container .run-button-select .run-configurations-list .configuration span {
+  margin-top: -2px;
+  color: var(--text-color);
+}
+.tools .container .run-button-select .run-configurations-list .configuration svg {
+  margin-top: 1px;
+}
+.tools .container .run-button-select .run-configurations-list.hidden {
+  display: none;
+}
+.tools .container button.theme {
+  padding-top: 3px;
+  grid-template-columns: max-content;
+  margin-left: 20px;
+}
+.tools .container button.theme:hover {
+  background-color: transparent;
+}
+.tools .container button.theme:hover .icon .theme-icon path {
+  fill: #9b9b9b;
+}
+.tools .container button.theme .theme-icon {
+  width: 22px;
+}
+.tools .container button.theme .theme-icon path {
+  fill: var(--text-color);
+}
+
+/*# sourceMappingURL=tools.css.map */

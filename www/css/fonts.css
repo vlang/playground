@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@font-face {
+  font-family: "JetBrainsSans";
+  src: url("../public/fonts/JetBrainsSans-Regular.woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "JetBrainsSans";
+  src: url("../public/fonts/JetBrainsSans-Bold.woff2");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "JetBrainsSans";
+  src: url("../public/fonts/JetBrainsSans-SemiBold.woff2");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "JetBrainsSans";
+  src: url("../public/fonts/JetBrainsSans-Medium.woff2");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "JetBrainsSans";
+  src: url("../public/fonts/JetBrainsSans-Book.woff2");
+  font-weight: 350;
+}
+@font-face {
+  font-family: "JetBrainsSans";
+  src: url("../public/fonts/JetBrainsSans-Light.woff2");
+  font-weight: 300;
+}
+
+/*# sourceMappingURL=fonts.css.map */

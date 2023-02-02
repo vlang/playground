@@ -1,0 +1,89 @@
+header {
+  height: 70px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  font: 400 14px/1.5 "JetBrainsSans", Helvetica, Arial, sans-serif;
+  -webkit-backdrop-filter: saturate(50%) blur(8px);
+  backdrop-filter: saturate(50%) blur(8px);
+  background: var(--header-background);
+}
+header .header-container {
+  padding: 0 50px;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto max-content;
+  align-items: center;
+}
+header .header-container .logo {
+  display: grid;
+  align-items: center;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: 10px;
+  margin-top: 4px;
+}
+header .header-container .logo a {
+  display: grid;
+  align-items: center;
+}
+header .header-container .logo span {
+  font-size: 17px;
+  font-weight: 500;
+}
+header .header-container .logo span {
+  color: var(--text-color);
+}
+header .header-container .logo img {
+  width: 25px;
+}
+header .header-container ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+  justify-self: end;
+}
+header .header-container ul .change-theme {
+  margin: 2px 0 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+header .header-container ul .change-theme:hover {
+  cursor: pointer;
+}
+header .header-container ul .change-theme:hover svg path {
+  fill: var(--secondary-color);
+}
+header .header-container ul .change-theme svg {
+  width: 18px;
+  height: 18px;
+}
+header .header-container ul .change-theme svg path {
+  fill: var(--text-color);
+}
+header .header-container ul li {
+  margin: 0 10px;
+}
+header .header-container ul li a {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+header .header-container ul li a:hover {
+  cursor: pointer;
+  color: var(--color);
+}
+header .header-container ul li a.active {
+  color: var(--theme-color);
+}
+
+/*# sourceMappingURL=header.css.map */

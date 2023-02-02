@@ -15,11 +15,10 @@ println('Hello, Playground!')
 
 // To run the code, click the "Run" button or just press Ctrl + R.
 // To format the code, click the "Format" button or just press Ctrl + L.
-// See all shortcuts in the "Help" in the bottom right corner.
 
-// More examples are available in right dropdown list.
+// More examples are available in top dropdown list.
 // You can find Help for shortcuts in the bottom right corner or just press Ctrl + I.
-// See also change theme button in the top right corner. 
+// See also change theme button in the top right corner.
 // If you want to learn more about V, visit https://vlang.io
 // Join us on Discord: https://discord.gg/vlang
 // Enjoy!

@@ -1,0 +1,214 @@
+.tools {
+  position: relative;
+  height: 65px;
+  color: #fff;
+
+  -webkit-backdrop-filter: saturate(50%) blur(5px);
+  backdrop-filter: saturate(50%) blur(5px);
+  background: var(--tools-background-color);
+  border-top: 1px solid var(--tools-border);
+  z-index: 10;
+
+  .container {
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto max-content;
+    align-items: center;
+    padding: 0 15px 0 40px;
+
+    .title {
+      height: 100%;
+      display: grid;
+      grid-template-columns: max-content max-content;
+      grid-column-gap: 15px;
+      align-content: center;
+      font-size: 22px;
+      color: var(--text-color);
+
+      .title-v-part {
+        font-weight: 700;
+        color: var(--text-color);
+        text-decoration: none;
+
+        svg {
+          margin-top: 5px;
+        }
+      }
+
+      span {
+        display: grid;
+        grid-template-columns: max-content max-content;
+        grid-column-gap: 3px;
+        align-items: center;
+      }
+    }
+
+    .buttons {
+      display: grid;
+      height: 100%;
+      grid-template-columns: repeat(4, max-content);
+      align-content: center;
+      grid-column-gap: 8px;
+    }
+
+    .buttons button {
+      height: 38px;
+      padding: 8px 20px 6px 17px;
+      border: none;
+      border-radius: 12px;
+      background-color: transparent;
+      color: var(--text-color);
+      font-size: 15px;
+      line-height: 1.5;
+      display: grid;
+      grid-template-columns: max-content max-content;
+      grid-column-gap: 8px;
+      transition: background-color 75ms;
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--tools-button-hover);
+      }
+
+      .icon {
+        path {
+          fill: var(--text-color);
+        }
+
+        rect {
+          fill: var(--text-color);
+        }
+
+        padding-top: 2px;
+
+        .run-icon {
+          fill: #fff;
+        }
+      }
+    }
+
+    .run-button-select {
+      height: 38px;
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.5;
+      display: grid;
+      transition: background-color 150ms ease 100ms;
+      margin-left: 20px;
+      grid-template-columns: max-content max-content max-content;
+
+      button {
+        padding: 8px 20px 6px 17px;
+        border-radius: 8px 0 0 8px;
+        background-color: #3474f0;
+        border: none;
+        color: #fff;
+        font-size: 15px;
+        line-height: 1.5;
+        display: grid;
+        grid-template-columns: max-content max-content;
+        grid-column-gap: 8px;
+        align-items: center;
+
+        &:hover {
+          cursor: pointer;
+          background-color: #2a5ed0;
+        }
+
+        .label {
+          margin-top: -2px;
+        }
+      }
+
+      .open-run-select {
+        border-radius: 0 8px 8px 0;
+        padding: 8px 7px 4px 7px;
+        background-color: #3474f0;
+
+        &:hover {
+          cursor: pointer;
+          background-color: #2a5ed0;
+        }
+
+        .open-icon {
+          padding: 3px 0 0 0;
+        }
+      }
+
+      .run-configurations-list {
+        width: 250px;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background-color: var(--tools-background-color);
+        border: 1px solid var(--select-header-border);
+        border-radius: 8px;
+        z-index: 1000;
+        padding: 15px 10px;
+        box-shadow: 0 15px 8px -10px rgba(0, 0, 0, 0.2);
+
+        h4 {
+          margin: 0 0 5px;
+          padding-left: 10px;
+          color: #6e737b;
+          font-size: 13px;
+          font-weight: 700;
+        }
+
+        .configuration {
+          padding: 5px 7px 2px;
+          border-radius: 6px;
+          font-size: 15px;
+          display: grid;
+          grid-template-columns: max-content max-content;
+          grid-column-gap: 8px;
+
+          &:hover {
+            cursor: pointer;
+            background-color: var(--configuration-item-hover);
+          }
+
+          span {
+            margin-top: -2px;
+            color: var(--text-color);
+          }
+
+          svg {
+            margin-top: 1px;
+          }
+        }
+      }
+
+      .run-configurations-list.hidden {
+        display: none;
+      }
+    }
+
+    button.theme {
+      padding-top: 3px;
+      grid-template-columns: max-content;
+      margin-left: 20px;
+
+      &:hover {
+        background-color: transparent;
+
+        .icon {
+          .theme-icon {
+            path {
+              fill: #9b9b9b;
+            }
+          }
+        }
+      }
+
+      .theme-icon {
+        width: 22px;
+
+        path {
+          fill: var(--text-color);
+        }
+      }
+    }
+  }
+}

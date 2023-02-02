@@ -1,3 +1,7 @@
+@import "fonts.css";
+@import "variables.css";
+@import "header.css";
+@import "tools.css";
 @import "./editor_themes/light.css";
 @import "./editor_themes/dark.css";
 @import "./style.css";

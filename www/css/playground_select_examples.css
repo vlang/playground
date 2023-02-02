@@ -18,18 +18,12 @@ html[data-theme='dark'] {
 
 .playground__examples__select {
     width: 250px;
-    height: 30px;
-
-    position: absolute;
-
-    top: 20px;
-    right: 30px;
 }
 
 .dropdown {
     max-width: 400px;
     position: relative;
-    font-family: Inter, sans-serif;
+    font-family: "JetBrainsSans", Helvetica, Arial, sans-serif;
     font-size: 14px;
 
     border: 1px solid var(--select-header-border);
@@ -46,8 +40,8 @@ html[data-theme='dark'] {
     background: var(--select-background);
     border: 0 solid #e6eaed;
     border-radius: 4px;
-    height: 50px;
-    padding: 10px 40px 10px 15px;
+    height: 40px;
+    padding: 5px 40px 5px 15px;
     cursor: pointer;
     font-size: 14px;
 }
