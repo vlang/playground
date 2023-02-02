@@ -68,6 +68,9 @@ header .header-container ul .change-theme svg {
   width: 18px;
   height: 18px;
 }
+header .header-container ul .change-theme svg.sun {
+  margin-top: 2px;
+}
 header .header-container ul .change-theme svg path {
   fill: var(--text-color);
 }

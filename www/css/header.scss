@@ -80,6 +80,10 @@ header {
           width: 18px;
           height: 18px;
 
+          &.sun {
+            margin-top: 2px;
+          }
+
           path {
             fill: var(--text-color);
           }
