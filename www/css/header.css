@@ -22,7 +22,7 @@ header .header-container .logo {
   align-items: center;
   grid-template-columns: max-content max-content;
   grid-column-gap: 10px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 header .header-container .logo a {
   display: grid;
@@ -42,11 +42,11 @@ header .header-container ul {
   display: flex;
   list-style: none;
   padding: 0;
-  margin: 4px 0 0 0;
+  margin: 2px 0 0 0;
   justify-self: end;
 }
 header .header-container ul .change-theme {
-  margin: 2px 0 0 20px;
+  margin: 0 0 0 20px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -23,7 +23,7 @@ header {
       align-items: center;
       grid-template-columns: max-content max-content;
       grid-column-gap: 10px;
-      margin-top: 4px;
+      margin-top: 2px;
 
       a {
         display: grid;
@@ -48,11 +48,11 @@ header {
       display: flex;
       list-style: none;
       padding: 0;
-      margin: 4px 0 0 0;
+      margin: 2px 0 0 0;
       justify-self: end;
 
       .change-theme {
-        margin: 2px 0 0 20px;
+        margin: 0 0 0 20px;
         display: flex;
         align-items: center;
         justify-content: center;
