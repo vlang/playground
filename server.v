@@ -117,8 +117,8 @@ fn prettify(output string) string {
 	return pretty
 }
 
-fn ddhhmmss(time time.Time) string {
-	return '${time.day:02d}-${time.hour:02d}:${time.minute:02d}:${time.second:02d}'
+fn ddhhmmss(t time.Time) string {
+	return '${t.day:02d}-${t.hour:02d}:${t.minute:02d}:${t.second:02d}'
 }
 
 fn log_code(code string, build_res string) ! {
