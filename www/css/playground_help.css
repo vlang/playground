@@ -27,12 +27,6 @@ html[data-theme='dark'] {
     color: var(--help-button-color);
     font-size: 25px;
 
-    position: absolute;
-
-    margin-top: -60px;
-    right: 20px;
-    bottom: 20px;
-
     transition: background-color 100ms, border-color 100ms;
 }
 

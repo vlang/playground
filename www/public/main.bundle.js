@@ -872,108 +872,11 @@ println('Hello, Playground!')
   // noinspection JSDeprecatedSymbols
   HelpManager.isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
 
-  // src/clipboard_util.ts
-  function fallbackCopyTextToClipboard(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      const successful = document.execCommand("copy");
-      const msg = successful ? "successful" : "unsuccessful";
-      console.log("Fallback: Copying text command was " + msg);
-    } catch (err) {
-      console.log("Fallback: Oops, unable to copy", err);
-    }
-    document.body.removeChild(textArea);
-  }
-  __name(fallbackCopyTextToClipboard, "fallbackCopyTextToClipboard");
-  function copyTextToClipboard(text, onCopy) {
-    if (!navigator.clipboard) {
-      fallbackCopyTextToClipboard(text);
-      return;
-    }
-    navigator.clipboard.writeText(text).then(function() {
-      console.log("Async: Copying to clipboard was successful!");
-      onCopy();
-    }, function(err) {
-      fallbackCopyTextToClipboard(text);
-      console.log("Async: Could not copy text: ", err, "fallback to old method");
-    });
-  }
-  __name(copyTextToClipboard, "copyTextToClipboard");
-
-  // src/Terminal/Terminal.ts
-  var Terminal = class {
-    constructor(element) {
-      this.onClose = null;
-      this.onWrite = null;
-      this.filters = [];
-      this.element = element;
-      this.attachResizeHandler(element);
-    }
-    registerCloseHandler(handler) {
-      this.onClose = handler;
-    }
-    registerWriteHandler(handler) {
-      this.onWrite = handler;
-    }
-    registerFilter(filter) {
-      this.filters.push(filter);
-    }
-    write(text) {
-      const lines = text.split("\n");
-      const outputElement = this.getTerminalOutputElement();
-      const filteredLines = lines.filter((line) => this.filters.every((filter) => filter(line)));
-      const newText = filteredLines.join("\n");
-      outputElement.innerHTML += newText + "\n";
-      if (this.onWrite !== null) {
-        this.onWrite(text);
-      }
-    }
-    clear() {
-      this.getTerminalOutputElement().innerHTML = "";
-    }
-    mount() {
-      const closeButton = this.element.querySelector(".js-terminal__close-buttom");
-      if (closeButton === null || closeButton === void 0 || this.onClose === null) {
-        return;
-      }
-      closeButton.addEventListener("click", this.onClose);
-    }
-    getTerminalOutputElement() {
-      return this.element.querySelector(".js-terminal__output");
-    }
-    attachResizeHandler(element) {
-      const header = element.querySelector(".header");
-      if (!header)
-        return;
-      let mouseDown = false;
-      header.addEventListener("mousedown", () => {
-        mouseDown = true;
-        document.body.classList.add("dragging");
-      });
-      document.addEventListener("mousemove", (e) => {
-        if (!mouseDown)
-          return;
-        element.style.height = `${document.body.clientHeight + 70 - e.clientY + header.clientHeight / 2}px`;
-      });
-      document.addEventListener("mouseup", () => {
-        mouseDown = false;
-        document.body.classList.remove("dragging");
-      });
-    }
-  };
-  __name(Terminal, "Terminal");
-
   // src/RunConfigurationManager/RunConfigurationManager.ts
   var RunConfigurationType = /* @__PURE__ */ ((RunConfigurationType2) => {
     RunConfigurationType2["Run"] = "Run";
     RunConfigurationType2["Test"] = "Test";
+    RunConfigurationType2["Cgen"] = "Cgen";
     return RunConfigurationType2;
   })(RunConfigurationType || {});
   function getRunConfigurationTypeByString(runConfigurationType) {
@@ -982,6 +885,8 @@ println('Hello, Playground!')
         return "Run" /* Run */;
       case "Test":
         return "Test" /* Test */;
+      case "Cgen":
+        return "Cgen" /* Cgen */;
       default:
         throw new Error(`Unknown run configuration type: ${runConfigurationType}`);
     }
@@ -1002,6 +907,9 @@ println('Hello, Playground!')
       }, "onSelect");
       this.queryParams = queryParams;
       this.mount();
+    }
+    get configuration() {
+      return this.currentConfiguration;
     }
     registerOnChange(callback) {
       this.onChange = callback;
@@ -1032,6 +940,9 @@ println('Hello, Playground!')
       const runConfigurationAsString = RunConfigurationType[runConfigurationType];
       this.runButton.setAttribute("data-type", runConfigurationAsString);
       this.runButtonLabel.textContent = runConfigurationAsString;
+      if (runConfigurationType == "Cgen" /* Cgen */) {
+        this.runButtonLabel.textContent = "Show generated C code";
+      }
       if (!this.fromQueryParam) {
         window.localStorage.setItem(_RunConfigurationManager.LOCAL_STORAGE_KEY, runConfigurationAsString);
       }
@@ -1665,17 +1576,135 @@ fn sum(a int, b int) int {
 println('Hello, link 404!')
 `.trimStart();
 
+  // src/Examples/ExamplesManager.ts
+  var _ExamplesManager = class {
+    constructor() {
+      this.onSelectHandler = null;
+      this.selectElement = document.querySelector(".js-examples__select");
+    }
+    registerOnSelectHandler(handler) {
+      this.onSelectHandler = handler;
+    }
+    mount() {
+      if (this.selectElement === null || this.selectElement === void 0) {
+        return;
+      }
+      const examplesSelectList = this.selectElement.querySelector(".dropdown__list");
+      const examplesButton = this.selectElement.querySelector(".dropdown__button");
+      if (examplesSelectList !== null && examplesButton !== null) {
+        examples.forEach(function(example, index) {
+          examplesSelectList.innerHTML += _ExamplesManager.exampleElementListTemplate(example.name, index);
+        });
+        const examplesButtonSpan = examplesButton.querySelector("span");
+        examplesButtonSpan.innerText = examples[0].name;
+      }
+      const dropdownItems = this.selectElement.querySelectorAll(".dropdown__list-item");
+      dropdownItems.forEach((option) => {
+        option.addEventListener("click", () => {
+          const exampleName = option.innerText;
+          const example = examples.find((example2) => {
+            return example2.name === exampleName;
+          });
+          if (this.onSelectHandler !== null && example) {
+            this.onSelectHandler(example);
+          }
+        });
+      });
+      const dropdownBtn = this.selectElement.querySelector(".dropdown__button");
+      const dropdownList = this.selectElement.querySelector(".dropdown__list");
+      const dropdownInput = this.selectElement.querySelector(".dropdown__input_hidden");
+      dropdownBtn.addEventListener("click", function() {
+        dropdownList.classList.toggle("dropdown__list_visible");
+        this.classList.toggle("dropdown__button_active");
+      });
+      dropdownItems.forEach(function(option) {
+        option.addEventListener("click", function(e) {
+          var _a;
+          dropdownItems.forEach(function(el) {
+            el.classList.remove("dropdown__list-item_active");
+          });
+          const target = e.target;
+          target.classList.add("dropdown__list-item_active");
+          const dropdownBtnSpan = dropdownBtn.querySelector("span");
+          dropdownBtnSpan.innerText = this.innerText;
+          dropdownInput.value = (_a = this.dataset.value) != null ? _a : "";
+          dropdownList.classList.remove("dropdown__list_visible");
+        });
+      });
+      document.addEventListener("click", function(e) {
+        if (e.target !== dropdownBtn && !dropdownBtn.contains(e.target)) {
+          dropdownBtn.classList.remove("dropdown__button_active");
+          dropdownList.classList.remove("dropdown__list_visible");
+        }
+      });
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Tab" || e.key === "Escape") {
+          dropdownBtn.classList.remove("dropdown__button_active");
+          dropdownList.classList.remove("dropdown__list_visible");
+        }
+      });
+    }
+  };
+  var ExamplesManager = _ExamplesManager;
+  __name(ExamplesManager, "ExamplesManager");
+  ExamplesManager.exampleElementListTemplate = /* @__PURE__ */ __name(function(name, index) {
+    let className = "";
+    if (index === 0) {
+      className = "dropdown__list-item_active";
+    }
+    return `
+<li class="dropdown__list-item ${className}" data-value="${name}">${name}</li>
+`;
+  }, "exampleElementListTemplate");
+
+  // src/clipboard_util.ts
+  function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand("copy");
+      const msg = successful ? "successful" : "unsuccessful";
+      console.log("Fallback: Copying text command was " + msg);
+    } catch (err) {
+      console.log("Fallback: Oops, unable to copy", err);
+    }
+    document.body.removeChild(textArea);
+  }
+  __name(fallbackCopyTextToClipboard, "fallbackCopyTextToClipboard");
+  function copyTextToClipboard(text, onCopy) {
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(text);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+      console.log("Async: Copying to clipboard was successful!");
+      onCopy();
+    }, function(err) {
+      fallbackCopyTextToClipboard(text);
+      console.log("Async: Could not copy text: ", err, "fallback to old method");
+    });
+  }
+  __name(copyTextToClipboard, "copyTextToClipboard");
+
   // src/Editor/Editor.ts
   var _Editor = class {
-    constructor(wrapper, repository) {
+    constructor(id, wrapper, repository, terminal, readOnly, mode) {
+      this.terminal = terminal;
       const editorConfig = {
-        mode: "v",
+        mode,
         lineNumbers: true,
         matchBrackets: true,
         extraKeys: {
           "Ctrl-Space": "autocomplete",
           "Ctrl-/": "toggleComment"
         },
+        readOnly,
         indentWithTabs: true,
         indentUnit: 4,
         autoCloseBrackets: true,
@@ -1692,8 +1721,8 @@ println('Hello, link 404!')
         theme: "dark"
       };
       this.wrapperElement = wrapper;
-      const place = wrapper.querySelector("textarea");
-      this.editor = CodeMirror.fromTextArea(place, editorConfig);
+      this.textAreaElement = wrapper.querySelector(`textarea.${id}`);
+      this.editor = CodeMirror.fromTextArea(this.textAreaElement, editorConfig);
       this.repository = repository;
       this.repository.getCode((code) => {
         if (code === SharedCodeRepository.CODE_NOT_FOUND) {
@@ -1703,23 +1732,6 @@ println('Hello, link 404!')
         }
         this.setCode(code);
       });
-      const terminalElement = wrapper.querySelector(".js-terminal");
-      if (terminalElement === null || terminalElement === void 0) {
-        throw new Error("Terminal not found, please check that terminal inside editor element");
-      }
-      this.terminal = new Terminal(terminalElement);
-      this.terminal.registerCloseHandler(() => {
-        this.closeTerminal();
-        this.editor.refresh();
-      });
-      this.terminal.registerWriteHandler((_) => {
-        this.openTerminal();
-      });
-      this.terminal.registerFilter((line) => {
-        return !line.trim().startsWith("Failed command");
-      });
-      this.terminal.mount();
-      this.closeTerminal();
       this.initFont();
     }
     initFont() {
@@ -1761,11 +1773,8 @@ println('Hello, link 404!')
       }
       this.repository.saveCode(this.getCode());
     }
-    openTerminal() {
-      this.wrapperElement.classList.remove("closed-terminal");
-    }
-    closeTerminal() {
-      this.wrapperElement.classList.add("closed-terminal");
+    clear() {
+      this.setCode("");
     }
     setTheme(theme) {
       this.editor.setOption("theme", theme.name());
@@ -1775,6 +1784,26 @@ println('Hello, link 404!')
     }
     refresh() {
       this.editor.refresh();
+    }
+    hide() {
+      var _a;
+      const realEditorElement = this.textAreaElement.parentElement;
+      console.log(realEditorElement);
+      if (realEditorElement !== void 0) {
+        realEditorElement.style.display = "none";
+      }
+      const editorsElement = realEditorElement.parentElement;
+      (_a = editorsElement == null ? void 0 : editorsElement.classList) == null ? void 0 : _a.remove("two-editors");
+    }
+    show() {
+      var _a;
+      const realEditorElement = this.textAreaElement.parentElement;
+      console.log(realEditorElement);
+      if (realEditorElement !== void 0) {
+        realEditorElement.style.display = "grid";
+      }
+      const editorsElement = realEditorElement.parentElement;
+      (_a = editorsElement == null ? void 0 : editorsElement.classList) == null ? void 0 : _a.add("two-editors");
     }
   };
   var Editor = _Editor;
@@ -1886,86 +1915,13 @@ println('Hello, link 404!')
   ThemeManager.QUERY_PARAM_NAME = "theme";
   ThemeManager.LOCAL_STORAGE_KEY = "theme";
 
-  // src/Examples/ExamplesManager.ts
-  var _ExamplesManager = class {
-    constructor() {
-      this.onSelectHandler = null;
-      this.selectElement = document.querySelector(".js-examples__select");
-    }
-    registerOnSelectHandler(handler) {
-      this.onSelectHandler = handler;
-    }
-    mount() {
-      if (this.selectElement === null || this.selectElement === void 0) {
-        return;
-      }
-      const examplesSelectList = this.selectElement.querySelector(".dropdown__list");
-      const examplesButton = this.selectElement.querySelector(".dropdown__button");
-      if (examplesSelectList !== null && examplesButton !== null) {
-        examples.forEach(function(example, index) {
-          examplesSelectList.innerHTML += _ExamplesManager.exampleElementListTemplate(example.name, index);
-        });
-        examplesButton.innerHTML = examples[0].name;
-      }
-      const dropdownItems = this.selectElement.querySelectorAll(".dropdown__list-item");
-      dropdownItems.forEach((option) => {
-        option.addEventListener("click", () => {
-          const exampleName = option.innerText;
-          const example = examples.find((example2) => {
-            return example2.name === exampleName;
-          });
-          if (this.onSelectHandler !== null && example) {
-            this.onSelectHandler(example);
-          }
-        });
-      });
-      const dropdownBtn = this.selectElement.querySelector(".dropdown__button");
-      const dropdownList = this.selectElement.querySelector(".dropdown__list");
-      const dropdownInput = this.selectElement.querySelector(".dropdown__input_hidden");
-      dropdownBtn.addEventListener("click", function() {
-        dropdownList.classList.toggle("dropdown__list_visible");
-        this.classList.toggle("dropdown__button_active");
-      });
-      dropdownItems.forEach(function(option) {
-        option.addEventListener("click", function(e) {
-          var _a;
-          dropdownItems.forEach(function(el) {
-            el.classList.remove("dropdown__list-item_active");
-          });
-          const target = e.target;
-          target.classList.add("dropdown__list-item_active");
-          dropdownBtn.innerText = this.innerText;
-          dropdownInput.value = (_a = this.dataset.value) != null ? _a : "";
-          dropdownList.classList.remove("dropdown__list_visible");
-        });
-      });
-      document.addEventListener("click", function(e) {
-        if (e.target !== dropdownBtn) {
-          dropdownBtn.classList.remove("dropdown__button_active");
-          dropdownList.classList.remove("dropdown__list_visible");
-        }
-      });
-      document.addEventListener("keydown", function(e) {
-        if (e.key === "Tab" || e.key === "Escape") {
-          dropdownBtn.classList.remove("dropdown__button_active");
-          dropdownList.classList.remove("dropdown__list_visible");
-        }
-      });
+  // src/CodeRunner/CodeRunner.ts
+  var RetrieveCodeResult = class {
+    constructor(output) {
+      this.output = output;
     }
   };
-  var ExamplesManager = _ExamplesManager;
-  __name(ExamplesManager, "ExamplesManager");
-  ExamplesManager.exampleElementListTemplate = /* @__PURE__ */ __name(function(name, index) {
-    let className = "";
-    if (index === 0) {
-      className = "dropdown__list-item_active";
-    }
-    return `
-<li class="dropdown__list-item ${className}" data-value="${name}">${name}</li>
-`;
-  }, "exampleElementListTemplate");
-
-  // src/CodeRunner/CodeRunner.ts
+  __name(RetrieveCodeResult, "RetrieveCodeResult");
   var ShareCodeResult = class {
     constructor(hash) {
       this.hash = hash;
@@ -1999,6 +1955,19 @@ println('Hello, link 404!')
         return resp;
       }).then((resp) => resp.json()).then((data2) => JSON.parse(data2));
     }
+    static retrieveCgenCode(code) {
+      const data = new FormData();
+      data.append("code", code);
+      return fetch("/cgen", {
+        method: "post",
+        body: data
+      }).then((resp) => {
+        if (resp.status != 200) {
+          throw new Error("Can't compile and get C code");
+        }
+        return resp.text();
+      }).then((hash) => new RetrieveCodeResult(hash));
+    }
     static formatCode(code) {
       const data = new FormData();
       data.append("code", code);
@@ -2023,6 +1992,107 @@ println('Hello, link 404!')
   };
   __name(CodeRunner, "CodeRunner");
 
+  // src/Terminal/Terminal.ts
+  var Terminal = class {
+    constructor(element) {
+      this.onClose = null;
+      this.onWrite = null;
+      this.filters = [];
+      this.element = element;
+      this.attachResizeHandler(element);
+    }
+    registerCloseHandler(handler) {
+      this.onClose = handler;
+    }
+    registerWriteHandler(handler) {
+      this.onWrite = handler;
+    }
+    registerFilter(filter) {
+      this.filters.push(filter);
+    }
+    write(text) {
+      const lines = text.split("\n");
+      const outputElement = this.getTerminalOutputElement();
+      const filteredLines = lines.filter((line) => this.filters.every((filter) => filter(line)));
+      const newText = filteredLines.join("\n");
+      outputElement.innerHTML += newText + "\n";
+      if (this.onWrite !== null) {
+        this.onWrite(text);
+      }
+    }
+    clear() {
+      this.getTerminalOutputElement().innerHTML = "";
+    }
+    mount() {
+      const closeButton = this.element.querySelector(".js-terminal__close-buttom");
+      if (closeButton === null || closeButton === void 0 || this.onClose === null) {
+        return;
+      }
+      closeButton.addEventListener("click", this.onClose);
+    }
+    getTerminalOutputElement() {
+      return this.element.querySelector(".js-terminal__output");
+    }
+    attachResizeHandler(element) {
+      const header = element.querySelector(".header");
+      if (!header)
+        return;
+      let mouseDown = false;
+      header.addEventListener("mousedown", () => {
+        mouseDown = true;
+        document.body.classList.add("dragging");
+      });
+      document.addEventListener("mousemove", (e) => {
+        if (!mouseDown)
+          return;
+        element.style.height = `${document.body.clientHeight - e.clientY + header.clientHeight / 2}px`;
+      });
+      document.addEventListener("mouseup", () => {
+        mouseDown = false;
+        document.body.classList.remove("dragging");
+      });
+    }
+  };
+  __name(Terminal, "Terminal");
+
+  // src/TipsManager.ts
+  var _TipsManager = class {
+    constructor() {
+      this.layerElement = document.querySelector(".js-tips-layer");
+      this.mount();
+    }
+    mount() {
+      const closeButton = document.querySelector(".js-tips-layer__close");
+      closeButton.addEventListener("click", () => {
+        this.hide();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (!this.isShown()) {
+          return;
+        }
+        if (event.key === "Escape") {
+          this.hide();
+        }
+      });
+    }
+    isShown() {
+      return this.layerElement.classList.contains("open");
+    }
+    show() {
+      if (window.localStorage.getItem(_TipsManager.DONT_SHOW_AGAIN_LOCAL_STORAGE_KEY) === "true") {
+        return;
+      }
+      this.layerElement.classList.add("open");
+      window.localStorage.setItem(_TipsManager.DONT_SHOW_AGAIN_LOCAL_STORAGE_KEY, "true");
+    }
+    hide() {
+      this.layerElement.classList.remove("open");
+    }
+  };
+  var TipsManager = _TipsManager;
+  __name(TipsManager, "TipsManager");
+  TipsManager.DONT_SHOW_AGAIN_LOCAL_STORAGE_KEY = "no-more-tips";
+
   // src/Playground.ts
   var CODE_UNSAVED_KEY = "unsaved";
   var Playground = class {
@@ -2031,9 +2101,18 @@ println('Hello, link 404!')
      */
     constructor(editorElement2) {
       this.runAsTestConsumer = /* @__PURE__ */ __name(() => false, "runAsTestConsumer");
+      this.cgenMode = false;
+      this.wrapperElement = editorElement2;
       this.queryParams = new QueryParams(window.location.search);
       this.repository = CodeRepositoryManager.selectRepository(this.queryParams);
-      this.editor = new Editor(editorElement2, this.repository);
+      const terminalElement = editorElement2.querySelector(".js-terminal");
+      if (terminalElement === null || terminalElement === void 0) {
+        throw new Error("Terminal not found, please check that terminal inside editor element");
+      }
+      this.terminal = new Terminal(terminalElement);
+      this.editor = new Editor("main", editorElement2, this.repository, this.terminal, false, "v");
+      this.cgenEditor = new Editor("cgen", editorElement2, new TextCodeRepository(""), this.terminal, true, "text/x-csrc");
+      this.cgenEditor.hide();
       this.themeManager = new ThemeManager(this.queryParams);
       this.themeManager.registerOnChange((theme) => {
         this.editor.setTheme(theme);
@@ -2042,6 +2121,11 @@ println('Hello, link 404!')
       this.examplesManager = new ExamplesManager();
       this.examplesManager.registerOnSelectHandler((example) => {
         this.editor.setCode(example.code);
+        if (this.runConfigurationManager.configuration === "Cgen" /* Cgen */) {
+          this.cgenEditor.clear();
+          this.cgenEditor.setCode("Rerun Cgen to see C code");
+          return;
+        }
         this.runConfigurationManager.useConfiguration(example.runConfiguration);
       });
       this.examplesManager.mount();
@@ -2049,11 +2133,44 @@ println('Hello, link 404!')
       this.runConfigurationManager = new RunConfigurationManager(this.queryParams);
       this.runConfigurationManager.registerOnChange(() => {
       });
-      this.runConfigurationManager.registerOnSelect(() => {
+      this.runConfigurationManager.registerOnSelect((type) => {
         this.runConfigurationManager.toggleConfigurationsList();
+        if (type === "Cgen" /* Cgen */) {
+          this.cgenEditor.show();
+        }
         this.run();
       });
       this.runConfigurationManager.setupConfiguration();
+      this.tipsManager = new TipsManager();
+      this.registerAction("close-cgen", () => {
+        this.cgenEditor.hide();
+        this.disableCgenMode();
+      });
+      this.terminal.registerCloseHandler(() => {
+        this.closeTerminal();
+      });
+      this.terminal.registerWriteHandler((_) => {
+        this.openTerminal();
+      });
+      this.terminal.registerFilter((line) => {
+        return !line.trim().startsWith("Failed command");
+      });
+      this.terminal.mount();
+      this.closeTerminal();
+    }
+    enableCgenMode() {
+      this.tipsManager.show();
+      this.wrapperElement.querySelectorAll(".playground__editor").forEach((editor) => {
+        editor.classList.add("with-tabs");
+      });
+      this.cgenMode = true;
+    }
+    disableCgenMode() {
+      this.wrapperElement.querySelectorAll(".playground__editor").forEach((editor) => {
+        editor.classList.remove("with-tabs");
+      });
+      this.removeEditorLinesHighlighting();
+      this.cgenMode = false;
     }
     registerRunAsTestConsumer(consumer) {
       this.runAsTestConsumer = consumer;
@@ -2071,11 +2188,15 @@ println('Hello, link 404!')
       actionButton.addEventListener("click", callback);
     }
     run() {
-      if (this.runAsTestConsumer()) {
+      const configuration = this.runConfigurationManager.configuration;
+      if (configuration === "Run" /* Run */) {
+        this.runCode();
+      } else if (configuration === "Test" /* Test */) {
         this.runTest();
-        return;
+      } else if (configuration === "Cgen" /* Cgen */) {
+        this.enableCgenMode();
+        this.retrieveCgenCode();
       }
-      this.runCode();
     }
     runCode() {
       this.clearTerminal();
@@ -2101,9 +2222,55 @@ println('Hello, link 404!')
         this.writeToTerminal("Can't run tests. Please try again.");
       });
     }
+    retrieveCgenCode() {
+      this.clearTerminal();
+      this.writeToTerminal("Running retrieving of generated C code...");
+      const code = this.editor.getCode();
+      CodeRunner.retrieveCgenCode(code).then((result) => {
+        const code2 = result.output;
+        const lines = code2.split("\n");
+        const filteredLines = [];
+        const mapping = {};
+        for (let i = 0; i < lines.length - 1; i++) {
+          const line = lines[i];
+          const next = lines[i + 1];
+          if (next.startsWith("#line")) {
+            continue;
+          }
+          if (line.startsWith("#line")) {
+            if (next.length != 0) {
+              const parts = line.split(" ");
+              const lineNo = parseInt(parts[1]);
+              mapping[lineNo] = next;
+            }
+            continue;
+          }
+          filteredLines.push(line);
+        }
+        const resultCode = filteredLines.join("\n");
+        const v2c = {};
+        for (let mappingKey in mapping) {
+          const line = mapping[mappingKey];
+          const chenIndex = filteredLines.indexOf(line);
+          if (chenIndex != -1) {
+            v2c[mappingKey] = chenIndex;
+          }
+        }
+        const mainIndex = filteredLines.indexOf("void main__main(void) {");
+        console.log(v2c);
+        window.localStorage.setItem("cgen-mapping", JSON.stringify(v2c));
+        this.clearTerminal();
+        this.cgenEditor.show();
+        this.cgenEditor.setCode(resultCode);
+        this.cgenEditor.editor.scrollIntoView({ line: mainIndex, ch: 0 });
+        this.closeTerminal();
+      }).catch((err) => {
+        console.log(err);
+        this.writeToTerminal("Can't compile and get C code. Please try again.");
+      });
+    }
     formatCode() {
       this.clearTerminal();
-      this.writeToTerminal("Formatting code...");
       const code = this.editor.getCode();
       CodeRunner.formatCode(code).then((result) => {
         if (!result.ok) {
@@ -2112,7 +2279,6 @@ println('Hello, link 404!')
           return;
         }
         this.editor.setCode(result.output, true);
-        this.writeToTerminal("Code formatted successfully!");
       }).catch((err) => {
         console.log(err);
         this.writeToTerminal("Can't format code. Please try again.");
@@ -2152,6 +2318,30 @@ println('Hello, link 404!')
           this.editor.showCompletion();
         }
       });
+      this.editor.editor.on("mousedown", (instance, e) => {
+        if (!this.cgenMode) {
+          return;
+        }
+        setTimeout(() => {
+          var _a;
+          this.removeEditorLinesHighlighting();
+          const cursor = instance.getCursor();
+          const line = cursor.line + 1;
+          const mappingString = (_a = window.localStorage.getItem("cgen-mapping")) != null ? _a : "{}";
+          const mapping = JSON.parse(mappingString);
+          const cgenLine = mapping[line];
+          if (cgenLine === void 0) {
+            return;
+          }
+          this.cgenEditor.editor.scrollIntoView({ line: cgenLine, ch: 0 });
+          console.log(cgenLine);
+          this.cgenEditor.editor.addLineClass(cgenLine, "text", "cgen-highlight");
+          window.localStorage.setItem("highlighted-c-line", cgenLine.toString());
+          this.editor.editor.addLineClass(cursor.line, "text", "cgen-highlight");
+          window.localStorage.setItem("highlighted-v-line", cursor.line.toString());
+          this.editor.editor.focus();
+        }, 100);
+      });
       document.addEventListener("keydown", (ev) => {
         const isCodeFromShareURL = this.repository instanceof SharedCodeRepository;
         if (isCodeFromShareURL && !ev.ctrlKey && !ev.metaKey) {
@@ -2186,6 +2376,16 @@ println('Hello, link 404!')
         }
       });
     }
+    removeEditorLinesHighlighting() {
+      const prevHighlightedLine = window.localStorage.getItem("highlighted-c-line");
+      if (prevHighlightedLine != void 0) {
+        this.cgenEditor.editor.removeLineClass(parseInt(prevHighlightedLine), "text", "cgen-highlight");
+      }
+      const prevVlangHighlightedLine = window.localStorage.getItem("highlighted-v-line");
+      if (prevVlangHighlightedLine != void 0) {
+        this.editor.editor.removeLineClass(parseInt(prevVlangHighlightedLine), "text", "cgen-highlight");
+      }
+    }
     askLoadUnsavedCode() {
       const isCodeFromShareURL = this.repository instanceof SharedCodeRepository;
       const hasUnsavedCode = window.localStorage.getItem(CODE_UNSAVED_KEY) != null;
@@ -2199,10 +2399,17 @@ println('Hello, link 404!')
       }
     }
     clearTerminal() {
-      this.editor.terminal.clear();
+      this.terminal.clear();
     }
     writeToTerminal(text) {
-      this.editor.terminal.write(text);
+      this.terminal.write(text);
+    }
+    openTerminal() {
+      this.wrapperElement.classList.remove("closed-terminal");
+    }
+    closeTerminal() {
+      this.wrapperElement.classList.add("closed-terminal");
+      this.editor.refresh();
     }
     markCodeAsUnsaved() {
       window.localStorage.setItem(CODE_UNSAVED_KEY, "");

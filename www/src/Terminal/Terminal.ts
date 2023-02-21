@@ -66,7 +66,7 @@ export class Terminal {
 
         document.addEventListener('mousemove', (e: MouseEvent) => {
             if (!mouseDown) return;
-            element.style.height = `${document.body.clientHeight + 70 - e.clientY + header.clientHeight / 2}px`;
+            element.style.height = `${document.body.clientHeight - e.clientY + header.clientHeight / 2}px`;
         });
 
         document.addEventListener('mouseup', () => {

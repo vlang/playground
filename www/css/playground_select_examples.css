@@ -31,7 +31,8 @@ html[data-theme='dark'] {
 
 .dropdown__button {
     position: relative;
-    display: flex;
+    display: grid;
+    grid-template-columns: auto max-content;
     align-items: center;
     line-height: 18px;
     color: var(--select-color);
@@ -41,9 +42,17 @@ html[data-theme='dark'] {
     border: 0 solid #e6eaed;
     border-radius: 4px;
     height: 40px;
-    padding: 5px 40px 5px 15px;
+    padding: 5px 15px 5px 15px;
     cursor: pointer;
     font-size: 14px;
+}
+
+.dropdown__button span {
+    overflow: auto;
+}
+
+.dropdown__button .open-icon {
+    margin-top: 4px;
 }
 
 .dropdown__list {

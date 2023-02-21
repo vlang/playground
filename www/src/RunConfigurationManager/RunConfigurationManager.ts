@@ -4,6 +4,7 @@ import { runIcons, testIcons } from "../icons";
 export enum RunConfigurationType {
     Run = "Run",
     Test = "Test",
+    Cgen = "Cgen",
 }
 
 function getRunConfigurationTypeByString(runConfigurationType: string): RunConfigurationType {
@@ -12,6 +13,8 @@ function getRunConfigurationTypeByString(runConfigurationType: string): RunConfi
             return RunConfigurationType.Run
         case "Test":
             return RunConfigurationType.Test
+        case "Cgen":
+            return RunConfigurationType.Cgen
         default:
             throw new Error(`Unknown run configuration type: ${runConfigurationType}`)
     }
@@ -38,6 +41,10 @@ export class RunConfigurationManager {
         this.queryParams = queryParams
 
         this.mount()
+    }
+
+    get configuration(): RunConfigurationType {
+        return this.currentConfiguration
     }
 
     public registerOnChange(callback: (type: RunConfigurationType) => void): void {
@@ -76,6 +83,10 @@ export class RunConfigurationManager {
         const runConfigurationAsString = RunConfigurationType[runConfigurationType]
         this.runButton.setAttribute("data-type", runConfigurationAsString)
         this.runButtonLabel.textContent = runConfigurationAsString
+
+        if (runConfigurationType == RunConfigurationType.Cgen) {
+            this.runButtonLabel.textContent = "Show generated C code"
+        }
 
         if (!this.fromQueryParam) {
             // Don't update saved theme state if we're loading from query param.

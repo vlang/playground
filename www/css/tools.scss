@@ -1,12 +1,12 @@
 .tools {
   position: relative;
+  width: 100%;
   height: 65px;
   color: #fff;
 
   -webkit-backdrop-filter: saturate(50%) blur(5px);
   backdrop-filter: saturate(50%) blur(5px);
   background: var(--tools-background-color);
-  border-top: 1px solid var(--tools-border);
   z-index: 10;
 
   .container {
@@ -114,6 +114,10 @@
         &:hover {
           cursor: pointer;
           background-color: #2a5ed0;
+        }
+
+        &:focus {
+          outline: none;
         }
 
         .label {

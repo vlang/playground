@@ -215,6 +215,44 @@ fn run_in_sandbox(code string, as_test bool) (string, bool) {
 	return prettify(run_res.output.trim_right('\n')), true
 }
 
+fn retrieve_cgen_code(code string) string {
+	box_path, box_id := try_init_sandbox()
+	defer {
+		isolate_cmd('isolate --box-id=${box_id} --cleanup')
+	}
+
+	os.write_file(os.join_path(box_path, 'code.v'), code) or {
+		return 'Failed to write code to sandbox.'
+	}
+
+	build_res := isolate_cmd('
+		|isolate
+		| --box-id=${box_id}
+		| --dir=${vexeroot}
+		| --env=HOME=/box
+		| --processes=${max_run_processes_and_threads}
+		| --mem=${max_compiler_memory_in_kb}
+		| --wall-time=${wall_time_in_seconds}
+		| --run
+		| --
+		|
+		| ${vexeroot}/v -showcc -keepc -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -skip-unused -usecache -g code.v
+	')
+	build_output := build_res.output.trim_right('\n')
+
+	log_code(code, build_output) or { eprintln('[WARNING] Failed to log code.') }
+
+	if build_res.exit_code != 0 {
+		return prettify(build_output)
+	}
+
+	cgen_file := os.read_file('/tmp/v_501/code.tmp.c') or {
+		return 'Failed to read generated C code.'
+	}
+
+	return cgen_file
+}
+
 ['/run'; post]
 fn (mut app App) run() vweb.Result {
 	code := app.form['code'] or {
@@ -251,6 +289,13 @@ fn (mut app App) run_test() vweb.Result {
 
 	dump(json.encode(resp))
 	return app.json(json.encode(resp))
+}
+
+['/cgen'; post]
+fn (mut app App) cgen() vweb.Result {
+	code := app.form['code'] or { return app.text('No code was provided.') }
+	res := retrieve_cgen_code(code)
+	return app.text(res)
 }
 
 ['/share'; post]
@@ -315,12 +360,12 @@ fn vfmt_code(code string) (string, bool) {
 		| ${vexeroot}/v fmt code.v
 	')
 
-	mut vfmt_output := vfmt_res.output.trim_right('\n')
+	vfmt_output := vfmt_res.output
 	if vfmt_res.exit_code != 0 {
 		return prettify(vfmt_output), false
 	}
 
-	return vfmt_output.all_before_last('\n'), true
+	return vfmt_output, true
 }
 
 struct FormatResp {

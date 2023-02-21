@@ -8,6 +8,7 @@ header {
   -webkit-backdrop-filter: saturate(50%) blur(8px);
   backdrop-filter: saturate(50%) blur(8px);
   background: var(--header-background);
+  border-bottom: 1px solid var(--header-border);
 }
 header .header-container {
   padding: 0 50px;
@@ -42,7 +43,7 @@ header .header-container ul {
   display: flex;
   list-style: none;
   padding: 0;
-  margin: 2px 0 0 0;
+  margin: 4px 0 0 0;
   justify-self: end;
 }
 header .header-container ul .change-theme {

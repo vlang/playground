@@ -1,4 +1,4 @@
-import { IExample, examples } from "./examples";
+import {examples, IExample} from "./examples"
 
 export class ExamplesManager {
     private readonly selectElement: HTMLElement
@@ -25,7 +25,8 @@ export class ExamplesManager {
                 examplesSelectList.innerHTML += ExamplesManager.exampleElementListTemplate(example.name, index)
             })
 
-            examplesButton.innerHTML = examples[0].name
+            const examplesButtonSpan = examplesButton.querySelector("span")!
+            examplesButtonSpan.innerText = examples[0].name
         }
 
         const dropdownItems = this.selectElement.querySelectorAll<HTMLElement>(".dropdown__list-item")
@@ -58,14 +59,16 @@ export class ExamplesManager {
                 })
                 const target = e.target as HTMLElement
                 target.classList.add("dropdown__list-item_active")
-                dropdownBtn.innerText = this.innerText
+
+                const dropdownBtnSpan = dropdownBtn.querySelector("span")!
+                dropdownBtnSpan.innerText = this.innerText
                 dropdownInput.value = this.dataset.value ?? ""
                 dropdownList.classList.remove("dropdown__list_visible")
             })
         })
 
         document.addEventListener("click", function (e) {
-            if (e.target !== dropdownBtn) {
+            if (e.target !== dropdownBtn && !dropdownBtn.contains(e.target as Node)) {
                 dropdownBtn.classList.remove("dropdown__button_active")
                 dropdownList.classList.remove("dropdown__list_visible")
             }

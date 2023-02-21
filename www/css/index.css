@@ -2,10 +2,11 @@
 @import "variables.css";
 @import "header.css";
 @import "tools.css";
+@import "tips.css";
 @import "./editor_themes/light.css";
 @import "./editor_themes/dark.css";
 @import "./style.css";
 @import "./playground_select_examples.css";
 @import "./shortcut.css";
 @import "./playground_help.css";
-@import "./playground.css";
+@import "playground.css";

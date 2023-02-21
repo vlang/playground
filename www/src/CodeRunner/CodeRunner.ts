@@ -3,6 +3,11 @@ type RunCodeResult = {
     output: string
 }
 
+class RetrieveCodeResult {
+    constructor(public output: string) {
+    }
+}
+
 type FormatCodeResult = {
     ok: boolean
     output: string
@@ -53,6 +58,24 @@ export class CodeRunner {
             })
             .then(resp => resp.json())
             .then(data => JSON.parse(data) as RunCodeResult)
+    }
+
+    public static retrieveCgenCode(code: string): Promise<RetrieveCodeResult> {
+        const data = new FormData()
+        data.append("code", code)
+
+        return fetch("/cgen", {
+            method: "post",
+            body: data,
+        })
+            .then(resp => {
+                if (resp.status != 200) {
+                    throw new Error("Can't compile and get C code")
+                }
+
+                return resp.text()
+            })
+            .then(hash => new RetrieveCodeResult(hash))
     }
 
     public static formatCode(code: string): Promise<FormatCodeResult> {

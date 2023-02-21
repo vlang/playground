@@ -1,15 +1,16 @@
-import { CodeRepository, CodeRepositoryManager, SharedCodeRepository } from "./Repositories";
-import { QueryParams } from "./QueryParams";
-import { HelpManager } from "./HelpManager";
-import { ITheme } from "./themes";
-import { IExample } from "./Examples";
-import { copyTextToClipboard } from "./clipboard_util";
+import {CodeRepository, CodeRepositoryManager, SharedCodeRepository, TextCodeRepository} from "./Repositories"
+import {QueryParams} from "./QueryParams"
+import {HelpManager} from "./HelpManager"
+import {ITheme} from "./themes"
+import {ExamplesManager, IExample} from "./Examples"
+import {copyTextToClipboard} from "./clipboard_util"
 
-import { Editor } from "./Editor/Editor";
-import { ThemeManager } from "./ThemeManager/ThemeManager"
-import { ExamplesManager } from "./Examples/ExamplesManager";
-import { RunConfigurationManager } from "./RunConfigurationManager/RunConfigurationManager";
-import { CodeRunner, ShareCodeResult } from "./CodeRunner/CodeRunner";
+import {Editor} from "./Editor/Editor"
+import {ThemeManager} from "./ThemeManager/ThemeManager"
+import {RunConfigurationManager, RunConfigurationType} from "./RunConfigurationManager/RunConfigurationManager"
+import {CodeRunner, ShareCodeResult} from "./CodeRunner/CodeRunner"
+import {Terminal} from "./Terminal/Terminal"
+import {TipsManager} from "./TipsManager"
 
 /**
  * PlaygroundDefaultAction describes the default action of a playground.
@@ -21,28 +22,43 @@ export enum PlaygroundDefaultAction {
     CHANGE_THEME = "change-theme",
 }
 
-const CODE_UNSAVED_KEY = "unsaved";
+const CODE_UNSAVED_KEY = "unsaved"
 
 /**
  * Playground is responsible for managing the all playground.
  */
 export class Playground {
     private runAsTestConsumer: () => boolean = () => false
+    private readonly wrapperElement: HTMLElement
     private readonly queryParams: QueryParams
     private readonly repository: CodeRepository
     private readonly editor: Editor
+    private readonly cgenEditor: Editor
     private readonly themeManager: ThemeManager
     private readonly examplesManager: ExamplesManager
     private readonly helpManager: HelpManager
     private readonly runConfigurationManager: RunConfigurationManager
+    private readonly tipsManager: TipsManager
+    private readonly terminal: Terminal
+    private cgenMode: boolean = false
 
     /**
      * @param editorElement - The element that will contain the playground.
      */
     constructor(editorElement: HTMLElement) {
+        this.wrapperElement = editorElement
         this.queryParams = new QueryParams(window.location.search)
         this.repository = CodeRepositoryManager.selectRepository(this.queryParams)
-        this.editor = new Editor(editorElement, this.repository)
+
+        const terminalElement = editorElement.querySelector(".js-terminal") as HTMLElement
+        if (terminalElement === null || terminalElement === undefined) {
+            throw new Error("Terminal not found, please check that terminal inside editor element")
+        }
+
+        this.terminal = new Terminal(terminalElement)
+        this.editor = new Editor("main", editorElement, this.repository, this.terminal, false, "v")
+        this.cgenEditor = new Editor("cgen", editorElement, new TextCodeRepository(""), this.terminal, true, "text/x-csrc")
+        this.cgenEditor.hide()
 
         this.themeManager = new ThemeManager(this.queryParams)
         this.themeManager.registerOnChange((theme: ITheme): void => {
@@ -53,6 +69,15 @@ export class Playground {
         this.examplesManager = new ExamplesManager()
         this.examplesManager.registerOnSelectHandler((example: IExample): void => {
             this.editor.setCode(example.code)
+
+            // if current configuration is Cgen, don't switch to the example's configuration
+            if (this.runConfigurationManager.configuration === RunConfigurationType.Cgen) {
+                // since example changed, C code no longer matches V code
+                this.cgenEditor.clear()
+                this.cgenEditor.setCode("Rerun Cgen to see C code")
+                return
+            }
+
             this.runConfigurationManager.useConfiguration(example.runConfiguration)
         })
         this.examplesManager.mount()
@@ -60,12 +85,55 @@ export class Playground {
         this.helpManager = new HelpManager(editorElement)
 
         this.runConfigurationManager = new RunConfigurationManager(this.queryParams)
-        this.runConfigurationManager.registerOnChange((): void => {})
-        this.runConfigurationManager.registerOnSelect((): void => {
+        this.runConfigurationManager.registerOnChange((): void => {
+        })
+        this.runConfigurationManager.registerOnSelect((type): void => {
             this.runConfigurationManager.toggleConfigurationsList()
+
+            if (type === RunConfigurationType.Cgen) {
+                this.cgenEditor.show()
+            }
+
             this.run()
         })
         this.runConfigurationManager.setupConfiguration()
+        this.tipsManager = new TipsManager()
+
+        this.registerAction("close-cgen", () => {
+            this.cgenEditor.hide()
+            this.disableCgenMode()
+        })
+
+        this.terminal.registerCloseHandler(() => {
+            this.closeTerminal()
+        })
+        this.terminal.registerWriteHandler((_) => {
+            this.openTerminal()
+        })
+        this.terminal.registerFilter((line) => {
+            return !line.trim().startsWith("Failed command")
+        })
+        this.terminal.mount()
+        this.closeTerminal()
+    }
+
+    public enableCgenMode() {
+        this.tipsManager.show()
+
+        this.wrapperElement.querySelectorAll(".playground__editor").forEach((editor) => {
+            editor.classList.add("with-tabs")
+        })
+
+        this.cgenMode = true
+    }
+
+    public disableCgenMode() {
+        this.wrapperElement.querySelectorAll(".playground__editor").forEach((editor) => {
+            editor.classList.remove("with-tabs")
+        })
+
+        this.removeEditorLinesHighlighting()
+        this.cgenMode = false
     }
 
     public registerRunAsTestConsumer(consumer: () => boolean): void {
@@ -87,12 +155,15 @@ export class Playground {
     }
 
     public run(): void {
-        if (this.runAsTestConsumer()) {
+        const configuration = this.runConfigurationManager.configuration
+        if (configuration === RunConfigurationType.Run) {
+            this.runCode()
+        } else if (configuration === RunConfigurationType.Test) {
             this.runTest()
-            return
+        } else if (configuration === RunConfigurationType.Cgen) {
+            this.enableCgenMode()
+            this.retrieveCgenCode()
         }
-
-        this.runCode()
     }
 
     public runCode(): void {
@@ -127,9 +198,73 @@ export class Playground {
             })
     }
 
+    public retrieveCgenCode(): void {
+        this.clearTerminal()
+        this.writeToTerminal("Running retrieving of generated C code...")
+
+        const code = this.editor.getCode()
+        CodeRunner.retrieveCgenCode(code)
+            .then(result => {
+                const code = result.output
+                const lines = code.split("\n")
+
+                const filteredLines = []
+                const mapping = {}
+
+                for (let i = 0; i < lines.length - 1; i++) {
+                    const line = lines[i]
+                    const next = lines[i + 1]
+                    if (next.startsWith("#line")) {
+                        continue
+                    }
+
+                    if (line.startsWith("#line")) {
+                        if (next.length != 0) {
+                            const parts = line.split(" ")
+                            const lineNo = parseInt(parts[1])
+                            // @ts-ignore
+                            mapping[lineNo] = next
+                        }
+
+                        continue
+                    }
+
+                    filteredLines.push(line)
+                }
+
+                const resultCode = filteredLines.join("\n")
+
+                const v2c = {}
+                for (let mappingKey in mapping) {
+                    // @ts-ignore
+                    const line = mapping[mappingKey]
+                    const chenIndex = filteredLines.indexOf(line)
+                    if (chenIndex != -1) {
+                        // @ts-ignore
+                        v2c[mappingKey] = chenIndex
+                    }
+                }
+
+                const mainIndex = filteredLines.indexOf("void main__main(void) {")
+
+                console.log(v2c)
+
+                window.localStorage.setItem("cgen-mapping", JSON.stringify(v2c))
+
+                this.clearTerminal()
+                this.cgenEditor.show()
+                this.cgenEditor.setCode(resultCode)
+                this.cgenEditor.editor.scrollIntoView({line: mainIndex, ch: 0})
+                this.closeTerminal()
+            })
+            .catch(err => {
+                console.log(err)
+                this.writeToTerminal("Can't compile and get C code. Please try again.")
+            })
+    }
+
     public formatCode(): void {
         this.clearTerminal()
-        this.writeToTerminal("Formatting code...")
 
         const code = this.editor.getCode()
         CodeRunner.formatCode(code)
@@ -141,7 +276,6 @@ export class Playground {
                 }
 
                 this.editor.setCode(result.output, true)
-                this.writeToTerminal("Code formatted successfully!")
             })
             .catch(err => {
                 console.log(err)
@@ -187,12 +321,43 @@ export class Playground {
     }
 
     public setupShortcuts(): void {
-        this.editor.editor.on("keypress",  (cm, event) => {
+        this.editor.editor.on("keypress", (cm, event) => {
             if (!cm.state.completionActive && // Enables keyboard navigation in autocomplete list
                 event.key.length === 1 && event.key.match(/[a-z0-9]/i)) { // Only letters and numbers trigger autocomplete
                 this.editor.showCompletion()
             }
-        });
+        })
+
+        this.editor.editor.on("mousedown", (instance, e) => {
+            if (!this.cgenMode) {
+                return
+            }
+
+            setTimeout(() => {
+                this.removeEditorLinesHighlighting()
+
+                const cursor = instance.getCursor()
+                const line = cursor.line + 1
+                const mappingString = window.localStorage.getItem("cgen-mapping") ?? "{}"
+                const mapping = JSON.parse(mappingString)
+
+                const cgenLine = mapping[line]
+                if (cgenLine === undefined) {
+                    return
+                }
+
+                this.cgenEditor.editor.scrollIntoView({line: cgenLine, ch: 0})
+                console.log(cgenLine)
+
+                this.cgenEditor.editor.addLineClass(cgenLine, "text", "cgen-highlight")
+                window.localStorage.setItem("highlighted-c-line", cgenLine.toString())
+
+                this.editor.editor.addLineClass(cursor.line, "text", "cgen-highlight")
+                window.localStorage.setItem("highlighted-v-line", cursor.line.toString())
+
+                this.editor.editor.focus()
+            }, 100)
+        })
 
         document.addEventListener("keydown", ev => {
             const isCodeFromShareURL = this.repository instanceof SharedCodeRepository
@@ -232,6 +397,18 @@ export class Playground {
         })
     }
 
+    private removeEditorLinesHighlighting() {
+        const prevHighlightedLine = window.localStorage.getItem("highlighted-c-line")
+        if (prevHighlightedLine != undefined) {
+            this.cgenEditor.editor.removeLineClass(parseInt(prevHighlightedLine), "text", "cgen-highlight")
+        }
+
+        const prevVlangHighlightedLine = window.localStorage.getItem("highlighted-v-line")
+        if (prevVlangHighlightedLine != undefined) {
+            this.editor.editor.removeLineClass(parseInt(prevVlangHighlightedLine), "text", "cgen-highlight")
+        }
+    }
+
     public askLoadUnsavedCode() {
         const isCodeFromShareURL = this.repository instanceof SharedCodeRepository
         const hasUnsavedCode = window.localStorage.getItem(CODE_UNSAVED_KEY) != null
@@ -249,11 +426,20 @@ export class Playground {
     }
 
     public clearTerminal(): void {
-        this.editor.terminal.clear()
+        this.terminal.clear()
     }
 
     public writeToTerminal(text: string): void {
-        this.editor.terminal.write(text)
+        this.terminal.write(text)
+    }
+
+    public openTerminal() {
+        this.wrapperElement.classList.remove("closed-terminal")
+    }
+
+    public closeTerminal() {
+        this.wrapperElement.classList.add("closed-terminal")
+        this.editor.refresh()
     }
 
     private markCodeAsUnsaved() {

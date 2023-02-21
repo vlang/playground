@@ -1,25 +1,26 @@
 import {CodeRepository, LocalCodeRepository, SharedCodeRepository} from "../Repositories"
+import {ITheme} from "../themes"
+import {codeIfSharedLinkBroken} from "../Examples"
 import {Terminal} from "../Terminal/Terminal"
-import {ITheme} from "../themes/interface"
-import {codeIfSharedLinkBroken} from "../Examples/examples"
 
 export class Editor {
     private static readonly FONT_LOCAL_STORAGE_KEY = "editor-font-size"
 
     private wrapperElement: HTMLElement
+    private readonly textAreaElement: HTMLTextAreaElement
     private repository: CodeRepository
     public editor: CodeMirror.Editor
-    public terminal: Terminal
 
-    constructor(wrapper: HTMLElement, repository: CodeRepository) {
+    constructor(id: string, wrapper: HTMLElement, repository: CodeRepository, public terminal: Terminal, readOnly: boolean, mode: string ) {
         const editorConfig = {
-            mode: "v",
+            mode: mode,
             lineNumbers: true,
             matchBrackets: true,
             extraKeys: {
                 "Ctrl-Space": "autocomplete",
                 "Ctrl-/": "toggleComment",
             },
+            readOnly: readOnly,
             indentWithTabs: true,
             indentUnit: 4,
             autoCloseBrackets: true,
@@ -38,9 +39,9 @@ export class Editor {
 
         this.wrapperElement = wrapper
 
-        const place = wrapper.querySelector("textarea")!
+        this.textAreaElement = wrapper.querySelector(`textarea.${id}`)! as HTMLTextAreaElement
         // @ts-ignore
-        this.editor = CodeMirror.fromTextArea(place, editorConfig)
+        this.editor = CodeMirror.fromTextArea(this.textAreaElement, editorConfig)
         this.repository = repository
         this.repository.getCode((code) => {
             if (code === SharedCodeRepository.CODE_NOT_FOUND) {
@@ -53,24 +54,6 @@ export class Editor {
             this.setCode(code)
         })
 
-        const terminalElement = wrapper.querySelector(".js-terminal") as HTMLElement
-        if (terminalElement === null || terminalElement === undefined) {
-            throw new Error("Terminal not found, please check that terminal inside editor element")
-        }
-        this.terminal = new Terminal(terminalElement)
-        this.terminal.registerCloseHandler(() => {
-            this.closeTerminal()
-            this.editor.refresh()
-        })
-        this.terminal.registerWriteHandler((_) => {
-            this.openTerminal()
-        })
-        this.terminal.registerFilter((line) => {
-            return !line.trim().startsWith('Failed command')
-        })
-        this.terminal.mount()
-        this.closeTerminal()
-
         this.initFont()
     }
 
@@ -81,7 +64,7 @@ export class Editor {
         }
     }
 
-    changeEditorFontSize(delta: number) {
+    public changeEditorFontSize(delta: number) {
         const cm = document.getElementsByClassName("CodeMirror")[0] as HTMLElement
         const fontSize = window.getComputedStyle(cm, null).getPropertyValue("font-size")
         if (fontSize) {
@@ -122,12 +105,8 @@ export class Editor {
         this.repository.saveCode(this.getCode())
     }
 
-    public openTerminal() {
-        this.wrapperElement.classList.remove("closed-terminal")
-    }
-
-    public closeTerminal() {
-        this.wrapperElement.classList.add("closed-terminal")
+    public clear() {
+        this.setCode("")
     }
 
     public setTheme(theme: ITheme) {
@@ -140,5 +119,27 @@ export class Editor {
 
     public refresh() {
         this.editor.refresh()
+    }
+
+    public hide() {
+        const realEditorElement = this.textAreaElement.parentElement as HTMLElement
+        console.log(realEditorElement)
+        if (realEditorElement !== undefined) {
+            realEditorElement.style.display = "none"
+        }
+
+        const editorsElement = realEditorElement.parentElement
+        editorsElement?.classList?.remove("two-editors")
+    }
+
+    public show() {
+        const realEditorElement = this.textAreaElement.parentElement as HTMLElement
+        console.log(realEditorElement)
+        if (realEditorElement !== undefined) {
+            realEditorElement.style.display = "grid"
+        }
+
+        const editorsElement = realEditorElement.parentElement
+        editorsElement?.classList?.add("two-editors")
     }
 }
