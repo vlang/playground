@@ -245,7 +245,10 @@ export class Playground {
                     }
                 }
 
-                const mainIndex = filteredLines.indexOf("void main__main(void) {")
+                let mainIndex = filteredLines.indexOf("void main__main(")
+                if (mainIndex == -1) {
+                    mainIndex = 0
+                }
 
                 console.log(v2c)
 

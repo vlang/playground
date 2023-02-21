@@ -2256,7 +2256,10 @@ println('Hello, link 404!')
             v2c[mappingKey] = chenIndex;
           }
         }
-        const mainIndex = filteredLines.indexOf("void main__main(void) {");
+        let mainIndex = filteredLines.indexOf("void main__main(");
+        if (mainIndex == -1) {
+          mainIndex = 0;
+        }
         console.log(v2c);
         window.localStorage.setItem("cgen-mapping", JSON.stringify(v2c));
         this.clearTerminal();
