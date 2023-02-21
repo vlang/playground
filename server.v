@@ -236,7 +236,7 @@ fn retrieve_cgen_code(code string) string {
 		| --run
 		| --
 		|
-		| ${vexeroot}/v -showcc -keepc -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -skip-unused -usecache -g code.v
+		| ${vexeroot}/v -showcc -keepc -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -skip-unused -g code.v
 	')
 	build_output := build_res.output.trim_right('\n')
 
