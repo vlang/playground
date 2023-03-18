@@ -146,12 +146,14 @@ export class Playground {
      * @param callback - The callback to be called when the action is triggered.
      */
     public registerAction(name: PlaygroundDefaultAction | string, callback: () => void): void {
-        const actionButton = document.getElementsByClassName(`js-${name}__action`)[0]
-        if (actionButton === undefined) {
-            throw new Error(`Can't find action button with class js-${name}__action`)
+        const actionButtons = document.querySelectorAll(`.js-${name}__action`)
+        if (actionButtons.length == 0) {
+            throw new Error(`Can't find any action button with class js-${name}__action`)
         }
 
-        actionButton.addEventListener("click", callback)
+        actionButtons.forEach((actionButton) => {
+            actionButton.addEventListener("click", callback)
+        })
     }
 
     public run(): void {

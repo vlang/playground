@@ -1,5 +1,5 @@
-import { QueryParams } from "../QueryParams";
-import { ITheme, Dark, Light } from "../themes";
+import {QueryParams} from "../QueryParams";
+import {ITheme, Dark, Light} from "../themes";
 
 type ThemeCallback = (newTheme: ITheme) => void;
 
@@ -10,12 +10,12 @@ type ThemeCallback = (newTheme: ITheme) => void;
  * It will also update the theme when the user changes the theme in the URL.
  *
  * @param queryParams The query params of the URL.
- * @param changeThemeButton The button to change the theme or null.
+ * @param changeThemeButtons The button to change the theme or null.
  *
  * @example
- * const changeThemeButton = document.querySelector('.js-change-theme')
+ * const changeThemeButtons = document.querySelector('.js-change-theme')
  * const queryParams = new QueryParams(window.location.search);
- * const themeManager = new ThemeManager(queryParams, changeThemeButton)
+ * const themeManager = new ThemeManager(queryParams, changeThemeButtons)
  *
  * themeManager.registerOnChange((theme) => {
  *   // Do something with the theme
@@ -29,14 +29,14 @@ export class ThemeManager {
     private currentTheme: ITheme | null = null
     private onChange: ThemeCallback[] = []
     private readonly queryParams: QueryParams
-    private readonly changeThemeButton: Element | null = null
+    private readonly changeThemeButtons: NodeListOf<Element> | null = null
     private readonly predefinedTheme: ITheme | null = null
     private fromQueryParam: boolean = false
 
     constructor(queryParams: QueryParams, predefinedTheme: ITheme | null = null) {
         this.queryParams = queryParams
         this.predefinedTheme = predefinedTheme
-        this.changeThemeButton = document.querySelector(".js-change-theme__action")
+        this.changeThemeButtons = document.querySelectorAll(".js-change-theme__action")
     }
 
     public registerOnChange(callback: ThemeCallback): void {
@@ -81,16 +81,20 @@ export class ThemeManager {
         this.currentTheme = theme
         this.onChange.forEach(callback => callback(theme))
 
-        if (this.changeThemeButton !== null) {
-            const svgSun = this.changeThemeButton.querySelector(".sun") as HTMLElement
-            const svgMoon = this.changeThemeButton.querySelector(".moon") as HTMLElement
-            if (theme.name() === "dark") {
-                svgSun.style.display = "block"
-                svgMoon.style.display = "none"
-            } else {
-                svgSun.style.display = "none"
-                svgMoon.style.display = "block"
-            }
+        if (this.changeThemeButtons !== null) {
+            this.changeThemeButtons.forEach((button) => {
+                const svgSun = button.querySelector(".sun") as HTMLElement
+                const svgMoon = button.querySelector(".moon") as HTMLElement
+                if (svgSun !== null && svgMoon !== null) {
+                    if (theme.name() === "dark") {
+                        svgSun.style.display = "block"
+                        svgMoon.style.display = "none"
+                    } else {
+                        svgSun.style.display = "none"
+                        svgMoon.style.display = "block"
+                    }
+                }
+            })
         }
 
         const html = document.querySelector("html")!

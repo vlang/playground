@@ -1832,12 +1832,12 @@ println('Hello, link 404!')
       this.themes = [new Dark(), new Light()];
       this.currentTheme = null;
       this.onChange = [];
-      this.changeThemeButton = null;
+      this.changeThemeButtons = null;
       this.predefinedTheme = null;
       this.fromQueryParam = false;
       this.queryParams = queryParams;
       this.predefinedTheme = predefinedTheme;
-      this.changeThemeButton = document.querySelector(".js-change-theme__action");
+      this.changeThemeButtons = document.querySelectorAll(".js-change-theme__action");
     }
     registerOnChange(callback) {
       this.onChange.push(callback);
@@ -1873,16 +1873,20 @@ println('Hello, link 404!')
     turnTheme(theme) {
       this.currentTheme = theme;
       this.onChange.forEach((callback) => callback(theme));
-      if (this.changeThemeButton !== null) {
-        const svgSun = this.changeThemeButton.querySelector(".sun");
-        const svgMoon = this.changeThemeButton.querySelector(".moon");
-        if (theme.name() === "dark") {
-          svgSun.style.display = "block";
-          svgMoon.style.display = "none";
-        } else {
-          svgSun.style.display = "none";
-          svgMoon.style.display = "block";
-        }
+      if (this.changeThemeButtons !== null) {
+        this.changeThemeButtons.forEach((button) => {
+          const svgSun = button.querySelector(".sun");
+          const svgMoon = button.querySelector(".moon");
+          if (svgSun !== null && svgMoon !== null) {
+            if (theme.name() === "dark") {
+              svgSun.style.display = "block";
+              svgMoon.style.display = "none";
+            } else {
+              svgSun.style.display = "none";
+              svgMoon.style.display = "block";
+            }
+          }
+        });
       }
       const html = document.querySelector("html");
       html.setAttribute("data-theme", theme.name());
@@ -2181,11 +2185,13 @@ println('Hello, link 404!')
      * @param callback - The callback to be called when the action is triggered.
      */
     registerAction(name, callback) {
-      const actionButton = document.getElementsByClassName(`js-${name}__action`)[0];
-      if (actionButton === void 0) {
-        throw new Error(`Can't find action button with class js-${name}__action`);
+      const actionButtons = document.querySelectorAll(`.js-${name}__action`);
+      if (actionButtons.length == 0) {
+        throw new Error(`Can't find any action button with class js-${name}__action`);
       }
-      actionButton.addEventListener("click", callback);
+      actionButtons.forEach((actionButton) => {
+        actionButton.addEventListener("click", callback);
+      });
     }
     run() {
       const configuration = this.runConfigurationManager.configuration;
