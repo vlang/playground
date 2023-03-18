@@ -360,12 +360,24 @@ fn vfmt_code(code string) (string, bool) {
 		| ${vexeroot}/v fmt code.v
 	')
 
-	vfmt_output := vfmt_res.output
+	mut vfmt_output := $if local ? {
+		vfmt_res.output
+	} $else {
+		vfmt_res.output.trim_right('\n')
+	}
 	if vfmt_res.exit_code != 0 {
 		return prettify(vfmt_output), false
 	}
 
-	return vfmt_output, true
+	result := $if local ? {
+		vfmt_output
+	} $else {
+		// isolate output message like "OK (0.033 sec real, 0.219 sec wall)"
+		// so we need to remove it
+		vfmt_output.all_before_last('\n') + '\n'
+	}
+
+	return result, true
 }
 
 struct FormatResp {
