@@ -1,0 +1,39 @@
+.shortcut {
+  display: grid;
+  grid-template-columns: auto max-content;
+  grid-column-gap: 10px;
+  align-content: center;
+  margin-bottom: 15px;
+
+  &.inline {
+    display: inline;
+  }
+
+  .key {
+    font-size: 14px;
+
+    kbd {
+      display: inline-block;
+      font-family: "JetBrainsSans", Helvetica, Arial, sans-serif;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 0.05em 0.3em 0.1em;
+      margin: 0 0.2em;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
+      background-color: #f7f7f7;
+
+      &:hover {
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+
+      &:active {
+        box-shadow: 0 0 0 2px #fff inset;
+        transform: translateY(1px);
+      }
+    }
+  }
+}
