@@ -704,7 +704,7 @@ println('Hello, Playground!')
 // More examples are available in top dropdown list.
 // You can find Help for shortcuts in the bottom right corner or just press Ctrl + I.
 // See also change theme button in the top right corner.
-// If you want to learn more about V, visit https://vlang.io
+// If you want to learn more about V, visit https://docs.vlang.foundation/ and https://learn.vlang.foundation/
 // Join us on Discord: https://discord.gg/vlang
 // Enjoy!
 `.trimStart();
@@ -1057,7 +1057,7 @@ for area in areas {
     // V uses the \${} notation to interpolate a variable
     // or expression right on the string.
     // Learn more about string interpolation in the documentation:
-    // https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
+    // https://docs.vlang.foundation/concepts/types/strings.html#string-interpolation
     println('Hello, \${area} developers!')
 }
         `,
@@ -1069,12 +1069,12 @@ for area in areas {
       code: `
 // As in other languages, you can define functions in V.
 // Learn more about functions in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#functions
+// https://docs.vlang.foundation/concepts/functions/overview.html
 fn fib(n int) u64 {
     // To define a array of specific type, use the following syntax.
     // Here we define an array of int with the length of n + 2.
     // Learn more about arrays in the documentation:
-    // https://github.com/vlang/v/blob/master/doc/docs.md#arrays
+    // https://docs.vlang.foundation/concepts/types/arrays.html
     mut f := []u64{len: n + 2}
     f[0] = 0
     f[1] = 1
@@ -1088,7 +1088,7 @@ fn fib(n int) u64 {
 
 // main function is the entry point of the program.
 // See note about the main function in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#hello-world
+// https://docs.vlang.foundation/getting-started/hello-world.html
 fn main() {
     for i in 0 .. 30 {
         println(fib(i))
@@ -1099,16 +1099,16 @@ fn main() {
     },
     {
       name: "Structs and embedded structs",
-      // language=V
+      // language=V format=false
       code: `
 // Structs are a way to define a new type with a set of fields.
 // You can define a struct with the following syntax:
 // Learn more about structs in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#structs
+// https://docs.vlang.foundation/concepts/structs/overview.html
 struct Size {
 // mut keyword is used to define mutable fields
 // pub keyword is used to define public fields
-// 
+//
 // By default, all fields are private and immutable.
 pub mut:
     width  int
@@ -1133,10 +1133,10 @@ mut button := Button{
 
 button.width = 3
 
-// With embedding, the struct Button will automatically have get all the 
+// With embedding, the struct Button will automatically have get all the
 // fields and methods from the struct Size, which allows you to do:
 assert button.area() == 6
-// If you need to access embedded structs directly, use an explicit 
+// If you need to access embedded structs directly, use an explicit
 // reference like \`button.Size\`:
 assert button.Size.area() == 6
 // Conceptually, embedded structs are similar to mixins in OOP, not base classes.
@@ -1160,7 +1160,7 @@ struct Node {
 // Sum types are a way to define a type that can be one of several types.
 // In V, sum types are defined with following syntax.
 // Learn more about sum types in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#sum-types
+// https://docs.vlang.foundation/concepts/sum-types.html
 type Tree = Empty | Node
 
 // Let's calculate the sum of all values in the tree.
@@ -1181,7 +1181,7 @@ fn main() {
 fn sum(tree Tree) f64 {
     // In V, you can use \`match\` expression to match a value against a sum type.
     // Learn more about match expression in the documentation:
-    // https://github.com/vlang/v/blob/master/doc/docs.md#match
+    // https://docs.vlang.foundation/concepts/control-flow/conditions.html#match-expression
     return match tree {
         // if the value has type Empty, return 0
         Empty { 0 }
@@ -1196,43 +1196,43 @@ fn sum(tree Tree) f64 {
       name: "Generics",
       // language=V
       code: `
-// Sometimes there may be situations where you need code that will 
+// Sometimes there may be situations where you need code that will
 // work in the same way for different types.
 //
-// For example, in this example, we are creating a \`List\` that will 
+// For example, in this example, we are creating a \`List\` that will
 // be able to store elements of any type while maintaining type safety.
 //
-// In V, to define a generic structure, you need to write the generic parameters 
-// in square brackets after name. 
-// There may be one or more of them, each of them must be named with a 
+// In V, to define a generic structure, you need to write the generic parameters
+// in square brackets after name.
+// There may be one or more of them, each of them must be named with a
 // single capital letter.
 //
 // Learn more about generics in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#generics
+// https://docs.vlang.foundation/concepts/generics.html
 struct List[T] {
 mut:
     data []T
 }
 
-// Since the \`List\` structure is generic, we can define methods that accept or 
+// Since the \`List\` structure is generic, we can define methods that accept or
 // return the type with which the structure was created.
 //
-// That is, for each \`List\` with a specific type, its own copy of this structure 
+// That is, for each \`List\` with a specific type, its own copy of this structure
 // will be created when V compile code.
 //
-// This means that if you call push on a \`List[int]\`, then the \`push()\` function will 
+// This means that if you call push on a \`List[int]\`, then the \`push()\` function will
 // take an int argument.
 fn (mut l List[T]) push(val T) {
     l.data << val
 }
 
-// Here everything is the same as with \`push()\`, however, for \`List[int]\` the function 
+// Here everything is the same as with \`push()\`, however, for \`List[int]\` the function
 // will return an int value, and not accept it.
 fn (l &List[T]) pop() T {
     return l.data.last()
 }
 
-// In V, there can be not only structures, but also functions, so the following function 
+// In V, there can be not only structures, but also functions, so the following function
 // creates a generic structure with the type passed to the function.
 fn list_of[T]() List[T] {
     return List[T]{}
@@ -1243,10 +1243,10 @@ fn main() {
     mut string_list := List[string]{}
     //                     ^^^^^^^^ Generic arguments to create a struct
     // Here we have passed a string as the T parameter to the struct.
-    // We can say that this code is equivalent to \`List_string{}\`, where 
+    // We can say that this code is equivalent to \`List_string{}\`, where
     // \`List_string\` has a data field with type \`[]string\`.
 
-    // Methods are called as usual, the compiler will understand 
+    // Methods are called as usual, the compiler will understand
     // that \`push()\` takes a value of type string.
     string_list.push('hello')
     string_list.push('world')
@@ -1260,7 +1260,7 @@ fn main() {
     mut bool_list := list_of[bool]()
     //                      ^^^^^^ Generic arguments to call the function.
     // Here, as for \`List\`, we passed arguments to be used instead of T.
-    // The compiler itself will compute and understand that it is necessary 
+    // The compiler itself will compute and understand that it is necessary
     // to create a \`List\` with the bool type.
 
     bool_list.push(true)
@@ -1275,7 +1275,7 @@ fn main() {
       code: `
 // V's model of concurrency is going to be very similar to Go's.
 // Learn more about concurrency in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#concurrency
+// https://docs.vlang.foundation/concepts/concurrency.html
 import time
 
 fn task(id int, duration int) {
@@ -1308,7 +1308,7 @@ fn main() {
       code: `
 // Channels in V very similar to Go's channels.
 // Learn more about channels in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#channels
+// https://docs.vlang.foundation/concepts/concurrency.html#channels
 import time
 
 fn main() {
@@ -1341,7 +1341,7 @@ fn main() {
 
     // Select is powerful construct that allows you to work for multiple channels.
     // Learn more about select in the documentation:
-    // https://github.com/vlang/v/blob/master/doc/docs.md#channel-select
+    // https://docs.vlang.foundation/concepts/concurrency.html#channel-select
     select {
         a := <-ch {
             // do something with \`a\`
@@ -1372,13 +1372,13 @@ fn main() {
       code: `
 // V very modular and has a lot of built-in modules.
 // In this example we will use the json module to encode and decode JSON data.
-// If you want to learn more about modules, visit 
-// https://github.com/vlang/v/blob/master/doc/docs.md#modules
+// If you want to learn more about modules, visit
+// https://docs.vlang.foundation/concepts/modules/overview.html
 import json
 
 // Since V is statically typed, we need to define a struct to hold the data.
 // Learn more about structs in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#structs
+// https://docs.vlang.foundation/concepts/structs/overview.html
 struct User {
     name string
     age  int
@@ -1390,24 +1390,24 @@ mut:
 
 fn main() {
     json_data := '[{"name":"Frodo", "age":25}, {"name":"Bobby", "age":10}]'
-    
+
     // json.decode() is special function that can decode JSON data.
     // It takes a type and a json data as arguments and returns a value of passed type.
-    // V tries to decode the data as the passed type. For example, if you pass []User, 
+    // V tries to decode the data as the passed type. For example, if you pass []User,
     // it will try to decode the data as an array of User.
-    // 
+    //
     // In this case it will return an array of User.
-    // 
+    //
     // Learn more about the json module in the documentation:
-    // https://github.com/vlang/v/blob/master/doc/docs.md#json
+    // https://docs.vlang.foundation/concepts/working-with-json.html
     mut users := json.decode([]User, json_data) or {
         // But if the json data is invalid, it will return an error.
         // You can handle it with the 'or {}' syntax as in this example.
-        // 
+        //
         // err is a special variable that contains the error message.
-        // 
-        // Learn more about error handling in documentation: 
-        // https://github.com/vlang/v/blob/master/doc/docs.md#optionresult-types-and-error-handling
+        //
+        // Learn more about error handling in documentation:
+        // https://docs.vlang.foundation/concepts/error-handling.html
         eprintln('Failed to parse json, error: \${err}')
         return
     }
@@ -1417,7 +1417,7 @@ fn main() {
         println('\${user.name}: \${user.age}')
     }
     println('')
-    
+
     for i, mut user in users {
         println('\${i}) \${user.name}')
         if !user.can_register() {
@@ -1431,10 +1431,10 @@ fn main() {
     }
 
     println('')
-    
+
     // json.encode() is a special function that can encode a value to JSON.
     // It takes a value and returns a JSON string.
-    // 
+    //
     // It always return a string, so you don't need to handle the error.
     encoded_data := json.encode(users)
     println(encoded_data)
@@ -1502,7 +1502,7 @@ for line in lines {
     {
       name: "Compile-time Reflection",
       code: `
-// https://github.com/vlang/v/blob/master/doc/docs.md#compile-time-reflection
+// https://docs.vlang.foundation/concepts/compile-time/reflection.html
 
 struct User {
     name string
@@ -1558,7 +1558,7 @@ fn get_int(data string, field string) int {
       name: "Anonymous & higher order functions",
       // language=V
       code: `
-// https://github.com/vlang/v/blob/master/doc/docs.md#anonymous--higher-order-functions
+// https://docs.vlang.foundation/concepts/functions/anonymous-and-higher-order-functions.html
 
 fn sqr(n int) int {
     return n * n
@@ -1596,7 +1596,7 @@ fn main() {
     // You can even have an array/map of functions:
     fns := [sqr, cube]
     println(fns[0](10)) // "100"
-    
+
     fns_map := {
         'sqr':  sqr
         'cube': cube
@@ -1613,7 +1613,7 @@ fn main() {
 // Tests in V is very simple.
 // To define a test function, just add \`test_\` prefix to the function name.
 // Learn more about testing in the documentation:
-// https://github.com/vlang/v/blob/master/doc/docs.md#testing
+// https://docs.vlang.foundation/concepts/testing.html
 fn test_hello() {
     // Inside test functions you can use \`assert\` to check if the result is correct.
     assert hello() == 'Hello world'
