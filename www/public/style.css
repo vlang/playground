@@ -726,6 +726,7 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
 .tools .container .additional-arguments .additional-arguments-input input {
   height: 30px;
   padding: 0 10px;
+  font-size: 13px;
   font-family:
     "JetBrains Mono",
     ui-monospace,
