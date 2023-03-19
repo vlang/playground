@@ -2290,6 +2290,11 @@ println('Hello, link 404!')
       this.writeToTerminal("Running code...");
       const snippet = this.getRunnableCodeSnippet();
       CodeRunner.runCode(snippet).then((result) => {
+        if (result.error != "") {
+          this.writeToTerminal(result.error);
+          this.writeToTerminal("Can't run code. Please try again.");
+          return;
+        }
         this.clearTerminal();
         this.writeToTerminal(result.output);
       }).catch((err) => {
@@ -2302,6 +2307,11 @@ println('Hello, link 404!')
       this.writeToTerminal("Running tests...");
       const snippet = this.getRunnableCodeSnippet();
       CodeRunner.runTest(snippet).then((result) => {
+        if (result.error != "") {
+          this.writeToTerminal(result.error);
+          this.writeToTerminal("Can't run tests. Please try again.");
+          return;
+        }
         this.clearTerminal();
         this.writeToTerminal(result.output);
       }).catch((err) => {
@@ -2385,6 +2395,11 @@ println('Hello, link 404!')
       const snippet = this.getRunnableCodeSnippet();
       console.log(snippet);
       CodeRunner.shareCode(snippet).then((result) => {
+        if (result.error != "") {
+          this.writeToTerminal("Can't share code. Please try again.");
+          this.writeToTerminal(result.error);
+          return;
+        }
         this.writeToTerminal("Code shared successfully!");
         this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, result.hash);
         const link = this.buildShareLink(result);
