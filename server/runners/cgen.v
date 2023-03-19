@@ -16,19 +16,9 @@ pub fn retrieve_cgen_code(snippet models.CodeStorage) !string {
 	}
 
 	build_res := isolate.execute('
-		isolate
-		 --box-id=${box_id}
-		 --dir=${@VEXEROOT}
-		 --env=HOME=/box
-		 --processes=${max_run_processes_and_threads}
-		 --mem=${max_compiler_memory_in_kb}
-		 --wall-time=${wall_time_in_seconds}
-		 --run
-		 --
-
 		 ${@VEXEROOT}/v -showcc -keepc -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -skip-unused -g
 		 ${snippet.build_arguments}
-		 code.v
+		 ${box_path}/code.v
 	')
 	build_output := build_res.output.trim_right('\n')
 
@@ -38,7 +28,7 @@ pub fn retrieve_cgen_code(snippet models.CodeStorage) !string {
 		return error(prettify(build_output))
 	}
 
-	path_to_cgen := $if macos { '/tmp/v_501/code.tmp.c' } $else { '/tmp/v_60000/code.tmp.c' }
+	path_to_cgen := $if macos { '/tmp/v_501/code.tmp.c' } $else { '/tmp/v_0/code.tmp.c' }
 	cgen_file := os.read_file(path_to_cgen) or {
 		return error('Failed to read generated C code.')
 	}
