@@ -1,7 +1,6 @@
 module main
 
 import vweb
-import json
 import models
 
 ['/p/:hash'; get]

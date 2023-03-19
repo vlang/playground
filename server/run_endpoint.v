@@ -16,7 +16,9 @@ fn (mut app Server) run() vweb.Result {
 		error: err.msg()
 	}) }
 
-	res, ok := runners.run(snippet)
+	res := runners.run(snippet) or { return app.json(RunResponse{
+		error: err.msg()
+	}) }
 
 	return app.json(RunResponse{
 		output: res

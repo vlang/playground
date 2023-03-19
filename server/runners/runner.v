@@ -6,17 +6,17 @@ import models
 import logger
 
 // run runs the code in sandbox.
-pub fn run(snippet models.CodeStorage) (string, bool) {
+pub fn run(snippet models.CodeStorage) !string {
 	return run_in_sandbox(snippet, false)
 }
 
 // run runs the code as tests in sandbox.
-pub fn test(snippet models.CodeStorage) (string, bool) {
+pub fn test(snippet models.CodeStorage) !string {
 	return run_in_sandbox(snippet, true)
 }
 
 // run_in_sandbox is common function for running tests and code in sandbox.
-fn run_in_sandbox(snippet models.CodeStorage, as_test bool) (string, bool) {
+fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 	box_path, box_id := isolate.init_sandbox()
 	defer {
 		isolate.execute('isolate --box-id=${box_id} --cleanup')
@@ -25,7 +25,7 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) (string, bool) {
 	file := if as_test { 'code_test.v' } else { 'code.v' }
 
 	os.write_file(os.join_path(box_path, file), snippet.code) or {
-		return 'Failed to write code to sandbox.', false
+		return error('Failed to write code to sandbox.')
 	}
 
 	if as_test {
@@ -48,7 +48,11 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) (string, bool) {
 
 		logger.log(snippet.code, run_output) or { eprintln('[WARNING] Failed to log code.') }
 
-		return prettify(run_output), run_res.exit_code == 0
+		if run_res.exit_code != 0 {
+			return error(prettify(run_output))
+		}
+
+		return prettify(run_output)
 	}
 
 	build_res := isolate.execute('
@@ -71,7 +75,7 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) (string, bool) {
 	logger.log(snippet.code, build_output) or { eprintln('[WARNING] Failed to log code.') }
 
 	if build_res.exit_code != 0 {
-		return prettify(build_output), false
+		return error(prettify(build_output))
 	}
 
 	run_res := isolate.execute('
@@ -95,8 +99,8 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) (string, bool) {
 		&& run_res.output.contains('GC Warning: Out of Memory!')
 
 	if is_reached_resource_limit || is_out_of_memory {
-		return 'The program reached the resource limit assigned to it.', false
+		return error('The program reached the resource limit assigned to it.')
 	}
 
-	return prettify(run_res.output.trim_right('\n')), true
+	return prettify(run_res.output.trim_right('\n'))
 }

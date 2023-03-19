@@ -18,7 +18,11 @@ fn (mut app Server) format() vweb.Result {
 		})
 	}
 
-	res, ok := runners.format_code(code)
+	res := runners.format_code(code) or {
+		return app.json(FormatResponse{
+			error: 'Failed to format code.'
+		})
+	}
 
 	return app.json(FormatResponse{
 		output: res

@@ -21,6 +21,7 @@ Additional form fields:
 
 - `build_arguments` — build arguments when building binary
 - `run_arguments` — run arguments when running binary
+- `run_configuration` — run configuration type
 
 #### Request
 
@@ -50,6 +51,7 @@ Additional form fields:
 
 - `build_arguments` — build arguments when building binary
 - `run_arguments` — run arguments when running binary
+- `run_configuration` — run configuration type
 
 #### Request
 
@@ -131,6 +133,7 @@ Additional form fields:
 
 - `build_arguments` — build arguments when building binary
 - `run_arguments` — run arguments when running binary
+- `run_configuration` — run configuration type
 
 #### Request
 
@@ -177,6 +180,10 @@ Snippet structure is next:
   "run_arguments": {
     "type": "array",
     "description": "run arguments when running binary"
+  },
+  "run_configuration": {
+    "type": "integer",
+    "description": "run configuration type"
   },
   "additional": {
     "type": "object",
