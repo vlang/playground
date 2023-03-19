@@ -1,10 +1,36 @@
-import { QueryParams } from "../QueryParams";
-import { runIcons, testIcons } from "../icons";
+import {QueryParams} from "../QueryParams";
+import {SharedCodeRunConfiguration} from "../Repositories";
 
 export enum RunConfigurationType {
     Run = "Run",
     Test = "Test",
     Cgen = "Cgen",
+}
+
+export function toSharedRunConfiguration(runConfigurationType: string): SharedCodeRunConfiguration {
+    switch (runConfigurationType) {
+        case "Run":
+            return SharedCodeRunConfiguration.Run
+        case "Test":
+            return SharedCodeRunConfiguration.Test
+        case "Cgen":
+            return SharedCodeRunConfiguration.Cgen
+        default:
+            throw new Error(`Unknown run configuration type: ${runConfigurationType}`)
+    }
+}
+
+export function getRunConfigurationTypeByShared(sharedRunConfiguration: SharedCodeRunConfiguration): RunConfigurationType {
+    switch (sharedRunConfiguration) {
+        case SharedCodeRunConfiguration.Run:
+            return RunConfigurationType.Run
+        case SharedCodeRunConfiguration.Test:
+            return RunConfigurationType.Test
+        case SharedCodeRunConfiguration.Cgen:
+            return RunConfigurationType.Cgen
+        default:
+            return RunConfigurationType.Run
+    }
 }
 
 function getRunConfigurationTypeByString(runConfigurationType: string): RunConfigurationType {
@@ -23,6 +49,8 @@ function getRunConfigurationTypeByString(runConfigurationType: string): RunConfi
 export class RunConfigurationManager {
     private static readonly QUERY_PARAM_NAME = "runConfiguration"
     private static readonly LOCAL_STORAGE_KEY = "run-configuration"
+    private static readonly LOCAL_STORAGE_BUILD_ARGUMENTS_KEY = "build-arguments"
+    private static readonly LOCAL_STORAGE_RUN_ARGUMENTS_KEY = "run-arguments"
 
     private readonly queryParams: QueryParams
     private currentConfiguration: RunConfigurationType = RunConfigurationType.Run
@@ -33,9 +61,13 @@ export class RunConfigurationManager {
     private readonly openRunButton = document.querySelector(".js-open-run-select")!
     private readonly configurationsList = document.querySelector(".js-run-configurations-list")!
     private readonly configurations = document.querySelectorAll(".js-configuration")!
+    private readonly buildArgumentsInput = document.querySelector(".js-build-arguments-input") as HTMLInputElement
+    private readonly runArgumentsInput = document.querySelector(".js-run-arguments-input") as HTMLInputElement
 
-    private onChange: (type: RunConfigurationType) => void = () => {}
-    private onSelect: (type: RunConfigurationType) => void = () => {}
+    private onChange: (type: RunConfigurationType) => void = () => {
+    }
+    private onSelect: (type: RunConfigurationType) => void = () => {
+    }
 
     constructor(queryParams: QueryParams) {
         this.queryParams = queryParams
@@ -67,6 +99,16 @@ export class RunConfigurationManager {
             return
         }
 
+        const buildArgumentsFromLocalStorage = window.localStorage.getItem(RunConfigurationManager.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY)
+        if (buildArgumentsFromLocalStorage !== null && buildArgumentsFromLocalStorage !== undefined) {
+            this.buildArgumentsInput.value = buildArgumentsFromLocalStorage
+        }
+
+        const runArgumentsFromLocalStorage = window.localStorage.getItem(RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY)
+        if (runArgumentsFromLocalStorage !== null && runArgumentsFromLocalStorage !== undefined) {
+            this.runArgumentsInput.value = runArgumentsFromLocalStorage
+        }
+
         const configurationFromLocalStorage = window.localStorage.getItem(RunConfigurationManager.LOCAL_STORAGE_KEY)
         if (configurationFromLocalStorage !== null && configurationFromLocalStorage !== undefined) {
             this.useConfiguration(getRunConfigurationTypeByString(configurationFromLocalStorage))
@@ -91,6 +133,8 @@ export class RunConfigurationManager {
         if (!this.fromQueryParam) {
             // Don't update saved theme state if we're loading from query param.
             window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_KEY, runConfigurationAsString)
+            window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY, this.buildArgumentsInput.value)
+            window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY, this.runArgumentsInput.value)
         }
 
         if (this.fromQueryParam) {
@@ -104,9 +148,33 @@ export class RunConfigurationManager {
         }
     }
 
+    get buildArguments(): string[] {
+        return this.buildArgumentsInput.value.split(" ").filter(arg => arg.length > 0)
+    }
+
+    get runArguments(): string[] {
+        return this.runArgumentsInput.value.split(" ").filter(arg => arg.length > 0)
+    }
+
+    public setBuildArguments(args: string) {
+        this.buildArgumentsInput.value = args
+    }
+
+    public setRunArguments(args: string) {
+        this.runArgumentsInput.value = args
+    }
+
     private mount() {
         this.openRunButton.addEventListener("click", () => {
             this.toggleConfigurationsList()
+        })
+
+        this.buildArgumentsInput.addEventListener("input", () => {
+            window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY, this.buildArgumentsInput.value)
+        })
+
+        this.runArgumentsInput.addEventListener("input", () => {
+            window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY, this.runArgumentsInput.value)
         })
 
         this.configurations.forEach(configuration => {

@@ -1,4 +1,4 @@
-import { CodeRepository } from "./interface";
+import {CodeRepository, CodeSnippet} from "./interface";
 
 export class GithubGistCodeRepository implements CodeRepository {
     public static readonly QUERY_PARAM_NAME = "gist"
@@ -9,7 +9,7 @@ export class GithubGistCodeRepository implements CodeRepository {
     saveCode(_: string): void {
     }
 
-    getCode(onReady: (code: string) => void): void {
+    getCode(onReady: (snippet: CodeSnippet) => void): void {
         fetch("https://api.github.com/gists/" + this.id, {
             method: "get",
             headers: {
@@ -31,7 +31,7 @@ export class GithubGistCodeRepository implements CodeRepository {
                 })
                     .then(r => r.text())
                     .then(r => {
-                        onReady(r)
+                        onReady({code: r})
                     })
                     .catch(err => {
                         console.log(err)

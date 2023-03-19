@@ -1,34 +1,52 @@
-type RunCodeResult = {
-    ok: boolean
+import {SharedCodeRunConfiguration} from "../Repositories";
+
+type RunCodeResponse = {
     output: string
+    error: string
 }
 
-class RetrieveCodeResult {
-    constructor(public output: string) {
+type RetrieveCgenCodeResponse = {
+    cgenCode: string
+    error: string
+}
+
+type FormatCodeResponse = {
+    output: string
+    error: string
+}
+
+export type ShareCodeResponse = {
+    hash: string
+    error: string
+}
+
+export class RunnableCodeSnippet {
+    constructor(
+        public code: string,
+        public buildArguments: string[],
+        public runArguments: string[],
+        public runConfiguration: SharedCodeRunConfiguration,
+    ) {
     }
-}
 
-type FormatCodeResult = {
-    ok: boolean
-    output: string
-}
-
-export class ShareCodeResult {
-    constructor(public hash: string) {
+    public toFormData(): FormData {
+        const data = new FormData()
+        data.append("code", this.code)
+        data.append("build-arguments", this.buildArguments.join(" "))
+        data.append("run-arguments", this.runArguments.join(" "))
+        data.append("run-configuration", this.runConfiguration.toString())
+        return data
     }
 }
 
 /**
- * CodeRunner describes how to run, format and share code.
+ * CodeRunner describes how to run, format, and share code.
  */
 export class CodeRunner {
-    public static runCode(code: string): Promise<RunCodeResult> {
-        const data = new FormData()
-        data.append("code", code)
-
+    public static runCode(snippet: RunnableCodeSnippet): Promise<RunCodeResponse> {
         return fetch("/run", {
             method: "post",
-            body: data,
+            body: snippet.toFormData(),
         })
             .then(resp => {
                 if (resp.status != 200) {
@@ -38,16 +56,13 @@ export class CodeRunner {
                 return resp
             })
             .then(resp => resp.json())
-            .then(data => JSON.parse(data) as RunCodeResult)
+            .then(data => data as RunCodeResponse)
     }
 
-    public static runTest(code: string): Promise<RunCodeResult> {
-        const data = new FormData()
-        data.append("code", code)
-
+    public static runTest(snippet: RunnableCodeSnippet): Promise<RunCodeResponse> {
         return fetch("/run_test", {
             method: "post",
-            body: data,
+            body: snippet.toFormData(),
         })
             .then(resp => {
                 if (resp.status != 200) {
@@ -57,54 +72,47 @@ export class CodeRunner {
                 return resp
             })
             .then(resp => resp.json())
-            .then(data => JSON.parse(data) as RunCodeResult)
+            .then(data => data as RunCodeResponse)
     }
 
-    public static retrieveCgenCode(code: string): Promise<RetrieveCodeResult> {
-        const data = new FormData()
-        data.append("code", code)
-
+    public static retrieveCgenCode(snippet: RunnableCodeSnippet): Promise<RetrieveCgenCodeResponse> {
         return fetch("/cgen", {
             method: "post",
-            body: data,
+            body: snippet.toFormData(),
         })
             .then(resp => {
                 if (resp.status != 200) {
                     throw new Error("Can't compile and get C code")
                 }
 
-                return resp.text()
+                return resp
             })
-            .then(hash => new RetrieveCodeResult(hash))
+            .then(resp => resp.json())
+            .then(data => data as RetrieveCgenCodeResponse)
     }
 
-    public static formatCode(code: string): Promise<FormatCodeResult> {
-        const data = new FormData()
-        data.append("code", code)
-
+    public static formatCode(snippet: RunnableCodeSnippet): Promise<FormatCodeResponse> {
         return fetch("/format", {
             method: "post",
-            body: data,
+            body: snippet.toFormData(),
         })
             .then(resp => resp.json())
-            .then(data => JSON.parse(data) as FormatCodeResult)
+            .then(data => data as FormatCodeResponse)
     }
 
-    public static shareCode(code: string): Promise<ShareCodeResult> {
-        const data = new FormData()
-        data.append("code", code)
-
+    public static shareCode(snippet: RunnableCodeSnippet): Promise<ShareCodeResponse> {
         return fetch("/share", {
             method: "post",
-            body: data,
+            body: snippet.toFormData(),
         })
             .then(resp => {
                 if (resp.status != 200) {
                     throw new Error("Can't share code")
                 }
 
-                return resp.text()
+                return resp
             })
-            .then(hash => new ShareCodeResult(hash))
+            .then(resp => resp.json())
+            .then(data => data as ShareCodeResponse)
     }
 }

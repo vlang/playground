@@ -12,35 +12,46 @@
   .container {
     height: 100%;
     display: grid;
-    grid-template-columns: auto max-content;
+    grid-template-columns: max-content auto max-content;
     align-items: center;
-    padding: 0 15px 0 40px;
+    padding: 5px 15px 5px 40px;
 
-    .title {
-      height: 100%;
+    .additional-arguments {
       display: grid;
       grid-template-columns: max-content max-content;
-      grid-column-gap: 15px;
-      align-content: center;
-      font-size: 22px;
-      color: var(--text-color);
+      grid-column-gap: 10px;
 
-      .title-v-part {
-        font-weight: 700;
-        color: var(--text-color);
-        text-decoration: none;
+      margin-left: 10px;
 
-        svg {
-          margin-top: 5px;
+      .additional-arguments-input {
+        display: grid;
+        grid-template-rows: max-content auto;
+        grid-row-gap: 3px;
+
+        height: 100%;
+
+        label {
+          font-size: 11px;
+          color: var(--secondary-color);
+        }
+
+        input {
+          height: 30px;
+          padding: 0 10px;
+
+          font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+          border: 1px solid var(--border-color);
+          outline: none;
+
+          color: var(--text-color);
+          background-color: var(--tools-background-color);
+
+          &:focus {
+            border: 1px solid var(--brand-color);
+          }
         }
       }
 
-      span {
-        display: grid;
-        grid-template-columns: max-content max-content;
-        grid-column-gap: 3px;
-        align-items: center;
-      }
     }
 
     .buttons {

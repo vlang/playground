@@ -4,17 +4,20 @@ build_ts:
 build_ts_watch:
 	cd ./www && npm ci && npm run watch
 
-build: build_ts
-	v server.v
+mkdir:
+	mkdir -p ./server/bin
 
-local_build:
-	v -g -d local server.v
+build: build_ts mkdir
+	v server -o ./server/bin/server
+
+local_build: mkdir
+	v -g -d local -d uselibbacktrace -o ./server/bin/server ./server
 
 run: build
-	./server
+	./server/bin/server
 
 local_run: local_build
-	./server
+	./server/bin/server
 
 run_docker:
 	docker-compose up -d

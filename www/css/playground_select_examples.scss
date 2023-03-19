@@ -18,6 +18,15 @@ html[data-theme='dark'] {
 
 .playground__examples__select {
     width: 250px;
+
+    display: grid;
+    grid-template-rows: max-content auto;
+    grid-row-gap: 3px;
+
+    label {
+        font-size: 11px;
+        color: var(--secondary-color);
+    }
 }
 
 .dropdown {
@@ -26,7 +35,6 @@ html[data-theme='dark'] {
     font-family: "JetBrainsSans", Helvetica, Arial, sans-serif;
     font-size: 14px;
 
-    border: 1px solid var(--select-header-border);
 }
 
 .dropdown__button {
@@ -39,20 +47,23 @@ html[data-theme='dark'] {
     width: 100%;
     text-align: left;
     background: var(--select-background);
-    border: 0 solid #e6eaed;
+    border: 1px solid var(--select-header-border);
     border-radius: 4px;
-    height: 40px;
-    padding: 5px 15px 5px 15px;
+    height: 30px;
+    padding: 5px 10px 5px 10px;
     cursor: pointer;
     font-size: 14px;
 }
 
 .dropdown__button span {
-    overflow: auto;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-top: -3px;
 }
 
 .dropdown__button .open-icon {
-    margin-top: 4px;
+    margin-top: 1px;
 }
 
 .dropdown__list {
@@ -61,7 +72,7 @@ html[data-theme='dark'] {
     list-style-type: none;
     position: absolute;
     left: 0;
-    top: 50px;
+    top: 30px;
     border-radius: 4px;
     background: var(--select-background);
     overflow: hidden;

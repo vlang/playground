@@ -2,13 +2,17 @@ import {CodeRepository, CodeRepositoryManager, SharedCodeRepository, TextCodeRep
 import {QueryParams} from "./QueryParams"
 import {HelpManager} from "./HelpManager"
 import {ITheme} from "./themes"
-import {ExamplesManager, IExample} from "./Examples"
+import {codeIfSharedLinkBroken, ExamplesManager, IExample} from "./Examples"
 import {copyTextToClipboard} from "./clipboard_util"
 
 import {Editor} from "./Editor/Editor"
 import {ThemeManager} from "./ThemeManager/ThemeManager"
-import {RunConfigurationManager, RunConfigurationType} from "./RunConfigurationManager/RunConfigurationManager"
-import {CodeRunner, ShareCodeResult} from "./CodeRunner/CodeRunner"
+import {
+    getRunConfigurationTypeByShared,
+    RunConfigurationManager,
+    RunConfigurationType
+} from "./RunConfigurationManager/RunConfigurationManager"
+import {CodeRunner, RunnableCodeSnippet, ShareCodeResponse} from "./CodeRunner/CodeRunner"
 import {Terminal} from "./Terminal/Terminal"
 import {TipsManager} from "./TipsManager"
 
@@ -25,7 +29,7 @@ export enum PlaygroundDefaultAction {
 const CODE_UNSAVED_KEY = "unsaved"
 
 /**
- * Playground is responsible for managing the all playground.
+ * Playground is responsible for managing the all playgrounds.
  */
 export class Playground {
     private runAsTestConsumer: () => boolean = () => false
@@ -60,9 +64,35 @@ export class Playground {
         this.cgenEditor = new Editor("cgen", editorElement, new TextCodeRepository(""), this.terminal, true, "text/x-csrc")
         this.cgenEditor.hide()
 
+        this.repository.getCode((snippet) => {
+            if (snippet.code === SharedCodeRepository.CODE_NOT_FOUND) {
+                // If the code is not found, use the default Hello World example.
+                this.editor.setCode(codeIfSharedLinkBroken)
+                this.terminal.write("Code for shared link not found.")
+                return
+            }
+
+            if (snippet.runConfiguration !== undefined) {
+                const runConfiguration = getRunConfigurationTypeByShared(snippet.runConfiguration)
+                this.runConfigurationManager.useConfiguration(runConfiguration)
+            }
+
+            if (snippet.buildArguments !== undefined) {
+                this.runConfigurationManager.setBuildArguments(snippet.buildArguments)
+            }
+
+            if (snippet.runArguments !== undefined) {
+                this.runConfigurationManager.setRunArguments(snippet.runArguments)
+            }
+
+            this.editor.setCode(snippet.code)
+        })
+
+
         this.themeManager = new ThemeManager(this.queryParams)
         this.themeManager.registerOnChange((theme: ITheme): void => {
             this.editor.setTheme(theme)
+            this.cgenEditor.setTheme(theme)
         })
         this.themeManager.loadTheme()
 
@@ -156,6 +186,10 @@ export class Playground {
         })
     }
 
+    public getRunnableCodeSnippet(): RunnableCodeSnippet {
+        return this.editor.getRunnableCodeSnippet(this.runConfigurationManager)
+    }
+
     public run(): void {
         const configuration = this.runConfigurationManager.configuration
         if (configuration === RunConfigurationType.Run) {
@@ -172,8 +206,8 @@ export class Playground {
         this.clearTerminal()
         this.writeToTerminal("Running code...")
 
-        const code = this.editor.getCode()
-        CodeRunner.runCode(code)
+        const snippet = this.getRunnableCodeSnippet()
+        CodeRunner.runCode(snippet)
             .then(result => {
                 this.clearTerminal()
                 this.writeToTerminal(result.output)
@@ -188,8 +222,8 @@ export class Playground {
         this.clearTerminal()
         this.writeToTerminal("Running tests...")
 
-        const code = this.editor.getCode()
-        CodeRunner.runTest(code)
+        const snippet = this.getRunnableCodeSnippet()
+        CodeRunner.runTest(snippet)
             .then(result => {
                 this.clearTerminal()
                 this.writeToTerminal(result.output)
@@ -204,10 +238,16 @@ export class Playground {
         this.clearTerminal()
         this.writeToTerminal("Running retrieving of generated C code...")
 
-        const code = this.editor.getCode()
-        CodeRunner.retrieveCgenCode(code)
+        const snippet = this.getRunnableCodeSnippet()
+        CodeRunner.retrieveCgenCode(snippet)
             .then(result => {
-                const code = result.output
+                if (result.error != "") {
+                    this.clearTerminal()
+                    this.writeToTerminal(result.error)
+                    return
+                }
+
+                const code = result.cgenCode
                 const lines = code.split("\n")
 
                 const filteredLines = []
@@ -247,7 +287,8 @@ export class Playground {
                     }
                 }
 
-                let mainIndex = filteredLines.indexOf("void main__main(")
+                const lineWithMainMain = filteredLines.find((line) => line.startsWith("void main__main(void) {")) || ""
+                let mainIndex = filteredLines.indexOf(lineWithMainMain)
                 if (mainIndex == -1) {
                     mainIndex = 0
                 }
@@ -271,12 +312,12 @@ export class Playground {
     public formatCode(): void {
         this.clearTerminal()
 
-        const code = this.editor.getCode()
-        CodeRunner.formatCode(code)
+        const snippet = this.getRunnableCodeSnippet()
+        CodeRunner.formatCode(snippet)
             .then(result => {
-                if (!result.ok) {
+                if (result.error != "") {
                     this.clearTerminal()
-                    this.writeToTerminal(result.output)
+                    this.writeToTerminal(result.error)
                     return
                 }
 
@@ -291,8 +332,9 @@ export class Playground {
     public shareCode(): void {
         this.clearTerminal()
 
-        const code = this.editor.getCode()
-        CodeRunner.shareCode(code)
+        const snippet = this.getRunnableCodeSnippet()
+        console.log(snippet)
+        CodeRunner.shareCode(snippet)
             .then(result => {
                 this.writeToTerminal("Code shared successfully!")
 
@@ -313,7 +355,7 @@ export class Playground {
             })
     }
 
-    private buildShareLink(result: ShareCodeResult) {
+    private buildShareLink(result: ShareCodeResponse) {
         let url = window.location.href.split("?")[0]
         if (!url.endsWith("/")) {
             url += "/"
@@ -333,7 +375,7 @@ export class Playground {
             }
         })
 
-        this.editor.editor.on("mousedown", (instance, e) => {
+        this.editor.editor.on("mousedown", (instance) => {
             if (!this.cgenMode) {
                 return
             }

@@ -624,7 +624,7 @@
   CodeMirror.defineMIME("text/x-v", "v");
 
   // src/Repositories/SharedCodeRepository.ts
-  var SharedCodeRepository = class {
+  var _SharedCodeRepository = class {
     constructor(hash) {
       this.hash = hash;
     }
@@ -639,13 +639,24 @@
       fetch("/query", {
         method: "post",
         body: data
-      }).then((resp) => resp.text()).then((data2) => {
-        onReady(data2);
+      }).then((resp) => resp.json()).then((data2) => data2).then((resp) => {
+        console.log(resp);
+        if (!resp.found) {
+          onReady({ code: _SharedCodeRepository.CODE_NOT_FOUND });
+          return;
+        }
+        if (resp.error != "") {
+          console.error(resp.error);
+          onReady({ code: _SharedCodeRepository.CODE_NOT_FOUND });
+          return;
+        }
+        onReady(resp.snippet);
       }).catch((err) => {
         console.log(err);
       });
     }
   };
+  var SharedCodeRepository = _SharedCodeRepository;
   __name(SharedCodeRepository, "SharedCodeRepository");
   SharedCodeRepository.QUERY_PARAM_NAME = "query";
   SharedCodeRepository.CODE_NOT_FOUND = "Not found.";
@@ -658,7 +669,7 @@
     saveCode(_) {
     }
     getCode(onReady) {
-      onReady(this.text);
+      onReady({ code: this.text });
     }
   };
   __name(TextCodeRepository, "TextCodeRepository");
@@ -671,10 +682,10 @@
     getCode(onReady) {
       const localCode = window.localStorage.getItem(_LocalCodeRepository.LOCAL_STORAGE_KEY);
       if (localCode === null || localCode === void 0) {
-        onReady(_LocalCodeRepository.WELCOME_CODE);
+        onReady({ code: _LocalCodeRepository.WELCOME_CODE });
         return;
       }
-      onReady(localCode);
+      onReady({ code: localCode });
     }
   };
   var LocalCodeRepository = _LocalCodeRepository;
@@ -707,7 +718,7 @@ println('Hello, Playground!')
     saveCode(_) {
     }
     getCode(onReady) {
-      onReady(this.decodedCode);
+      onReady({ code: this.decodedCode });
     }
   };
   __name(Base64CodeRepository, "Base64CodeRepository");
@@ -737,7 +748,7 @@ println('Hello, Playground!')
             "Content-Type": "text/plain"
           }
         }).then((r) => r.text()).then((r) => {
-          onReady(r);
+          onReady({ code: r });
         }).catch((err) => {
           console.log(err);
         });
@@ -879,6 +890,32 @@ println('Hello, Playground!')
     RunConfigurationType2["Cgen"] = "Cgen";
     return RunConfigurationType2;
   })(RunConfigurationType || {});
+  function toSharedRunConfiguration(runConfigurationType) {
+    switch (runConfigurationType) {
+      case "Run":
+        return 0 /* Run */;
+      case "Test":
+        return 1 /* Test */;
+      case "Cgen":
+        return 2 /* Cgen */;
+      default:
+        throw new Error(`Unknown run configuration type: ${runConfigurationType}`);
+    }
+  }
+  __name(toSharedRunConfiguration, "toSharedRunConfiguration");
+  function getRunConfigurationTypeByShared(sharedRunConfiguration) {
+    switch (sharedRunConfiguration) {
+      case 0 /* Run */:
+        return "Run" /* Run */;
+      case 1 /* Test */:
+        return "Test" /* Test */;
+      case 2 /* Cgen */:
+        return "Cgen" /* Cgen */;
+      default:
+        return "Run" /* Run */;
+    }
+  }
+  __name(getRunConfigurationTypeByShared, "getRunConfigurationTypeByShared");
   function getRunConfigurationTypeByString(runConfigurationType) {
     switch (runConfigurationType) {
       case "Run":
@@ -901,6 +938,8 @@ println('Hello, Playground!')
       this.openRunButton = document.querySelector(".js-open-run-select");
       this.configurationsList = document.querySelector(".js-run-configurations-list");
       this.configurations = document.querySelectorAll(".js-configuration");
+      this.buildArgumentsInput = document.querySelector(".js-build-arguments-input");
+      this.runArgumentsInput = document.querySelector(".js-run-arguments-input");
       this.onChange = /* @__PURE__ */ __name(() => {
       }, "onChange");
       this.onSelect = /* @__PURE__ */ __name(() => {
@@ -927,6 +966,14 @@ println('Hello, Playground!')
         this.useConfiguration(getRunConfigurationTypeByString(configurationFromQuery));
         return;
       }
+      const buildArgumentsFromLocalStorage = window.localStorage.getItem(_RunConfigurationManager.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY);
+      if (buildArgumentsFromLocalStorage !== null && buildArgumentsFromLocalStorage !== void 0) {
+        this.buildArgumentsInput.value = buildArgumentsFromLocalStorage;
+      }
+      const runArgumentsFromLocalStorage = window.localStorage.getItem(_RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY);
+      if (runArgumentsFromLocalStorage !== null && runArgumentsFromLocalStorage !== void 0) {
+        this.runArgumentsInput.value = runArgumentsFromLocalStorage;
+      }
       const configurationFromLocalStorage = window.localStorage.getItem(_RunConfigurationManager.LOCAL_STORAGE_KEY);
       if (configurationFromLocalStorage !== null && configurationFromLocalStorage !== void 0) {
         this.useConfiguration(getRunConfigurationTypeByString(configurationFromLocalStorage));
@@ -945,14 +992,34 @@ println('Hello, Playground!')
       }
       if (!this.fromQueryParam) {
         window.localStorage.setItem(_RunConfigurationManager.LOCAL_STORAGE_KEY, runConfigurationAsString);
+        window.localStorage.setItem(_RunConfigurationManager.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY, this.buildArgumentsInput.value);
+        window.localStorage.setItem(_RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY, this.runArgumentsInput.value);
       }
       if (this.fromQueryParam) {
         this.queryParams.updateURLParameter(_RunConfigurationManager.QUERY_PARAM_NAME, runConfigurationAsString);
       }
     }
+    get buildArguments() {
+      return this.buildArgumentsInput.value.split(" ").filter((arg) => arg.length > 0);
+    }
+    get runArguments() {
+      return this.runArgumentsInput.value.split(" ").filter((arg) => arg.length > 0);
+    }
+    setBuildArguments(args) {
+      this.buildArgumentsInput.value = args;
+    }
+    setRunArguments(args) {
+      this.runArgumentsInput.value = args;
+    }
     mount() {
       this.openRunButton.addEventListener("click", () => {
         this.toggleConfigurationsList();
+      });
+      this.buildArgumentsInput.addEventListener("input", () => {
+        window.localStorage.setItem(_RunConfigurationManager.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY, this.buildArgumentsInput.value);
+      });
+      this.runArgumentsInput.addEventListener("input", () => {
+        window.localStorage.setItem(_RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY, this.runArgumentsInput.value);
       });
       this.configurations.forEach((configuration) => {
         configuration.addEventListener("click", () => {
@@ -969,6 +1036,8 @@ println('Hello, Playground!')
   __name(RunConfigurationManager, "RunConfigurationManager");
   RunConfigurationManager.QUERY_PARAM_NAME = "runConfiguration";
   RunConfigurationManager.LOCAL_STORAGE_KEY = "run-configuration";
+  RunConfigurationManager.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY = "build-arguments";
+  RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY = "run-arguments";
 
   // src/Examples/examples.ts
   var examples = [
@@ -1692,6 +1761,78 @@ println('Hello, link 404!')
   }
   __name(copyTextToClipboard, "copyTextToClipboard");
 
+  // src/CodeRunner/CodeRunner.ts
+  var RunnableCodeSnippet = class {
+    constructor(code, buildArguments, runArguments, runConfiguration) {
+      this.code = code;
+      this.buildArguments = buildArguments;
+      this.runArguments = runArguments;
+      this.runConfiguration = runConfiguration;
+    }
+    toFormData() {
+      const data = new FormData();
+      data.append("code", this.code);
+      data.append("build-arguments", this.buildArguments.join(" "));
+      data.append("run-arguments", this.runArguments.join(" "));
+      data.append("run-configuration", this.runConfiguration.toString());
+      return data;
+    }
+  };
+  __name(RunnableCodeSnippet, "RunnableCodeSnippet");
+  var CodeRunner = class {
+    static runCode(snippet) {
+      return fetch("/run", {
+        method: "post",
+        body: snippet.toFormData()
+      }).then((resp) => {
+        if (resp.status != 200) {
+          throw new Error("Can't run code");
+        }
+        return resp;
+      }).then((resp) => resp.json()).then((data) => data);
+    }
+    static runTest(snippet) {
+      return fetch("/run_test", {
+        method: "post",
+        body: snippet.toFormData()
+      }).then((resp) => {
+        if (resp.status != 200) {
+          throw new Error("Can't run test");
+        }
+        return resp;
+      }).then((resp) => resp.json()).then((data) => data);
+    }
+    static retrieveCgenCode(snippet) {
+      return fetch("/cgen", {
+        method: "post",
+        body: snippet.toFormData()
+      }).then((resp) => {
+        if (resp.status != 200) {
+          throw new Error("Can't compile and get C code");
+        }
+        return resp;
+      }).then((resp) => resp.json()).then((data) => data);
+    }
+    static formatCode(snippet) {
+      return fetch("/format", {
+        method: "post",
+        body: snippet.toFormData()
+      }).then((resp) => resp.json()).then((data) => data);
+    }
+    static shareCode(snippet) {
+      return fetch("/share", {
+        method: "post",
+        body: snippet.toFormData()
+      }).then((resp) => {
+        if (resp.status != 200) {
+          throw new Error("Can't share code");
+        }
+        return resp;
+      }).then((resp) => resp.json()).then((data) => data);
+    }
+  };
+  __name(CodeRunner, "CodeRunner");
+
   // src/Editor/Editor.ts
   var _Editor = class {
     constructor(id, wrapper, repository, terminal, readOnly, mode) {
@@ -1724,14 +1865,6 @@ println('Hello, link 404!')
       this.textAreaElement = wrapper.querySelector(`textarea.${id}`);
       this.editor = CodeMirror.fromTextArea(this.textAreaElement, editorConfig);
       this.repository = repository;
-      this.repository.getCode((code) => {
-        if (code === SharedCodeRepository.CODE_NOT_FOUND) {
-          this.setCode(codeIfSharedLinkBroken);
-          this.terminal.write("Code for shared link not found.");
-          return;
-        }
-        this.setCode(code);
-      });
       this.initFont();
     }
     initFont() {
@@ -1772,6 +1905,9 @@ println('Hello, link 404!')
         this.repository = new LocalCodeRepository();
       }
       this.repository.saveCode(this.getCode());
+    }
+    getRunnableCodeSnippet(runConfiguration) {
+      return new RunnableCodeSnippet(this.getCode(), runConfiguration.buildArguments, runConfiguration.runArguments, toSharedRunConfiguration(runConfiguration.configuration));
     }
     clear() {
       this.setCode("");
@@ -1919,83 +2055,6 @@ println('Hello, link 404!')
   ThemeManager.QUERY_PARAM_NAME = "theme";
   ThemeManager.LOCAL_STORAGE_KEY = "theme";
 
-  // src/CodeRunner/CodeRunner.ts
-  var RetrieveCodeResult = class {
-    constructor(output) {
-      this.output = output;
-    }
-  };
-  __name(RetrieveCodeResult, "RetrieveCodeResult");
-  var ShareCodeResult = class {
-    constructor(hash) {
-      this.hash = hash;
-    }
-  };
-  __name(ShareCodeResult, "ShareCodeResult");
-  var CodeRunner = class {
-    static runCode(code) {
-      const data = new FormData();
-      data.append("code", code);
-      return fetch("/run", {
-        method: "post",
-        body: data
-      }).then((resp) => {
-        if (resp.status != 200) {
-          throw new Error("Can't run code");
-        }
-        return resp;
-      }).then((resp) => resp.json()).then((data2) => JSON.parse(data2));
-    }
-    static runTest(code) {
-      const data = new FormData();
-      data.append("code", code);
-      return fetch("/run_test", {
-        method: "post",
-        body: data
-      }).then((resp) => {
-        if (resp.status != 200) {
-          throw new Error("Can't run test");
-        }
-        return resp;
-      }).then((resp) => resp.json()).then((data2) => JSON.parse(data2));
-    }
-    static retrieveCgenCode(code) {
-      const data = new FormData();
-      data.append("code", code);
-      return fetch("/cgen", {
-        method: "post",
-        body: data
-      }).then((resp) => {
-        if (resp.status != 200) {
-          throw new Error("Can't compile and get C code");
-        }
-        return resp.text();
-      }).then((hash) => new RetrieveCodeResult(hash));
-    }
-    static formatCode(code) {
-      const data = new FormData();
-      data.append("code", code);
-      return fetch("/format", {
-        method: "post",
-        body: data
-      }).then((resp) => resp.json()).then((data2) => JSON.parse(data2));
-    }
-    static shareCode(code) {
-      const data = new FormData();
-      data.append("code", code);
-      return fetch("/share", {
-        method: "post",
-        body: data
-      }).then((resp) => {
-        if (resp.status != 200) {
-          throw new Error("Can't share code");
-        }
-        return resp.text();
-      }).then((hash) => new ShareCodeResult(hash));
-    }
-  };
-  __name(CodeRunner, "CodeRunner");
-
   // src/Terminal/Terminal.ts
   var Terminal = class {
     constructor(element) {
@@ -2117,9 +2176,28 @@ println('Hello, link 404!')
       this.editor = new Editor("main", editorElement2, this.repository, this.terminal, false, "v");
       this.cgenEditor = new Editor("cgen", editorElement2, new TextCodeRepository(""), this.terminal, true, "text/x-csrc");
       this.cgenEditor.hide();
+      this.repository.getCode((snippet) => {
+        if (snippet.code === SharedCodeRepository.CODE_NOT_FOUND) {
+          this.editor.setCode(codeIfSharedLinkBroken);
+          this.terminal.write("Code for shared link not found.");
+          return;
+        }
+        if (snippet.runConfiguration !== void 0) {
+          const runConfiguration = getRunConfigurationTypeByShared(snippet.runConfiguration);
+          this.runConfigurationManager.useConfiguration(runConfiguration);
+        }
+        if (snippet.buildArguments !== void 0) {
+          this.runConfigurationManager.setBuildArguments(snippet.buildArguments);
+        }
+        if (snippet.runArguments !== void 0) {
+          this.runConfigurationManager.setRunArguments(snippet.runArguments);
+        }
+        this.editor.setCode(snippet.code);
+      });
       this.themeManager = new ThemeManager(this.queryParams);
       this.themeManager.registerOnChange((theme) => {
         this.editor.setTheme(theme);
+        this.cgenEditor.setTheme(theme);
       });
       this.themeManager.loadTheme();
       this.examplesManager = new ExamplesManager();
@@ -2193,6 +2271,9 @@ println('Hello, link 404!')
         actionButton.addEventListener("click", callback);
       });
     }
+    getRunnableCodeSnippet() {
+      return this.editor.getRunnableCodeSnippet(this.runConfigurationManager);
+    }
     run() {
       const configuration = this.runConfigurationManager.configuration;
       if (configuration === "Run" /* Run */) {
@@ -2207,8 +2288,8 @@ println('Hello, link 404!')
     runCode() {
       this.clearTerminal();
       this.writeToTerminal("Running code...");
-      const code = this.editor.getCode();
-      CodeRunner.runCode(code).then((result) => {
+      const snippet = this.getRunnableCodeSnippet();
+      CodeRunner.runCode(snippet).then((result) => {
         this.clearTerminal();
         this.writeToTerminal(result.output);
       }).catch((err) => {
@@ -2219,8 +2300,8 @@ println('Hello, link 404!')
     runTest() {
       this.clearTerminal();
       this.writeToTerminal("Running tests...");
-      const code = this.editor.getCode();
-      CodeRunner.runTest(code).then((result) => {
+      const snippet = this.getRunnableCodeSnippet();
+      CodeRunner.runTest(snippet).then((result) => {
         this.clearTerminal();
         this.writeToTerminal(result.output);
       }).catch((err) => {
@@ -2231,10 +2312,15 @@ println('Hello, link 404!')
     retrieveCgenCode() {
       this.clearTerminal();
       this.writeToTerminal("Running retrieving of generated C code...");
-      const code = this.editor.getCode();
-      CodeRunner.retrieveCgenCode(code).then((result) => {
-        const code2 = result.output;
-        const lines = code2.split("\n");
+      const snippet = this.getRunnableCodeSnippet();
+      CodeRunner.retrieveCgenCode(snippet).then((result) => {
+        if (result.error != "") {
+          this.clearTerminal();
+          this.writeToTerminal(result.error);
+          return;
+        }
+        const code = result.cgenCode;
+        const lines = code.split("\n");
         const filteredLines = [];
         const mapping = {};
         for (let i = 0; i < lines.length - 1; i++) {
@@ -2262,7 +2348,8 @@ println('Hello, link 404!')
             v2c[mappingKey] = chenIndex;
           }
         }
-        let mainIndex = filteredLines.indexOf("void main__main(");
+        const lineWithMainMain = filteredLines.find((line) => line.startsWith("void main__main(void) {")) || "";
+        let mainIndex = filteredLines.indexOf(lineWithMainMain);
         if (mainIndex == -1) {
           mainIndex = 0;
         }
@@ -2280,11 +2367,11 @@ println('Hello, link 404!')
     }
     formatCode() {
       this.clearTerminal();
-      const code = this.editor.getCode();
-      CodeRunner.formatCode(code).then((result) => {
-        if (!result.ok) {
+      const snippet = this.getRunnableCodeSnippet();
+      CodeRunner.formatCode(snippet).then((result) => {
+        if (result.error != "") {
           this.clearTerminal();
-          this.writeToTerminal(result.output);
+          this.writeToTerminal(result.error);
           return;
         }
         this.editor.setCode(result.output, true);
@@ -2295,8 +2382,9 @@ println('Hello, link 404!')
     }
     shareCode() {
       this.clearTerminal();
-      const code = this.editor.getCode();
-      CodeRunner.shareCode(code).then((result) => {
+      const snippet = this.getRunnableCodeSnippet();
+      console.log(snippet);
+      CodeRunner.shareCode(snippet).then((result) => {
         this.writeToTerminal("Code shared successfully!");
         this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, result.hash);
         const link = this.buildShareLink(result);
@@ -2327,7 +2415,7 @@ println('Hello, link 404!')
           this.editor.showCompletion();
         }
       });
-      this.editor.editor.on("mousedown", (instance, e) => {
+      this.editor.editor.on("mousedown", (instance) => {
         if (!this.cgenMode) {
           return;
         }

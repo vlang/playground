@@ -1,4 +1,30 @@
-import { CodeRepository } from "./interface";
+import {CodeRepository, CodeSnippet} from "./interface";
+
+export enum SharedCodeRunConfiguration {
+    Run,
+    Test,
+    Cgen,
+}
+
+/**
+ * {
+ *   "snippet": {
+ *     "id": 3,
+ *     "code": "println(100)",
+ *     "hash": "21cf286fdb",
+ *     "build_arguments": [],
+ *     "run_arguments": [],
+ *     "additional": {}
+ *   },
+ *   "found": false,
+ *   "error": ""
+ * }
+ */
+type SharedCodeResponse = {
+    snippet: CodeSnippet
+    found: boolean
+    error: string
+}
 
 /**
  * Shared code repository using the server side SQL storage.
@@ -17,11 +43,11 @@ export class SharedCodeRepository implements CodeRepository {
         // nothing to do
     }
 
-    getCode(onReady: (code: string) => void) {
+    getCode(onReady: (snippet: CodeSnippet) => void) {
         return this.getSharedCode(onReady)
     }
 
-    private getSharedCode(onReady: (code: string) => void) {
+    private getSharedCode(onReady: (snippet: CodeSnippet) => void) {
         const data = new FormData()
         data.append("hash", this.hash)
 
@@ -29,9 +55,22 @@ export class SharedCodeRepository implements CodeRepository {
             method: "post",
             body: data,
         })
-            .then(resp => resp.text())
-            .then(data => {
-                onReady(data)
+            .then(resp => resp.json())
+            .then(data => data as SharedCodeResponse)
+            .then(resp => {
+                console.log(resp)
+                if (!resp.found) {
+                    onReady({code: SharedCodeRepository.CODE_NOT_FOUND})
+                    return
+                }
+
+                if (resp.error != "") {
+                    console.error(resp.error)
+                    onReady({code: SharedCodeRepository.CODE_NOT_FOUND})
+                    return
+                }
+
+                onReady(resp.snippet)
             })
             .catch(err => {
                 console.log(err)

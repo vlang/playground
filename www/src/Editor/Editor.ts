@@ -2,6 +2,11 @@ import {CodeRepository, LocalCodeRepository, SharedCodeRepository} from "../Repo
 import {ITheme} from "../themes"
 import {codeIfSharedLinkBroken} from "../Examples"
 import {Terminal} from "../Terminal/Terminal"
+import {RunnableCodeSnippet} from "../CodeRunner/CodeRunner";
+import {
+    RunConfigurationManager,
+    toSharedRunConfiguration
+} from "../RunConfigurationManager/RunConfigurationManager";
 
 export class Editor {
     private static readonly FONT_LOCAL_STORAGE_KEY = "editor-font-size"
@@ -11,7 +16,7 @@ export class Editor {
     private repository: CodeRepository
     public editor: CodeMirror.Editor
 
-    constructor(id: string, wrapper: HTMLElement, repository: CodeRepository, public terminal: Terminal, readOnly: boolean, mode: string ) {
+    constructor(id: string, wrapper: HTMLElement, repository: CodeRepository, public terminal: Terminal, readOnly: boolean, mode: string) {
         const editorConfig = {
             mode: mode,
             lineNumbers: true,
@@ -43,16 +48,6 @@ export class Editor {
         // @ts-ignore
         this.editor = CodeMirror.fromTextArea(this.textAreaElement, editorConfig)
         this.repository = repository
-        this.repository.getCode((code) => {
-            if (code === SharedCodeRepository.CODE_NOT_FOUND) {
-                // If the code is not found, use default Hello World example.
-                this.setCode(codeIfSharedLinkBroken)
-                this.terminal.write("Code for shared link not found.")
-                return
-            }
-
-            this.setCode(code)
-        })
 
         this.initFont()
     }
@@ -105,6 +100,10 @@ export class Editor {
         this.repository.saveCode(this.getCode())
     }
 
+    public getRunnableCodeSnippet(runConfiguration: RunConfigurationManager): RunnableCodeSnippet {
+        return new RunnableCodeSnippet(this.getCode(), runConfiguration.buildArguments,  runConfiguration.runArguments, toSharedRunConfiguration(runConfiguration.configuration))
+    }
+
     public clear() {
         this.setCode("")
     }
@@ -114,7 +113,7 @@ export class Editor {
     }
 
     public showCompletion() {
-       this.editor.execCommand("autocomplete")
+        this.editor.execCommand("autocomplete")
     }
 
     public refresh() {

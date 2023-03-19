@@ -1,4 +1,4 @@
-import { CodeRepository } from "./interface";
+import {CodeRepository, CodeSnippet} from "./interface";
 
 export class TextCodeRepository implements CodeRepository {
     constructor(private text: string) {
@@ -7,7 +7,7 @@ export class TextCodeRepository implements CodeRepository {
     saveCode(_: string): void {
     }
 
-    getCode(onReady: (code: string) => void): void {
-        onReady(this.text)
+    getCode(onReady: (snippet: CodeSnippet) => void): void {
+        onReady({code: this.text})
     }
 }

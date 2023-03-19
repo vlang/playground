@@ -1,4 +1,4 @@
-import { CodeRepository } from "./interface";
+import {CodeRepository, CodeSnippet} from "./interface";
 
 /**
  * Local code repository using the browser's local storage.
@@ -28,12 +28,12 @@ println('Hello, Playground!')
         window.localStorage.setItem(LocalCodeRepository.LOCAL_STORAGE_KEY, code)
     }
 
-    getCode(onReady: (code: string) => void) {
+    getCode(onReady: (snippet: CodeSnippet) => void) {
         const localCode = window.localStorage.getItem(LocalCodeRepository.LOCAL_STORAGE_KEY)
         if (localCode === null || localCode === undefined) {
-            onReady(LocalCodeRepository.WELCOME_CODE)
+            onReady({code: LocalCodeRepository.WELCOME_CODE})
             return
         }
-        onReady(localCode)
+        onReady({code: localCode})
     }
 }
