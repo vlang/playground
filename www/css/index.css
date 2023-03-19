@@ -863,19 +863,20 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
   box-shadow: 0 15px 8px -10px rgba(0, 0, 0, 0.2);
 }
 .run-configurations-list h4 {
-  margin: 0 0 5px;
+  margin: 0 0 10px;
   padding-left: 10px;
   color: #6e737b;
   font-size: 13px;
   font-weight: 700;
 }
 .run-configurations-list .configuration {
-  padding: 5px 7px 2px;
+  padding: 6px 7px 4px;
   border-radius: 6px;
   font-size: 15px;
   display: grid;
   grid-template-columns: max-content max-content;
   grid-column-gap: 8px;
+  color: var(--text-color);
 }
 .run-configurations-list .configuration:hover {
   cursor: pointer;
@@ -886,7 +887,7 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
   color: var(--text-color);
 }
 .run-configurations-list .configuration svg {
-  margin-top: 1px;
+  margin-top: -1px;
 }
 
 .run-configurations-list.hidden {
