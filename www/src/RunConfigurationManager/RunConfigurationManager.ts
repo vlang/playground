@@ -60,6 +60,7 @@ export class RunConfigurationManager {
     private readonly runButtonLabel = document.querySelector(".js-run__action .label")!
     private readonly openRunButton = document.querySelector(".js-open-run-select")!
     private readonly configurationsList = document.querySelector(".js-run-configurations-list")!
+    private readonly configurationsOverlay = document.querySelector(".js-run-configurations-list-overlay")!
     private readonly configurations = document.querySelectorAll(".js-configuration")!
     private readonly buildArgumentsInput = document.querySelector(".js-build-arguments-input") as HTMLInputElement
     private readonly runArgumentsInput = document.querySelector(".js-run-arguments-input") as HTMLInputElement
@@ -89,6 +90,12 @@ export class RunConfigurationManager {
 
     public toggleConfigurationsList() {
         this.configurationsList.classList.toggle("hidden")
+        this.configurationsOverlay.classList.toggle("opened")
+    }
+
+    public closeConfigurationsList() {
+        this.configurationsList.classList.add("hidden")
+        this.configurationsOverlay.classList.remove("opened")
     }
 
     public setupConfiguration() {
@@ -175,6 +182,16 @@ export class RunConfigurationManager {
 
         this.runArgumentsInput.addEventListener("input", () => {
             window.localStorage.setItem(RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY, this.runArgumentsInput.value)
+        })
+
+        this.configurationsOverlay.addEventListener("click", () => {
+            this.toggleConfigurationsList()
+        })
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                this.closeConfigurationsList()
+            }
         })
 
         this.configurations.forEach(configuration => {

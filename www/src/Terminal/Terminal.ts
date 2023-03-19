@@ -64,6 +64,18 @@ export class Terminal {
             document.body.classList.add('dragging');
         });
 
+        header.addEventListener('touchstart', () => {
+            mouseDown = true;
+            document.body.classList.add('dragging');
+        })
+
+        // @ts-ignore
+        header.addEventListener('touchmove', (e: TouchEvent) => {
+            if (!mouseDown) return;
+            element.style.height = `${document.body.clientHeight - e.touches[0].clientY + header.clientHeight / 2}px`;
+            e.preventDefault()
+        })
+
         document.addEventListener('mousemove', (e: MouseEvent) => {
             if (!mouseDown) return;
             element.style.height = `${document.body.clientHeight - e.clientY + header.clientHeight / 2}px`;
@@ -73,5 +85,10 @@ export class Terminal {
             mouseDown = false;
             document.body.classList.remove('dragging');
         });
+
+        document.addEventListener('touchend', () => {
+            mouseDown = false;
+            document.body.classList.remove('dragging');
+        })
     }
 }

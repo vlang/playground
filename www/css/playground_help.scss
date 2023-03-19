@@ -26,6 +26,7 @@ html[data-theme='dark'] {
     background-color: var(--help-button-background);
     color: var(--help-button-color);
     font-size: 25px;
+    outline: none;
 
     transition: background-color 100ms, border-color 100ms;
 }
@@ -50,10 +51,6 @@ html[data-theme='dark'] {
     display: block;
 }
 
-.playground__help-overlay:hover {
-    cursor: pointer;
-}
-
 .playground__help-tip {
     width: 300px;
     border-radius: 10px;
@@ -71,6 +68,11 @@ html[data-theme='dark'] {
 
     z-index: 1000;
     border: 1px solid var(--terminal-header-border);
+
+    @media (max-width: 1000px) {
+        bottom: 60px;
+        right: 20px;
+    }
 }
 
 .playground__help-tip.opened {

@@ -937,6 +937,7 @@ println('Hello, Playground!')
       this.runButtonLabel = document.querySelector(".js-run__action .label");
       this.openRunButton = document.querySelector(".js-open-run-select");
       this.configurationsList = document.querySelector(".js-run-configurations-list");
+      this.configurationsOverlay = document.querySelector(".js-run-configurations-list-overlay");
       this.configurations = document.querySelectorAll(".js-configuration");
       this.buildArgumentsInput = document.querySelector(".js-build-arguments-input");
       this.runArgumentsInput = document.querySelector(".js-run-arguments-input");
@@ -958,6 +959,11 @@ println('Hello, Playground!')
     }
     toggleConfigurationsList() {
       this.configurationsList.classList.toggle("hidden");
+      this.configurationsOverlay.classList.toggle("opened");
+    }
+    closeConfigurationsList() {
+      this.configurationsList.classList.add("hidden");
+      this.configurationsOverlay.classList.remove("opened");
     }
     setupConfiguration() {
       const configurationFromQuery = this.queryParams.getURLParameter(_RunConfigurationManager.QUERY_PARAM_NAME);
@@ -1020,6 +1026,14 @@ println('Hello, Playground!')
       });
       this.runArgumentsInput.addEventListener("input", () => {
         window.localStorage.setItem(_RunConfigurationManager.LOCAL_STORAGE_RUN_ARGUMENTS_KEY, this.runArgumentsInput.value);
+      });
+      this.configurationsOverlay.addEventListener("click", () => {
+        this.toggleConfigurationsList();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          this.closeConfigurationsList();
+        }
       });
       this.configurations.forEach((configuration) => {
         configuration.addEventListener("click", () => {
@@ -1658,16 +1672,16 @@ println('Hello, link 404!')
       if (this.selectElement === null || this.selectElement === void 0) {
         return;
       }
-      const examplesSelectList = this.selectElement.querySelector(".dropdown__list");
+      const examplesSelectList = document.querySelector(".dropdown__list");
       const examplesButton = this.selectElement.querySelector(".dropdown__button");
       if (examplesSelectList !== null && examplesButton !== null) {
-        examples.forEach(function(example, index) {
+        examples.forEach((example, index) => {
           examplesSelectList.innerHTML += _ExamplesManager.exampleElementListTemplate(example.name, index);
         });
         const examplesButtonSpan = examplesButton.querySelector("span");
         examplesButtonSpan.innerText = examples[0].name;
       }
-      const dropdownItems = this.selectElement.querySelectorAll(".dropdown__list-item");
+      const dropdownItems = examplesSelectList.querySelectorAll(".dropdown__list-item");
       dropdownItems.forEach((option) => {
         option.addEventListener("click", () => {
           const exampleName = option.innerText;
@@ -1680,8 +1694,8 @@ println('Hello, link 404!')
         });
       });
       const dropdownBtn = this.selectElement.querySelector(".dropdown__button");
-      const dropdownList = this.selectElement.querySelector(".dropdown__list");
       const dropdownInput = this.selectElement.querySelector(".dropdown__input_hidden");
+      const dropdownList = document.querySelector(".dropdown__list");
       dropdownBtn.addEventListener("click", function() {
         dropdownList.classList.toggle("dropdown__list_visible");
         this.classList.toggle("dropdown__button_active");
@@ -2105,12 +2119,26 @@ println('Hello, link 404!')
         mouseDown = true;
         document.body.classList.add("dragging");
       });
+      header.addEventListener("touchstart", () => {
+        mouseDown = true;
+        document.body.classList.add("dragging");
+      });
+      header.addEventListener("touchmove", (e) => {
+        if (!mouseDown)
+          return;
+        element.style.height = `${document.body.clientHeight - e.touches[0].clientY + header.clientHeight / 2}px`;
+        e.preventDefault();
+      });
       document.addEventListener("mousemove", (e) => {
         if (!mouseDown)
           return;
         element.style.height = `${document.body.clientHeight - e.clientY + header.clientHeight / 2}px`;
       });
       document.addEventListener("mouseup", () => {
+        mouseDown = false;
+        document.body.classList.remove("dragging");
+      });
+      document.addEventListener("touchend", () => {
         mouseDown = false;
         document.body.classList.remove("dragging");
       });

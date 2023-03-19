@@ -17,11 +17,11 @@ export class ExamplesManager {
             return
         }
 
-        const examplesSelectList = this.selectElement.querySelector(".dropdown__list")
+        const examplesSelectList = document.querySelector(".dropdown__list")!
         const examplesButton = this.selectElement.querySelector(".dropdown__button")
 
         if (examplesSelectList !== null && examplesButton !== null) {
-            examples.forEach(function (example: IExample, index: number) {
+            examples.forEach((example: IExample, index: number) => {
                 examplesSelectList.innerHTML += ExamplesManager.exampleElementListTemplate(example.name, index)
             })
 
@@ -29,7 +29,7 @@ export class ExamplesManager {
             examplesButtonSpan.innerText = examples[0].name
         }
 
-        const dropdownItems = this.selectElement.querySelectorAll<HTMLElement>(".dropdown__list-item")
+        const dropdownItems = examplesSelectList.querySelectorAll<HTMLElement>(".dropdown__list-item")
         dropdownItems.forEach((option: HTMLElement) => {
             option.addEventListener("click", () => {
                 const exampleName = option.innerText
@@ -44,8 +44,8 @@ export class ExamplesManager {
         })
 
         const dropdownBtn = this.selectElement.querySelector<HTMLElement>(".dropdown__button")!
-        const dropdownList = this.selectElement.querySelector<HTMLElement>(".dropdown__list")!
         const dropdownInput = this.selectElement.querySelector<HTMLInputElement>(".dropdown__input_hidden")!
+        const dropdownList = document.querySelector<HTMLElement>(".dropdown__list")!
 
         dropdownBtn.addEventListener("click", function () {
             dropdownList.classList.toggle("dropdown__list_visible")

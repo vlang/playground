@@ -242,7 +242,7 @@
                     <button class="dropdown__button" type="button">
                         <span>Hello World</span>
 
-                        <div class="open-icon">
+                        <span class="open-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <rect x="8.13306" y="11.6247" width="8" height="1"
@@ -250,10 +250,8 @@
                                 <rect x="7.43687" y="10.9072" width="8" height="1"
                                       transform="rotate(-45 7.43687 10.9072)" fill="white"/>
                             </svg>
-                        </div>
+                        </span>
                     </button>
-                    <ul class="dropdown__list">
-                    </ul>
                     <input id="examples-input" class="dropdown__input_hidden" type="text" name="select-category" value=""/>
                 </div>
             </div>
@@ -336,72 +334,76 @@
                             </svg>
                         </div>
                     </div>
-
-                    <div class="js-run-configurations-list run-configurations-list hidden">
-                        <h4>Configurations</h4>
-
-                        <div class="js-configuration configuration" data-type="Run">
-                            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_14_12)">
-                                    <path d="M14.0548 8.75068L3.25542 14.9857C2.92209 15.1782 2.50542 14.9376 2.50542 14.5527L2.50542 2.08263C2.50542 1.69774 2.92208 1.45717 3.25542 1.64962L14.0548 7.88465C14.3881 8.0771 14.3881 8.55823 14.0548 8.75068Z"
-                                          fill="#659360" fill-opacity="0.2" stroke="#659360"/>
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_14_12">
-                                        <rect width="16" height="16" fill="white"/>
-                                    </clipPath>
-                                </defs>
-                            </svg>
-
-                            <span>Run</span>
-                        </div>
-
-                        <div class="js-configuration configuration" data-type="Test">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_10_21)">
-                                    <path d="M14.2435 11.7122L9.12788 14.6657C8.79455 14.8582 8.37788 14.6176 8.37788 14.2327V8.32568C8.37788 7.94078 8.79455 7.70022 9.12788 7.89267L14.2435 10.8462C14.5769 11.0386 14.5769 11.5198 14.2435 11.7122Z"
-                                          fill="#659360" fill-opacity="0.2" stroke="#659360"/>
-                                    <mask id="mask0_10_21" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-1"
-                                          y="0" width="17"
-                                          height="17">
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                              d="M16 0H-2.24113e-05V6.69516H-0.575562V16.4948H7.32227V14H8.49998L8.74439 7.85167L16 12V0Z"
-                                              fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_10_21)">
-                                        <circle cx="6.68359" cy="7.13858" r="5.9928" fill="#659360" fill-opacity="0.2"/>
-                                        <circle cx="6.68359" cy="7.13858" r="5.4928" stroke="#659360"/>
-                                        <path d="M4.19995 4.58716H9.09369V5.43183H7.10044V10.844H6.19767V5.43183H4.19995V4.58716Z"
-                                              fill="#659360"/>
-                                    </g>
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_10_21">
-                                        <rect width="16" height="16" fill="white"/>
-                                    </clipPath>
-                                </defs>
-                            </svg>
-                            <span>Test</span>
-                        </div>
-
-                        <div class="js-configuration configuration" data-type="Cgen">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="7.73236" cy="7.97623" r="6.47858" fill="#4572E8" fill-opacity="0.2"/>
-                                <circle cx="7.73236" cy="7.97623" r="5.97858" stroke="#4572E8"/>
-                                <path d="M7.64877 11.7798C6.98052 11.7798 6.37317 11.6162 5.82674 11.2891C5.28378 10.9584 4.85742 10.506 4.54765 9.93167C4.23789 9.35391 4.08301 8.71002 4.08301 8C4.08301 7.28998 4.23789 6.64783 4.54765 6.07355C4.85742 5.49579 5.28378 5.04332 5.82674 4.71615C6.37317 4.38551 6.98052 4.22018 7.64877 4.22018C8.19869 4.22018 8.71206 4.33852 9.18889 4.57519C9.6692 4.80839 10.0642 5.11815 10.374 5.50449C10.6838 5.89082 10.8717 6.30152 10.9378 6.73658H10.0712C10.0016 6.44074 9.85019 6.16056 9.61699 5.89604C9.3838 5.63152 9.09318 5.41921 8.74513 5.25911C8.40056 5.09553 8.03511 5.01374 7.64877 5.01374C7.14062 5.01374 6.68294 5.14251 6.27572 5.40007C5.87198 5.65415 5.55526 6.00916 5.32554 6.4651C5.09583 6.91757 4.98098 7.4292 4.98098 8C4.98098 8.5708 5.09583 9.08417 5.32554 9.54012C5.55526 9.99258 5.87198 10.3476 6.27572 10.6051C6.68294 10.8592 7.14062 10.9863 7.64877 10.9863C8.03511 10.9863 8.40056 10.9062 8.74513 10.7461C9.09318 10.5825 9.3838 10.3685 9.61699 10.104C9.85019 9.83944 10.0016 9.55926 10.0712 9.26342H10.9378C10.8717 9.69848 10.6838 10.1092 10.374 10.4955C10.0642 10.8818 9.6692 11.1934 9.18889 11.43C8.71206 11.6632 8.19869 11.7798 7.64877 11.7798Z"
-                                      fill="#4572E8"/>
-                            </svg>
-
-                            <span>Show generated C code</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <ul class="playground-examples-list dropdown__list">
+    </ul>
+
+    <div class="js-run-configurations-list run-configurations-list hidden">
+        <h4>Configurations</h4>
+
+        <div class="js-configuration configuration" data-type="Run">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_14_12)">
+                    <path d="M14.0548 8.75068L3.25542 14.9857C2.92209 15.1782 2.50542 14.9376 2.50542 14.5527L2.50542 2.08263C2.50542 1.69774 2.92208 1.45717 3.25542 1.64962L14.0548 7.88465C14.3881 8.0771 14.3881 8.55823 14.0548 8.75068Z"
+                          fill="#659360" fill-opacity="0.2" stroke="#659360"/>
+                </g>
+                <defs>
+                    <clipPath id="clip0_14_12">
+                        <rect width="16" height="16" fill="white"/>
+                    </clipPath>
+                </defs>
+            </svg>
+
+            <span>Run</span>
+        </div>
+
+        <div class="js-configuration configuration" data-type="Test">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_10_21)">
+                    <path d="M14.2435 11.7122L9.12788 14.6657C8.79455 14.8582 8.37788 14.6176 8.37788 14.2327V8.32568C8.37788 7.94078 8.79455 7.70022 9.12788 7.89267L14.2435 10.8462C14.5769 11.0386 14.5769 11.5198 14.2435 11.7122Z"
+                          fill="#659360" fill-opacity="0.2" stroke="#659360"/>
+                    <mask id="mask0_10_21" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-1"
+                          y="0" width="17"
+                          height="17">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M16 0H-2.24113e-05V6.69516H-0.575562V16.4948H7.32227V14H8.49998L8.74439 7.85167L16 12V0Z"
+                              fill="#D9D9D9"/>
+                    </mask>
+                    <g mask="url(#mask0_10_21)">
+                        <circle cx="6.68359" cy="7.13858" r="5.9928" fill="#659360" fill-opacity="0.2"/>
+                        <circle cx="6.68359" cy="7.13858" r="5.4928" stroke="#659360"/>
+                        <path d="M4.19995 4.58716H9.09369V5.43183H7.10044V10.844H6.19767V5.43183H4.19995V4.58716Z"
+                              fill="#659360"/>
+                    </g>
+                </g>
+                <defs>
+                    <clipPath id="clip0_10_21">
+                        <rect width="16" height="16" fill="white"/>
+                    </clipPath>
+                </defs>
+            </svg>
+            <span>Test</span>
+        </div>
+
+        <div class="js-configuration configuration" data-type="Cgen">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7.73236" cy="7.97623" r="6.47858" fill="#4572E8" fill-opacity="0.2"/>
+                <circle cx="7.73236" cy="7.97623" r="5.97858" stroke="#4572E8"/>
+                <path d="M7.64877 11.7798C6.98052 11.7798 6.37317 11.6162 5.82674 11.2891C5.28378 10.9584 4.85742 10.506 4.54765 9.93167C4.23789 9.35391 4.08301 8.71002 4.08301 8C4.08301 7.28998 4.23789 6.64783 4.54765 6.07355C4.85742 5.49579 5.28378 5.04332 5.82674 4.71615C6.37317 4.38551 6.98052 4.22018 7.64877 4.22018C8.19869 4.22018 8.71206 4.33852 9.18889 4.57519C9.6692 4.80839 10.0642 5.11815 10.374 5.50449C10.6838 5.89082 10.8717 6.30152 10.9378 6.73658H10.0712C10.0016 6.44074 9.85019 6.16056 9.61699 5.89604C9.3838 5.63152 9.09318 5.41921 8.74513 5.25911C8.40056 5.09553 8.03511 5.01374 7.64877 5.01374C7.14062 5.01374 6.68294 5.14251 6.27572 5.40007C5.87198 5.65415 5.55526 6.00916 5.32554 6.4651C5.09583 6.91757 4.98098 7.4292 4.98098 8C4.98098 8.5708 5.09583 9.08417 5.32554 9.54012C5.55526 9.99258 5.87198 10.3476 6.27572 10.6051C6.68294 10.8592 7.14062 10.9863 7.64877 10.9863C8.03511 10.9863 8.40056 10.9062 8.74513 10.7461C9.09318 10.5825 9.3838 10.3685 9.61699 10.104C9.85019 9.83944 10.0016 9.55926 10.0712 9.26342H10.9378C10.8717 9.69848 10.6838 10.1092 10.374 10.4955C10.0642 10.8818 9.6692 11.1934 9.18889 11.43C8.71206 11.6632 8.19869 11.7798 7.64877 11.7798Z"
+                      fill="#4572E8"/>
+            </svg>
+
+            <span>Show generated C code</span>
+        </div>
+    </div>
+    <div class="js-run-configurations-list-overlay run-configurations-list-overlay"></div>
 
     <div class="js-playground v-playground">
         <div class="js-tips-layer tips-layer">
