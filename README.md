@@ -1,6 +1,7 @@
 # V Playground: Run, Edit, Share V Code Online
 
-The [V Playground](https://play.vlang.io) is a official place where you can run, edit and share V code online.
+The [V Playground](https://play.vlang.io) is an official place where you can run, edit and share V
+code online.
 
 ![](./docs/images/cover.png)
 
@@ -36,7 +37,9 @@ then access the playground at <http://localhost:5555>
 
 1. Install Docker
 2. Install [Visual Studio Code](https://code.visualstudio.com/)
-3. Install the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extension for VS Code
+3. Install the
+   [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+   extension for VS Code
 4. Clone <https://github.com/vlang/playground>
 5. Create your application within a container (see gif below)
 
@@ -82,3 +85,14 @@ make run
 ```
 
 then access the playground at <http://localhost:5555>
+
+## Server API
+
+See [server/README.md](./server/README.md) for more information about the server API.
+
+## License
+
+This project is under the **MIT License**.
+See the
+[LICENSE](https://github.com/vlang-foundation/playground/blob/main/LICENSE)
+file for the full license text.
