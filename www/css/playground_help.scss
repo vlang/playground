@@ -29,6 +29,10 @@ html[data-theme='dark'] {
     outline: none;
 
     transition: background-color 100ms, border-color 100ms;
+
+    &::after {
+        content: '?';
+    }
 }
 
 .playground__help-button:hover {

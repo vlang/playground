@@ -1375,6 +1375,9 @@ html[data-theme=dark] {
   outline: none;
   transition: background-color 100ms, border-color 100ms;
 }
+.playground__help-button::after {
+  content: "?";
+}
 .playground__help-button:hover {
   cursor: pointer;
   border: 1px solid var(--help-button-border-hover);
