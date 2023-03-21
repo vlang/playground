@@ -22,3 +22,11 @@ closeButton.addEventListener("click", () => {
 overlay.addEventListener("click", () => {
     closeMobileHeader();
 });
+
+const openMenuButtons = document.querySelectorAll(".js-open-menu");
+openMenuButtons.forEach(button => {
+    const menuElement = button.nextElementSibling
+    button.addEventListener("click", () => {
+        menuElement.classList.toggle("open");
+    })
+})

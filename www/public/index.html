@@ -18,7 +18,11 @@
 
     <link rel="stylesheet" href="./style.css">
 
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://vlang.foundation/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://vlang.foundation/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://vlang.foundation/images/favicon-16x16.png">
+    <link rel="manifest" href="https://vlang.foundation/images/site.webmanifest">
+    <link rel="icon" type="image/x-icon" href="https://vlang.foundation/images/favicon.ico">
 </head>
 <body>
 
@@ -26,16 +30,16 @@
     <header>
         <div class="header-container">
             <div class="logo">
-                <a href="https://vlang.io/" target="_blank">
-                    <img src="./images/logo.svg" alt="V Logo">
+                <a href="https://vlang.foundation/" target="_blank">
+                    <img src="https://vlang.foundation/images/logo.svg" alt="V Logo">
                 </a>
 
-                <span>Playground</span>
+                <a class="title" href="/index.html">Playground</a>
             </div>
 
             <div class="mobile-header-logo">
-                <a href="https://vlang.io/" target="_blank">
-                    <img src="/images/logo.svg" alt="V Logo">
+                <a href="https://vlang.foundation/" target="_blank">
+                    <img src="https://vlang.foundation/images/logo.svg" alt="V Logo">
                 </a>
 
                 <a class="title" href="/index.html">Playground</a>
@@ -54,7 +58,7 @@
                         </svg>
                     </span>
                     <span class="search-label">Search</span>
-                    <span class="shortcut">⌘K</span>
+                    <span class="shortcut"><span class="ctrl-key">Ctrl + </span>K</span>
                 </button>
             </div>
 
@@ -65,8 +69,26 @@
                 <li class="navigation-item">
                     <a href="#">Standard Library</a>
                 </li>
+                <li class="navigation-item with-items">
+                    <span class="with-icon js-open-menu">
+                        Play
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+                             viewBox="0 0 24 24">
+                            <path class="icon-data"
+                                  d="M12,16c-0.3,0-0.5-0.1-0.7-0.3l-6-6c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l5.3,5.3l5.3-5.3c0.4-0.4,1-0.4,1.4,0s0.4,1,0,1.4l-6,6C12.5,15.9,12.3,16,12,16z"></path>
+                        </svg>
+                    </span>
+                    <ul class="sub-menu">
+                        <li class="sub-menu-item">
+                            <a href="https://play.vlang.foundation/">Playground</a>
+                        </li>
+                        <li class="sub-menu-item">
+                            <a href="https://learn.vlang.foundation/">Vings</a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="navigation-item">
-                    <a class="active" href="https://play.vlang.foundation/">Play</a>
+                    <a href="https://blog.vlang.foundation/" target="_blank">Blog</a>
                 </li>
                 <li class="navigation-item">
                     <a href="https://github.com/vlang/v" target="_blank">GitHub</a>
@@ -148,8 +170,27 @@
                 <li class="navigation-item">
                     <a href="#">Standard Library</a>
                 </li>
+                <li class="navigation-item with-mobile-items">
+                    <span class="with-icon js-open-menu">
+                        Play
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+                             viewBox="0 0 24 24">
+                            <path class="icon-data"
+                                  d="M12,16c-0.3,0-0.5-0.1-0.7-0.3l-6-6c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l5.3,5.3l5.3-5.3c0.4-0.4,1-0.4,1.4,0s0.4,1,0,1.4l-6,6C12.5,15.9,12.3,16,12,16z"></path>
+                        </svg>
+                    </span>
+
+                    <ul class="sub-menu">
+                        <li class="sub-menu-item">
+                            <a href="https://play.vlang.foundation/">Playground</a>
+                        </li>
+                        <li class="sub-menu-item">
+                            <a href="https://learn.vlang.foundation/">Vings</a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="navigation-item">
-                    <a class="active" href="#">Play</a>
+                    <a href="https://blog.vlang.foundation/" target="_blank">Blog</a>
                 </li>
                 <li class="navigation-item">
                     <a href="https://github.com/vlang/v" target="_blank">GitHub</a>

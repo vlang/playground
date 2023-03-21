@@ -3,32 +3,37 @@
 /* css/index.css */
 @font-face {
   font-family: "JetBrainsSans";
-  src: url(./JetBrainsSans-Regular-YFEORCC2.woff2);
-  font-weight: 400;
+  src: url(https://vlang.foundation/fonts/JetBrainsSans-ExtraBold.woff2);
+  font-weight: 800;
 }
 @font-face {
   font-family: "JetBrainsSans";
-  src: url(./JetBrainsSans-Bold-42TDFBUT.woff2);
+  src: url(https://vlang.foundation/fonts/JetBrainsSans-Bold.woff2);
   font-weight: 700;
 }
 @font-face {
   font-family: "JetBrainsSans";
-  src: url(./JetBrainsSans-SemiBold-EGJR6JJX.woff2);
+  src: url(https://vlang.foundation/fonts/JetBrainsSans-SemiBold.woff2);
   font-weight: 600;
 }
 @font-face {
   font-family: "JetBrainsSans";
-  src: url(./JetBrainsSans-Medium-7WJ44Z4B.woff2);
+  src: url(https://vlang.foundation/fonts/JetBrainsSans-Medium.woff2);
   font-weight: 500;
 }
 @font-face {
   font-family: "JetBrainsSans";
-  src: url(./JetBrainsSans-Book-LOYWIQHK.woff2);
+  src: url(https://vlang.foundation/fonts/JetBrainsSans-Regular.woff2);
+  font-weight: 400;
+}
+@font-face {
+  font-family: "JetBrainsSans";
+  src: url(https://vlang.foundation/fonts/JetBrainsSans-Book.woff2);
   font-weight: 350;
 }
 @font-face {
   font-family: "JetBrainsSans";
-  src: url(./JetBrainsSans-Light-HYO3RUIJ.woff2);
+  src: url(https://vlang.foundation/fonts/JetBrainsSans-Light.woff2);
   font-weight: 300;
 }
 html {
@@ -74,6 +79,7 @@ html {
   --scrollbar-thumb-color: var(--gray-ef);
   --header-background-color: var(--main-color);
   --header-transparent-background-color: var(--background-light-transparent-gray);
+  --footer-background-color: var(--main-color);
   --overlay-background-color: var(--semi-dark-transparent-gray);
   --aside-background-color: var(--gray-f9);
   --aside-link-text-color: var(--gray-7e);
@@ -124,6 +130,7 @@ html[data-theme=dark] {
   --scrollbar-thumb-color: var(--gray-32);
   --header-background-color: var(--main-color);
   --header-transparent-background-color: var(--background-transparent-gray);
+  --footer-background-color: var(--main-color);
   --overlay-background-color: var(--semi-dark-transparent-gray);
   --aside-background-color: var(--almost-black);
   --aside-link-text-color: var(--gray-be);
@@ -187,12 +194,19 @@ html[data-theme=dark] {
 .close-button svg .icon-stroke {
   stroke: var(--text-color);
 }
+html {
+  --sub-menu-border-color: none;
+}
+html[data-theme=dark] {
+  --sub-menu-border-color: var(--border-color);
+}
 .header-component.underline header {
   border-bottom: 1px solid var(--divider-color);
 }
 .header-component.fixed header {
   position: fixed;
   top: 0;
+  left: 0;
 }
 .header-component.transparent-desktop header {
   -webkit-backdrop-filter: saturate(50%) blur(8px);
@@ -277,6 +291,10 @@ header .header-container .logo {
 header .header-container .logo a {
   display: grid;
   align-items: center;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-color);
+  text-decoration: none;
 }
 header .header-container .logo span {
   font-size: 17px;
@@ -437,15 +455,85 @@ header .header-container .mobile-header-list button svg .icon-data {
 header .header-container .mobile-header-list button svg .icon-stroke {
   stroke: var(--text-color);
 }
-li.navigation-item a {
+li.navigation-item {
+  position: relative;
+}
+li.navigation-item a,
+li.navigation-item span {
   color: var(--secondary-color);
   text-decoration: none;
 }
-li.navigation-item a:hover {
+li.navigation-item a:hover,
+li.navigation-item span:hover {
   cursor: pointer;
   color: var(--text-color);
 }
-li.navigation-item a.active {
+li.navigation-item a:hover.with-icon svg .icon-data,
+li.navigation-item span:hover.with-icon svg .icon-data {
+  fill: var(--text-color);
+}
+li.navigation-item a.active,
+li.navigation-item span.active {
+  color: var(--brand-color);
+}
+li.navigation-item a.with-icon,
+li.navigation-item span.with-icon {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: 4px;
+  align-items: center;
+}
+li.navigation-item a.with-icon svg,
+li.navigation-item span.with-icon svg {
+  width: 13px;
+}
+li.navigation-item a.with-icon svg .icon-data,
+li.navigation-item span.with-icon svg .icon-data {
+  fill: var(--secondary-color);
+}
+li.navigation-item.with-items ul.sub-menu {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: max-content;
+  padding: 12px 40px 12px 18px;
+  margin: 0;
+  list-style: none;
+  border-radius: 8px;
+  opacity: 0;
+  visibility: hidden;
+  background-color: var(--background-color);
+  border: 1px solid var(--sub-menu-border-color);
+  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.1);
+  transition:
+    opacity 0.2s,
+    visibility 0.2s,
+    transform 0.2s;
+  transform: translateY(10px);
+}
+li.navigation-item.with-items ul.sub-menu.open {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(30px);
+}
+li.navigation-item.with-items ul.sub-menu li {
+  margin: 0;
+  padding: 0 0 6px;
+}
+li.navigation-item.with-items ul.sub-menu li:last-child {
+  padding-bottom: 0;
+}
+li.navigation-item.with-items ul.sub-menu li a {
+  user-input: none;
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+li.navigation-item.with-items ul.sub-menu li a:hover {
+  cursor: pointer;
+  color: var(--text-color);
+}
+li.navigation-item.with-items ul.sub-menu li a.active {
   color: var(--brand-color);
 }
 aside.mobile-header-aside {
@@ -474,6 +562,20 @@ aside.mobile-header-aside ul.aside-navigation {
 aside.mobile-header-aside ul.aside-navigation li.navigation-item {
   margin: 10px 0;
   font-size: 16px;
+}
+aside.mobile-header-aside ul.aside-navigation li.navigation-item.with-mobile-items ul.sub-menu {
+  margin: 10px 0;
+  list-style: none;
+  padding-left: 20px;
+}
+aside.mobile-header-aside ul.aside-navigation li.navigation-item.with-mobile-items ul.sub-menu li {
+  padding: 0 0 10px;
+}
+aside.mobile-header-aside ul.aside-navigation li.navigation-item.with-mobile-items ul.sub-menu li:last-child {
+  padding-bottom: 0;
+}
+aside.mobile-header-aside ul.aside-navigation li.navigation-item span.with-icon {
+  grid-column-gap: 6px;
 }
 aside.mobile-header-aside ul.aside-navigation li.navigation-item a {
   color: var(--secondary-color);
@@ -1446,7 +1548,6 @@ html[data-theme=dark] {
 }
 html {
   --tools-button-hover: #ecedf1;
-  --header-background-color: #f7f8fa;
   --configuration-item-hover: #cfdefd;
   --terminal-header-border: #ecedf1;
   --terminal-header: #f7f8fa;
@@ -1466,7 +1567,6 @@ html {
 }
 html[data-theme=dark] {
   --tools-button-hover: #393b41;
-  --header-background-color: #2a2a2d;
   --configuration-item-hover: #2f446e;
   --terminal-header-border: #323438;
   --terminal-header: #2a2a2d;
@@ -1495,6 +1595,7 @@ body {
     Helvetica,
     Arial,
     sans-serif;
+  -webkit-font-smoothing: antialiased;
   background-color: var(--background-color);
 }
 body.dragging {
@@ -1504,9 +1605,6 @@ body.dragging {
 }
 body.dragging .playground__terminal .header {
   cursor: row-resize;
-}
-header {
-  background: var(--playground-header-background-color) !important;
 }
 main {
   top: 70px;

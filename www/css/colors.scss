@@ -54,6 +54,9 @@ html {
   --header-background-color: var(--main-color);
   --header-transparent-background-color: var(--background-light-transparent-gray);
 
+  // footer
+  --footer-background-color: var(--main-color);
+
   // overlay
   --overlay-background-color: var(--semi-dark-transparent-gray);
 
@@ -135,6 +138,9 @@ html[data-theme="dark"] {
   // header
   --header-background-color: var(--main-color);
   --header-transparent-background-color: var(--background-transparent-gray);
+
+  // footer
+  --footer-background-color: var(--main-color);
 
   // overlay
   --overlay-background-color: var(--semi-dark-transparent-gray);

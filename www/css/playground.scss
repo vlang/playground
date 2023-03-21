@@ -1,6 +1,5 @@
 html {
   --tools-button-hover: #ecedf1;
-  --header-background-color: #f7f8fa;
   --configuration-item-hover: #cfdefd;
   --terminal-header-border: #ecedf1;
   --terminal-header: #f7f8fa;
@@ -21,7 +20,6 @@ html {
 
 html[data-theme='dark'] {
   --tools-button-hover: #393b41;
-  --header-background-color: #2a2a2d;
   --configuration-item-hover: #2f446e;
   --terminal-header-border: #323438;
   --terminal-header: #2a2a2d;
@@ -48,6 +46,7 @@ body {
   margin: 0;
   padding: 70px 0 0 0;
   font-family: "JetBrainsSans", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
   background-color: var(--background-color);
 }
 
@@ -64,7 +63,7 @@ body.dragging {
 }
 
 header {
-  background: var(--playground-header-background-color) !important;
+  //background: var(--playground-header-background-color) !important;
 }
 
 main {

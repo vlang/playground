@@ -1,5 +1,13 @@
 @import "close-button";
 
+html {
+  --sub-menu-border-color: none;
+}
+
+html[data-theme="dark"] {
+  --sub-menu-border-color: var(--border-color);
+}
+
 .header-component {
   &.underline {
     header {
@@ -11,6 +19,7 @@
     header {
       position: fixed;
       top: 0;
+      left: 0;
     }
   }
 
@@ -110,6 +119,11 @@ header {
       a {
         display: grid;
         align-items: center;
+
+        font-size: 17px;
+        font-weight: 500;
+        color: var(--text-color);
+        text-decoration: none;
       }
 
       span {
@@ -319,17 +333,96 @@ header {
 }
 
 li.navigation-item {
-  a {
+  position: relative;
+
+  a, span {
     color: var(--secondary-color);
     text-decoration: none;
 
     &:hover {
       cursor: pointer;
       color: var(--text-color);
+
+      &.with-icon {
+        svg {
+          .icon-data {
+            fill: var(--text-color);
+          }
+        }
+      }
     }
 
     &.active {
       color: var(--brand-color);
+    }
+
+    &.with-icon {
+      display: grid;
+      grid-template-columns: max-content max-content;
+      grid-column-gap: 4px;
+      align-items: center;
+
+      svg {
+        width: 13px;
+
+        .icon-data {
+          fill: var(--secondary-color);
+        }
+      }
+    }
+  }
+
+  &.with-items {
+    ul.sub-menu {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: max-content;
+      padding: 12px 40px 12px 18px;
+      margin: 0;
+      list-style: none;
+      border-radius: 8px;
+      opacity: 0;
+      visibility: hidden;
+
+      background-color: var(--background-color);
+      border: 1px solid var(--sub-menu-border-color);
+
+      box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.1);
+
+      transition: opacity .20s, visibility .20s, transform .20s;
+      transform: translateY(10px);
+
+      &.open {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(30px);
+      }
+
+      li {
+        margin: 0;
+        padding: 0 0 6px;
+
+        &:last-child {
+          padding-bottom: 0;
+        }
+
+        a {
+          user-input: none;
+          color: var(--secondary-color);
+          text-decoration: none;
+
+          &:hover {
+            cursor: pointer;
+            color: var(--text-color);
+          }
+
+          &.active {
+            color: var(--brand-color);
+          }
+        }
+      }
     }
   }
 }
@@ -366,6 +459,27 @@ aside.mobile-header-aside {
       margin: 10px 0;
 
       font-size: 16px;
+
+      &.with-mobile-items {
+        ul.sub-menu {
+          margin: 10px 0;
+          list-style: none;
+          padding-left: 20px;
+
+          li {
+            padding: 0 0 10px;
+            &:last-child {
+              padding-bottom: 0;
+            }
+          }
+        }
+      }
+
+      span {
+        &.with-icon {
+          grid-column-gap: 6px;
+        }
+      }
 
       a {
         color: var(--secondary-color);

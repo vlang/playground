@@ -100,7 +100,7 @@ export class Playground {
         this.examplesManager.registerOnSelectHandler((example: IExample): void => {
             this.editor.setCode(example.code)
 
-            // if current configuration is Cgen, don't switch to the example's configuration
+            // if the current configuration is Cgen, don't switch to the example's configuration
             if (this.runConfigurationManager.configuration === RunConfigurationType.Cgen) {
                 // since example changed, C code no longer matches V code
                 this.cgenEditor.clear()
