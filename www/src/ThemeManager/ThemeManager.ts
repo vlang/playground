@@ -64,8 +64,10 @@ export class ThemeManager {
             return
         }
 
-        // By default, we turn the dark theme.
-        this.turnTheme(new Dark())
+        const preferDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const defaultTheme = preferDark ? new Dark() : new Light();
+
+        this.turnTheme(defaultTheme)
     }
 
     private findTheme(themeFromLocalStorage: string) {

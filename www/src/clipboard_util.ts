@@ -2,7 +2,7 @@ function fallbackCopyTextToClipboard(text: string): void {
     const textArea = document.createElement("textarea")
     textArea.value = text
 
-    // Avoid scrolling to bottom
+    // Avoid scrolling to the bottom
     textArea.style.top = "0"
     textArea.style.left = "0"
     textArea.style.position = "fixed"
@@ -28,11 +28,12 @@ export function copyTextToClipboard(text: string, onCopy: () => void): void {
         fallbackCopyTextToClipboard(text)
         return
     }
-    navigator.clipboard.writeText(text).then(function () {
-        console.log("Async: Copying to clipboard was successful!")
-        onCopy()
-    }, function (err) {
-        fallbackCopyTextToClipboard(text)
-        console.log("Async: Could not copy text: ", err, "fallback to old method")
-    })
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            console.log("Async: Copying to clipboard was successful!")
+            onCopy()
+        }, err => {
+            fallbackCopyTextToClipboard(text)
+            console.log("Async: Could not copy text: ", err, "fallback to old method")
+        })
 }

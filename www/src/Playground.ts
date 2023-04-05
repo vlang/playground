@@ -356,16 +356,12 @@ export class Playground {
 
                 this.writeToTerminal("Code shared successfully!")
 
-                this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, result.hash)
-
                 const link = this.buildShareLink(result)
                 this.writeToTerminal("Share link: " + link)
 
                 copyTextToClipboard(link, () => {
                     this.writeToTerminal("\nLink copied to clipboard.")
                 })
-
-                this.writeToTerminal("Note: current page has changed its own URL, it now links to shared code.")
             })
             .catch(err => {
                 console.log(err)
@@ -374,11 +370,7 @@ export class Playground {
     }
 
     private buildShareLink(result: ShareCodeResponse) {
-        let url = window.location.href.split("?")[0]
-        if (!url.endsWith("/")) {
-            url += "/"
-        }
-        return url + "p/" + result.hash
+        return `https://vlngf.co/p/${result.hash}`
     }
 
     public changeTheme(): void {
@@ -481,7 +473,7 @@ export class Playground {
         window.localStorage.removeItem(CODE_UNSAVED_KEY)
 
         if (isCodeFromShareURL && hasUnsavedCode) {
-            const yes = confirm("You have previously unsaved changes. Do you want to load it?")
+            const yes = confirm("You load the code from the link, but you have previously unsaved changes. Do you want to load it instead of code from link?")
 
             if (yes) {
                 this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, null)

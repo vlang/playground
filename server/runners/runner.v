@@ -102,5 +102,17 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 		return error('The program reached the resource limit assigned to it.')
 	}
 
-	return prettify(run_res.output.trim_right('\n'))
+	run_res_result := run_res.output.trim_right('\n')
+
+	if build_output.contains('warning:') || build_output.contains('notice:') {
+		return '
+			Build log:
+			${prettify(build_output)}
+
+			Output:
+			${run_res_result}
+		'.trim_indent()
+	}
+
+	return prettify(run_res_result)
 }

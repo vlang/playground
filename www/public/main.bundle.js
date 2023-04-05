@@ -1765,10 +1765,10 @@ println('Hello, link 404!')
       fallbackCopyTextToClipboard(text);
       return;
     }
-    navigator.clipboard.writeText(text).then(function() {
+    navigator.clipboard.writeText(text).then(() => {
       console.log("Async: Copying to clipboard was successful!");
       onCopy();
-    }, function(err) {
+    }, (err) => {
       fallbackCopyTextToClipboard(text);
       console.log("Async: Could not copy text: ", err, "fallback to old method");
     });
@@ -2010,7 +2010,9 @@ println('Hello, link 404!')
         this.turnTheme(this.predefinedTheme);
         return;
       }
-      this.turnTheme(new Dark());
+      const preferDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const defaultTheme = preferDark ? new Dark() : new Light();
+      this.turnTheme(defaultTheme);
     }
     findTheme(themeFromLocalStorage) {
       let foundThemes = this.themes.filter((theme2) => theme2.name() === themeFromLocalStorage);
@@ -2429,24 +2431,18 @@ println('Hello, link 404!')
           return;
         }
         this.writeToTerminal("Code shared successfully!");
-        this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, result.hash);
         const link = this.buildShareLink(result);
         this.writeToTerminal("Share link: " + link);
         copyTextToClipboard(link, () => {
           this.writeToTerminal("\nLink copied to clipboard.");
         });
-        this.writeToTerminal("Note: current page has changed its own URL, it now links to shared code.");
       }).catch((err) => {
         console.log(err);
         this.writeToTerminal("Can't share code. Please try again.");
       });
     }
     buildShareLink(result) {
-      let url = window.location.href.split("?")[0];
-      if (!url.endsWith("/")) {
-        url += "/";
-      }
-      return url + "p/" + result.hash;
+      return `https://vlngf.co/p/${result.hash}`;
     }
     changeTheme() {
       this.themeManager.toggleTheme();
@@ -2531,7 +2527,7 @@ println('Hello, link 404!')
       const hasUnsavedCode = window.localStorage.getItem(CODE_UNSAVED_KEY) != null;
       window.localStorage.removeItem(CODE_UNSAVED_KEY);
       if (isCodeFromShareURL && hasUnsavedCode) {
-        const yes = confirm("You have previously unsaved changes. Do you want to load it?");
+        const yes = confirm("You load the code from the link, but you have previously unsaved changes. Do you want to load it instead of code from link?");
         if (yes) {
           this.queryParams.updateURLParameter(SharedCodeRepository.QUERY_PARAM_NAME, null);
           window.location.reload();
