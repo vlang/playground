@@ -34,14 +34,14 @@ fn (mut app Server) add_new_code(snippet models.CodeStorage) {
 
 	sql app.db {
 		insert snippet into models.CodeStorage
-	}
+	} or { panic(err) }
 }
 
 // get_saved_code retrieves a code snippet from the database by its hash.
 fn (mut app Server) get_saved_code(hash string) ?models.CodeStorage {
 	found := sql app.db {
 		select from models.CodeStorage where hash == hash
-	}
+	} or { panic(err) }
 
 	if found.len == 0 {
 		return none
@@ -55,7 +55,7 @@ fn (mut app Server) init_once() {
 	app.db = sqlite.connect('code_storage.db') or { panic(err) }
 	sql app.db {
 		create table models.CodeStorage
-	}
+	} or { panic(err) }
 	isolate.execute('isolate --cleanup')
 	app.handle_static('./www/public', true)
 	app.serve_static('/', './www/public/')
