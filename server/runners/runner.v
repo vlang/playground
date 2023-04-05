@@ -106,11 +106,11 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 
 	if build_output.contains('warning:') || build_output.contains('notice:') {
 		return '
-			Build log:
-			${prettify(build_output)}
+Build log:
+${prettify(build_output)}
 
-			Output:
-			${run_res_result}
+Output:
+${run_res_result}
 		'.trim_indent()
 	}
 
