@@ -118,8 +118,8 @@ ${run_res_result}
 	return prettify(run_res_result)
 }
 
+const regex_arguments_validator = pcre2.compile('[^\\w\\d\\-=]') or { panic(err) }
+
 fn prepare_user_arguments(args string) string {
-	re := pcre2.compile('[^\\w\\d\\-=]') or { panic(err) }
-	println(re.replace_all(args, ' '))
-	return re.replace_all(args, ' ')
+	return regex_arguments_validator.replace_all(args, ' ')
 }
