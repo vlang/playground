@@ -210,12 +210,13 @@
 
   // src/v.ts
   var Context = class {
-    constructor(indentation, column, type, align, prev) {
+    constructor(indentation, column, type, align, prev, knownImports = /* @__PURE__ */ new Set()) {
       this.indentation = indentation;
       this.column = column;
       this.type = type;
       this.align = align;
       this.prev = prev;
+      this.knownImports = knownImports;
       /**
        * Whenever current position inside a string.
        */
@@ -230,11 +231,6 @@
        * Used for highlighting import names in import statements.
        */
       this.expectedImportName = false;
-      /**
-       * Set of imports in current context.
-       * Used for highlighting import names in code.
-       */
-      this.knownImports = /* @__PURE__ */ new Set();
     }
   };
   __name(Context, "Context");
@@ -279,12 +275,18 @@
     "union",
     "unsafe",
     "volatile",
+    "__global",
     "__offsetof"
   ]);
   var pseudoKeywords = /* @__PURE__ */ new Set([
     "sql",
     "chan",
     "thread"
+  ]);
+  var hashDirectives = /* @__PURE__ */ new Set([
+    "#flag",
+    "#include",
+    "#pkgconfig"
   ]);
   var atoms = /* @__PURE__ */ new Set([
     "true",
@@ -303,6 +305,7 @@
     "i8",
     "i16",
     "int",
+    "i32",
     "i64",
     "i128",
     "u8",
@@ -341,6 +344,14 @@
       if (ch === '"' || ch === "'" || ch === "`") {
         state.tokenize = tokenString(ch);
         return state.tokenize(stream, state);
+      }
+      if ((ch === "r" || ch === "c") && (stream.peek() == '"' || stream.peek() == "'")) {
+        const next2 = stream.next();
+        if (next2 === null) {
+          return "string";
+        }
+        state.tokenize = tokenRawString(next2);
+        return "string";
       }
       if (ch === ".") {
         if (!stream.match(/^[0-9]+([eE][\-+]?[0-9]+)?/)) {
@@ -414,8 +425,12 @@
         return "keyword";
       if (atoms.has(cur))
         return "atom";
-      if (builtinTypes.has(cur))
-        return "builtin";
+      if (hashDirectives.has(cur))
+        return "hash-directive";
+      if (!wasDot) {
+        if (builtinTypes.has(cur))
+          return "builtin";
+      }
       if (cur.length > 0 && cur[0].toUpperCase() === cur[0]) {
         return "type";
       }
@@ -431,16 +446,16 @@
           return "function";
         }
       }
-      if (wasDot) {
-        return "property";
-      }
-      if (state.context.expectedImportName && stream.peek() != ".") {
+      if (state.context.expectedImportName && stream.peek() !== ".") {
         state.context.expectedImportName = false;
         if (state.context.knownImports === void 0) {
           state.context.knownImports = /* @__PURE__ */ new Set();
         }
         state.context.knownImports.add(cur);
         return "import-name";
+      }
+      if (wasDot) {
+        return "property";
       }
       if (state.context.knownImports.has(cur) && stream.peek() == ".") {
         return "import-name";
@@ -494,6 +509,20 @@
       return "string";
     }
     __name(tokenNextInterpolation, "tokenNextInterpolation");
+    function tokenNextEscape(stream, state) {
+      let next = stream.next();
+      if (next === "\\") {
+        stream.next();
+        state.tokenize = tokenString(state.context.stringQuote);
+        return "valid-escape";
+      }
+      return "string";
+    }
+    __name(tokenNextEscape, "tokenNextEscape");
+    function isValidEscapeChar(ch) {
+      return ch === "n" || ch === "t" || ch === "r" || ch === "\\" || ch === '"' || ch === "'" || ch === "0";
+    }
+    __name(isValidEscapeChar, "isValidEscapeChar");
     function tokenString(quote) {
       return function(stream, state) {
         state.context.insideString = true;
@@ -516,6 +545,11 @@
             stream.backUp(1);
             return "string";
           }
+          if (escaped && isValidEscapeChar(next)) {
+            stream.backUp(2);
+            state.tokenize = tokenNextEscape;
+            return "string";
+          }
           escaped = !escaped && next === "\\";
         }
         if (end || escaped) {
@@ -527,6 +561,29 @@
       };
     }
     __name(tokenString, "tokenString");
+    function tokenRawString(quote) {
+      return function(stream, state) {
+        state.context.insideString = true;
+        state.context.stringQuote = quote;
+        let next = "";
+        let escaped = false;
+        let end = false;
+        while ((next = stream.next()) != null) {
+          if (next === quote && !escaped) {
+            end = true;
+            break;
+          }
+          escaped = !escaped && next === "\\";
+        }
+        if (end || escaped) {
+          state.tokenize = tokenBase;
+        }
+        state.context.insideString = false;
+        state.context.stringQuote = null;
+        return "string";
+      };
+    }
+    __name(tokenRawString, "tokenRawString");
     function tokenComment(stream, state) {
       let maybeEnd = false;
       let ch;
@@ -541,7 +598,7 @@
     }
     __name(tokenComment, "tokenComment");
     function pushContext(state, column, type) {
-      return state.context = new Context(state.indention, column, type, null, state.context);
+      return state.context = new Context(state.indention, column, type, null, state.context, state.context.knownImports);
     }
     __name(pushContext, "pushContext");
     function popContext(state) {

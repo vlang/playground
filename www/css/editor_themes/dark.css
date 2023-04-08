@@ -2,7 +2,7 @@
     color: #BBBBBB;
 }
 
-.cm-s-dark .cm-keyword { color: #CC7832; }
+.cm-s-dark .cm-keyword, .cm-s-dark .cm-valid-escape { color: #CC7832; }
 .cm-s-dark .cm-builtin { color: #CC7832; }
 .cm-s-dark .cm-atom { color: #CC7832; }
 .cm-s-dark .cm-number { color: #6897BB; }
@@ -22,6 +22,7 @@
 .cm-s-dark .cm-bracket { color: #997; }
 .cm-s-dark .cm-tag { color: #170; }
 .cm-s-dark .cm-attribute { color: #BBB529 !important; }
+.cm-s-dark .cm-hash-directive { color: #BBB529 !important; }
 .cm-s-dark .cm-hr { color: #999; }
 .cm-s-dark .cm-link { color: #00c; }
 .cm-s-dark .cm-function,.cm-def { color: #FFC66D; }

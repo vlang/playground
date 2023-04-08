@@ -11,7 +11,7 @@ pub fn run(snippet models.CodeStorage) !string {
 	return run_in_sandbox(snippet, false)
 }
 
-// run runs the code as tests in sandbox.
+// test runs the code as tests in sandbox.
 pub fn test(snippet models.CodeStorage) !string {
 	return run_in_sandbox(snippet, true)
 }

@@ -35,7 +35,12 @@ class Context {
         public column: number,
         public type: string,
         public align: boolean | null,
-        public prev?: Context) {
+        public prev?: Context,
+        /**
+         * Set of imports in the current context.
+         * Used for highlighting import names in code.
+         */
+        public knownImports: Set<string> = new Set()) {
     }
 
     /**
@@ -54,12 +59,6 @@ class Context {
      * Used for highlighting import names in import statements.
      */
     expectedImportName: boolean = false
-
-    /**
-     * Set of imports in current context.
-     * Used for highlighting import names in code.
-     */
-    knownImports: Set<string> = new Set()
 }
 
 export const keywords: Set<string> = new Set<string>([
@@ -103,6 +102,7 @@ export const keywords: Set<string> = new Set<string>([
     "union",
     "unsafe",
     "volatile",
+    "__global",
     "__offsetof",
 ])
 
@@ -110,6 +110,12 @@ export const pseudoKeywords: Set<string> = new Set<string>([
     "sql",
     "chan",
     "thread",
+])
+
+export const hashDirectives: Set<string> = new Set<string>([
+    "#flag",
+    "#include",
+    "#pkgconfig",
 ])
 
 export const atoms: Set<string> = new Set<string>([
@@ -130,6 +136,7 @@ export const builtinTypes: Set<string> = new Set<string>([
     "i8",
     "i16",
     "int",
+    "i32",
     "i64",
     "i128",
     "u8",
@@ -174,6 +181,17 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
         if (ch === "\"" || ch === "'" || ch === "`") {
             state.tokenize = tokenString(ch)
             return state.tokenize(stream, state)
+        }
+
+        // r'foo' or c'foo'
+        // r"foo" or c"foo"
+        if ((ch === "r" || ch === "c") && (stream.peek() == "\"" || stream.peek() == "'")) {
+            const next = stream.next()
+            if (next === null) {
+                return "string"
+            }
+            state.tokenize = tokenRawString(next as Quota)
+            return "string"
         }
 
         if (ch === ".") {
@@ -269,7 +287,13 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
         if (keywords.has(cur)) return "keyword"
         if (pseudoKeywords.has(cur)) return "keyword"
         if (atoms.has(cur)) return "atom"
-        if (builtinTypes.has(cur)) return "builtin"
+        if (hashDirectives.has(cur)) return "hash-directive"
+
+        if (!wasDot) {
+            // don't highlight `foo.int()`
+            //                      ^^^ as builtin
+            if (builtinTypes.has(cur)) return "builtin"
+        }
 
         if (cur.length > 0 && cur[0].toUpperCase() === cur[0]) {
             return "type"
@@ -289,21 +313,21 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
             }
         }
 
-        if (wasDot) {
-            return "property"
-        }
-
         // highlight only last part
         // example:
         //   import foo.boo
         //              ^^^ - only this part will be highlighted
-        if (state.context.expectedImportName && stream.peek() != ".") {
+        if (state.context.expectedImportName && stream.peek() !== ".") {
             state.context.expectedImportName = false
             if (state.context.knownImports === undefined) {
                 state.context.knownImports = new Set()
             }
             state.context.knownImports.add(cur)
             return "import-name"
+        }
+
+        if (wasDot) {
+            return "property"
         }
 
         // highlight only identifier with dot after it
@@ -370,6 +394,22 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
         return "string"
     }
 
+    function tokenNextEscape(stream: StringStream, state: ModeState) {
+        let next = stream.next()
+        if (next === "\\") {
+            stream.next()
+            state.tokenize = tokenString(state.context.stringQuote)
+            // we already know that next char is valid escape
+            return "valid-escape"
+        }
+
+        return "string"
+    }
+
+    function isValidEscapeChar(ch: string) {
+        return ch === "n" || ch === "t" || ch === "r" || ch === "\\" || ch === "\"" || ch === "\'" || ch === "0"
+    }
+
     function tokenString(quote: Quota | null) {
         return function (stream: StringStream, state: ModeState) {
             state.context.insideString = true
@@ -393,6 +433,38 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
                     state.tokenize = tokenNextInterpolation
                     stream.backUp(1)
                     return "string"
+                }
+                if (escaped && isValidEscapeChar(next)) {
+                    stream.backUp(2)
+                    state.tokenize = tokenNextEscape
+                    return "string"
+                }
+                escaped = !escaped && next === "\\"
+            }
+
+            if (end || escaped) {
+                state.tokenize = tokenBase
+            }
+
+            state.context.insideString = false
+            state.context.stringQuote = null
+            return "string"
+        }
+    }
+
+    function tokenRawString(quote: Quota | null) {
+        return function (stream: StringStream, state: ModeState) {
+            state.context.insideString = true
+            state.context.stringQuote = quote
+
+            let next: string | null = ""
+            let escaped = false
+            let end = false
+
+            while ((next = stream.next()) != null) {
+                if (next === quote && !escaped) {
+                    end = true
+                    break
                 }
                 escaped = !escaped && next === "\\"
             }
@@ -421,7 +493,7 @@ CodeMirror.defineMode("v", (config: EditorConfiguration): Mode<ModeState> => {
     }
 
     function pushContext(state: ModeState, column: number, type: string) {
-        return state.context = new Context(state.indention, column, type, null, state.context)
+        return state.context = new Context(state.indention, column, type, null, state.context, state.context.knownImports)
     }
 
     function popContext(state: ModeState) {

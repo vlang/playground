@@ -1,4 +1,4 @@
-.cm-s-light .cm-keyword { color: #0033b3; }
+.cm-s-light .cm-keyword, .cm-s-light .cm-valid-escape { color: #0033b3; }
 .cm-s-light .cm-builtin { color: #0033b3; }
 .cm-s-light .cm-atom { color: #219; }
 .cm-s-light .cm-number { color: #1750EB; }
@@ -18,6 +18,7 @@
 .cm-s-light .cm-bracket { color: #997; }
 .cm-s-light .cm-tag { color: #170; }
 .cm-s-light .cm-attribute { color: #9E880D !important; }
+.cm-s-light .cm-hash-directive { color: #9E880D !important; }
 .cm-s-light .cm-hr { color: #999; }
 .cm-s-light .cm-link { color: #00c; }
 .cm-s-light .cm-function {}

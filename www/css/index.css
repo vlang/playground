@@ -1222,7 +1222,7 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
   transform: translateY(1px);
 }
 
-.cm-s-light .cm-keyword {
+.cm-s-light .cm-keyword, .cm-s-light .cm-valid-escape {
   color: #0033b3;
 }
 
@@ -1287,6 +1287,10 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
 }
 
 .cm-s-light .cm-attribute {
+  color: #9E880D !important;
+}
+
+.cm-s-light .cm-hash-directive {
   color: #9E880D !important;
 }
 
@@ -1357,7 +1361,7 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
   color: #BBBBBB;
 }
 
-.cm-s-dark .cm-keyword {
+.cm-s-dark .cm-keyword, .cm-s-dark .cm-valid-escape {
   color: #CC7832;
 }
 
@@ -1422,6 +1426,10 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
 }
 
 .cm-s-dark .cm-attribute {
+  color: #BBB529 !important;
+}
+
+.cm-s-dark .cm-hash-directive {
   color: #BBB529 !important;
 }
 
