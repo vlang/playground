@@ -4,6 +4,7 @@ import os
 import isolate
 import models
 import logger
+import srackham.pcre2
 
 // run runs the code in sandbox.
 pub fn run(snippet models.CodeStorage) !string {
@@ -41,7 +42,7 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 			--
 
 			${@VEXEROOT}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g
-			${snippet.build_arguments}
+			${prepare_user_arguments(snippet.build_arguments)}
 			test ${file}
 		')
 		run_output := run_res.output.trim_right('\n')
@@ -67,7 +68,7 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 		 --
 
 		${@VEXEROOT}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g
-		${snippet.build_arguments}
+		${prepare_user_arguments(snippet.build_arguments)}
 		${file}
 	')
 	build_output := build_res.output.trim_right('\n')
@@ -90,7 +91,7 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 		 --run
 		 --
 		 ./code
-		 ${snippet.run_arguments}
+		 ${prepare_user_arguments(snippet.run_arguments)}
 	')
 
 	is_reached_resource_limit := run_res.exit_code == 1
@@ -115,4 +116,10 @@ ${run_res_result}
 	}
 
 	return prettify(run_res_result)
+}
+
+fn prepare_user_arguments(args string) string {
+	re := pcre2.compile('[^\\w\\d\\-=]') or { panic(err) }
+	println(re.replace_all(args, ' '))
+	return re.replace_all(args, ' ')
 }

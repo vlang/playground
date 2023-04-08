@@ -17,7 +17,7 @@ pub fn retrieve_cgen_code(snippet models.CodeStorage) !string {
 
 	build_res := isolate.execute('
 		 ${@VEXEROOT}/v -showcc -keepc -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -skip-unused -g
-		 ${snippet.build_arguments}
+		 ${prepare_user_arguments(snippet.build_arguments)}
 		 ${box_path}/code.v
 	')
 	build_output := build_res.output.trim_right('\n')
