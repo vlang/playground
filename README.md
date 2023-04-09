@@ -36,7 +36,7 @@ cd playground
 #### Using Docker Compose
 
 ```bash
-docker-compose up -d
+npm run run-docker
 ```
 
 then access the playground at <http://localhost:5555>
@@ -59,7 +59,7 @@ And your system will remain "clean".
 Then just run:
 
 ```sh
-make run
+npm run serve
 ```
 
 then access the playground at <http://localhost:5555>
@@ -67,7 +67,7 @@ then access the playground at <http://localhost:5555>
 ### Run the playground locally
 
 ```bash
-make local_run
+npm run local-serve
 ```
 
 then access the playground at <http://localhost:5555>
@@ -90,7 +90,7 @@ make install
 #### Run the server
 
 ```bash
-make run
+npm run serve
 ```
 
 then access the playground at <http://localhost:5555>
