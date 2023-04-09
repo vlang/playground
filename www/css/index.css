@@ -1892,8 +1892,8 @@ main {
 }
 .v-playground .playground__editor .tabs ul li.tab .close-button svg {
   width: 10px;
-  margin-top: -2px;
-  margin-left: 0px;
+  margin-top: 0;
+  margin-left: 0;
 }
 
 .playground__terminal {
@@ -1992,7 +1992,7 @@ main {
   border: 1px solid var(--select-header-border);
   background: var(--select-background);
   color: var(--completion-variant-color);
-  font-size: 80%;
+  font-size: 14px;
   font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
   max-height: 20em;
   overflow-y: auto;
