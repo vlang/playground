@@ -11,9 +11,9 @@ code online.
 
 - Nice and clean UI
 - Powerful editor with syntax highlighting and auto-completion
-- Easy run code
-- Easy run tests
-- Easy code formatting
+- Ability to run code as tests
+- Ability to see generated C code for passed V code
+- Pass flags to V compiler and binary
 - Shareable code and editor state via URL or local storage
 
 ## Developing
@@ -45,7 +45,8 @@ then access the playground at <http://localhost:5555>
 4. Clone <https://github.com/vlang/playground>
 5. Create your application within a container (see gif below)
 
-Done. And your system will remain "clean".
+Done.
+And your system will remain "clean".
 
 ![vscode-open-in-container](https://user-images.githubusercontent.com/17727170/197407889-88fe33b0-8e95-47fe-b2db-598fd307140e.gif)
 
@@ -100,4 +101,5 @@ See the
 file for the full license text.
 
 [FoundationOfficialBadge]: https://vlang.foundation/badge.svg
+
 [FoundationUrl]: https://vlang.foundation
