@@ -13,10 +13,14 @@ Documentation can be found in the
 
 - Nice and clean UI
 - Powerful editor with syntax highlighting and auto-completion
-- Ability to run code as tests
-- Ability to see generated C code for passed V code
-- Pass flags to V compiler and binary
-- Shareable code and editor state via URL or local storage
+- Ability to [run code as tests](https://docs.vlang.foundation/tools/playground.html#test)
+- Ability
+  to [see generated C code](https://docs.vlang.foundation/tools/playground.html#show-generated-c-code)
+  for passed V code
+- Pass [flags](https://docs.vlang.foundation/tools/playground.html#pass-arguments-to-compiler) to V
+  compiler and binary
+- [Shareable](https://docs.vlang.foundation/tools/playground.html#share-code) code and editor state
+  via URL or local storage
 
 ## Developing
 
