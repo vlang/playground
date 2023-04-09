@@ -1,5 +1,7 @@
 # V Playground: Run, Edit, Share V Code Online
 
+[![Foundation Official Project][FoundationOfficialBadge]][FoundationUrl]
+
 The [V Playground](https://play.vlang.io) is an official place where you can run, edit and share V
 code online.
 
@@ -16,7 +18,7 @@ code online.
 
 ## Developing
 
-First clone the repository:
+First, clone the repository:
 
 ```bash
 git clone https://github.com/vlang/playground
@@ -96,3 +98,6 @@ This project is under the **MIT License**.
 See the
 [LICENSE](https://github.com/vlang-foundation/playground/blob/main/LICENSE)
 file for the full license text.
+
+[FoundationOfficialBadge]: https://vlang.foundation/badge.svg
+[FoundationUrl]: https://vlang.foundation
