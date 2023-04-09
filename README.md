@@ -4,6 +4,8 @@
 
 The [V Playground](https://play.vlang.io) is an official place where you can run, edit and share V
 code online.
+Documentation can be found in the
+[V Playground Documentation](https://docs.vlang.foundation/tools/playground.html) section.
 
 ![](./docs/images/cover.png)
 
