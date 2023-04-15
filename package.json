@@ -14,16 +14,16 @@
     "clean": "rm -rf ./server/bin"
   },
   "author": {
-    "name": "V Open Source Foundation",
-    "url": "https://vlang.foundation/"
+    "name": "V Open Source Community Association",
+    "url": "https://vosca.dev/"
   },
   "contributors": [
     "Petr Makhnev",
     "Mark @walkingdevel"
   ],
   "bugs": {
-    "url": "https://github.com/vlang-foundation/playground/issues"
+    "url": "https://github.com/vlang-association/playground/issues"
   },
-  "homepage": "https://play.vlang.foundation/",
+  "homepage": "https://play.vosca.dev/",
   "dependencies": {}
 }

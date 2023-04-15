@@ -10,7 +10,7 @@ println('Hello, Playground!')
 // More examples are available in top dropdown list.
 // You can find Help for shortcuts in the bottom right corner or just press Ctrl + I.
 // See also change theme button in the top right corner.
-// If you want to learn more about V, visit https://docs.vlang.foundation/ and https://learn.vlang.foundation/
+// If you want to learn more about V, visit https://docs.vosca.dev/ and https://learn.vosca.dev/
 // Join us on Discord: https://discord.gg/vlang
 // Enjoy!
 `.trimStart());var A=class{constructor(e){this.text=e;this.decodedCode=atob(e)}decodedCode;saveCode(e){}getCode(e){e({code:this.decodedCode})}};p(A,"QUERY_PARAM_NAME","base64");var M=class{constructor(e){this.id=e}saveCode(e){}getCode(e){fetch("https://api.github.com/gists/"+this.id,{method:"get",headers:{"Content-Type":"application/json"}}).then(t=>t.json()).then(t=>{let n=t.files,o=Object.keys(n)[0],a=n[o].raw_url;fetch(a,{method:"get",headers:{"Content-Type":"text/plain"}}).then(c=>c.text()).then(c=>{e({code:c})}).catch(c=>{console.log(c)})}).catch(t=>{console.log(t)})}};p(M,"QUERY_PARAM_NAME","gist");var G=class{static selectRepository(e,t){if(t!==void 0&&t.codeHash!==null&&t.codeHash!==void 0)return new y(t.codeHash);if(t!==void 0&&t.code!==null&&t.code!==void 0)return new R(t.code);if(t!==void 0&&t.embed!==null&&t.embed!==void 0&&t.embed)return new R("");let n=new v,o=e.getURLParameter(y.QUERY_PARAM_NAME);if(o!=null)return new y(o);let u=e.getURLParameter(A.QUERY_PARAM_NAME);if(u!=null)return new A(u);let a=e.getURLParameter(M.QUERY_PARAM_NAME);return a!=null?new M(a):n}};var O=class{params;constructor(e){this.params=new URLSearchParams(e)}updateURLParameter(e,t){let n=O.updateURLParameter(window.location.href,e,t);window.history.replaceState({},"",n)}getURLParameter(e){return this.params.get(e)}static updateURLParameter(e,t,n){let o=new URL(e);return n?o.searchParams.set(t,n):o.searchParams.delete(t),o.toString()}};var oe=class{containingElement;element;helpOverlay;showHelpButton;closeHelpButton;constructor(e){this.containingElement=e,this.element=e.getElementsByClassName("js-help-wrapper")[0],!(this.element===null||this.element===void 0)&&(this.helpOverlay=this.element.querySelector(".js-help-overlay"),this.showHelpButton=this.element.querySelector(".js-show-help"),this.closeHelpButton=this.element.querySelector(".js-close-help"),this.mount())}mount(){this.showHelpButton!==void 0&&this.showHelpButton.addEventListener("click",()=>{this.toggleHelp()}),this.helpOverlay!==void 0&&this.helpOverlay.addEventListener("click",()=>{this.toggleHelp()}),this.closeHelpButton!==void 0&&this.closeHelpButton.addEventListener("click",()=>{this.toggleHelp()}),oe.isMac||document.querySelectorAll(".js-shortcut kbd.ctrl").forEach(function(t){t.innerText="Ctrl"})}closeHelp(){this.helpOverlay.classList.contains("opened")&&this.toggleHelp()}toggleHelp(){this.containingElement.getElementsByClassName("js-help")[0].classList.toggle("opened"),this.helpOverlay.classList.toggle("opened")}},B=oe;p(B,"isMac",navigator.platform.toUpperCase().indexOf("MAC")>=0);var Y=(n=>(n.Run="Run",n.Test="Test",n.Cgen="Cgen",n))(Y||{});function fe(l){switch(l){case"Run":return 0;case"Test":return 1;case"Cgen":return 2;default:throw new Error(`Unknown run configuration type: ${l}`)}}function ye(l){switch(l){case 0:return"Run";case 1:return"Test";case 2:return"Cgen";default:return"Run"}}function se(l){switch(l){case"Run":return"Run";case"Test":return"Test";case"Cgen":return"Cgen";default:throw new Error(`Unknown run configuration type: ${l}`)}}var C=class{queryParams;currentConfiguration="Run";fromQueryParam=!1;runButton=document.querySelector(".js-run__action");runButtonLabel=document.querySelector(".js-run__action .label");openRunButton=document.querySelector(".js-open-run-select");configurationsList=document.querySelector(".js-run-configurations-list");configurationsOverlay=document.querySelector(".js-run-configurations-list-overlay");configurations=document.querySelectorAll(".js-configuration");buildArgumentsInput=document.querySelector(".js-build-arguments-input");runArgumentsInput=document.querySelector(".js-run-arguments-input");onChange=()=>{};onSelect=()=>{};constructor(e){this.queryParams=e,this.mount()}get configuration(){return this.currentConfiguration}registerOnChange(e){this.onChange=e}registerOnSelect(e){this.onSelect=e}toggleConfigurationsList(){this.configurationsList.classList.toggle("hidden"),this.configurationsOverlay.classList.toggle("opened")}closeConfigurationsList(){this.configurationsList.classList.add("hidden"),this.configurationsOverlay.classList.remove("opened")}setupConfiguration(){let e=this.queryParams.getURLParameter(C.QUERY_PARAM_NAME);if(e!=null){this.fromQueryParam=!0,this.useConfiguration(se(e));return}let t=window.localStorage.getItem(C.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY);t!=null&&(this.buildArgumentsInput.value=t);let n=window.localStorage.getItem(C.LOCAL_STORAGE_RUN_ARGUMENTS_KEY);n!=null&&(this.runArgumentsInput.value=n);let o=window.localStorage.getItem(C.LOCAL_STORAGE_KEY);if(o!=null){this.useConfiguration(se(o));return}this.useConfiguration("Run")}useConfiguration(e){this.currentConfiguration=e,this.onChange(e);let t=Y[e];this.runButton.setAttribute("data-type",t),this.runButtonLabel.textContent=t,e=="Cgen"&&(this.runButtonLabel.textContent="Show generated C code"),this.fromQueryParam||(window.localStorage.setItem(C.LOCAL_STORAGE_KEY,t),window.localStorage.setItem(C.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY,this.buildArgumentsInput.value),window.localStorage.setItem(C.LOCAL_STORAGE_RUN_ARGUMENTS_KEY,this.runArgumentsInput.value)),this.fromQueryParam&&this.queryParams.updateURLParameter(C.QUERY_PARAM_NAME,t)}get buildArguments(){return this.buildArgumentsInput.value.split(" ").filter(e=>e.length>0)}get runArguments(){return this.runArgumentsInput.value.split(" ").filter(e=>e.length>0)}setBuildArguments(e){this.buildArgumentsInput.value=e}setRunArguments(e){this.runArgumentsInput.value=e}mount(){this.openRunButton.addEventListener("click",()=>{this.toggleConfigurationsList()}),this.buildArgumentsInput.addEventListener("input",()=>{window.localStorage.setItem(C.LOCAL_STORAGE_BUILD_ARGUMENTS_KEY,this.buildArgumentsInput.value)}),this.runArgumentsInput.addEventListener("input",()=>{window.localStorage.setItem(C.LOCAL_STORAGE_RUN_ARGUMENTS_KEY,this.runArgumentsInput.value)}),this.configurationsOverlay.addEventListener("click",()=>{this.toggleConfigurationsList()}),document.addEventListener("keydown",e=>{e.key==="Escape"&&this.closeConfigurationsList()}),this.configurations.forEach(e=>{e.addEventListener("click",()=>{let t=e.getAttribute("data-type")??"Run",n=se(t);this.useConfiguration(n),this.onSelect(n)})})}},S=C;p(S,"QUERY_PARAM_NAME","runConfiguration"),p(S,"LOCAL_STORAGE_KEY","run-configuration"),p(S,"LOCAL_STORAGE_BUILD_ARGUMENTS_KEY","build-arguments"),p(S,"LOCAL_STORAGE_RUN_ARGUMENTS_KEY","run-arguments");var K=[{name:"Hello, Playground!",code:v.WELCOME_CODE,runConfiguration:"Run"},{name:"String interpolation",code:`
@@ -21,18 +21,18 @@ for area in areas {
     // V uses the \${} notation to interpolate a variable
     // or expression right on the string.
     // Learn more about string interpolation in the documentation:
-    // https://docs.vlang.foundation/concepts/types/strings.html#string-interpolation
+    // https://docs.vosca.dev/concepts/types/strings.html#string-interpolation
     println('Hello, \${area} developers!')
 }
         `,runConfiguration:"Run"},{name:"Fibonacci",code:`
 // As in other languages, you can define functions in V.
 // Learn more about functions in the documentation:
-// https://docs.vlang.foundation/concepts/functions/overview.html
+// https://docs.vosca.dev/concepts/functions/overview.html
 fn fib(n int) u64 {
     // To define a array of specific type, use the following syntax.
     // Here we define an array of int with the length of n + 2.
     // Learn more about arrays in the documentation:
-    // https://docs.vlang.foundation/concepts/types/arrays.html
+    // https://docs.vosca.dev/concepts/types/arrays.html
     mut f := []u64{len: n + 2}
     f[0] = 0
     f[1] = 1
@@ -46,7 +46,7 @@ fn fib(n int) u64 {
 
 // main function is the entry point of the program.
 // See note about the main function in the documentation:
-// https://docs.vlang.foundation/getting-started/hello-world.html
+// https://docs.vosca.dev/getting-started/hello-world.html
 fn main() {
     for i in 0 .. 30 {
         println(fib(i))
@@ -56,7 +56,7 @@ fn main() {
 // Structs are a way to define a new type with a set of fields.
 // You can define a struct with the following syntax:
 // Learn more about structs in the documentation:
-// https://docs.vlang.foundation/concepts/structs/overview.html
+// https://docs.vosca.dev/concepts/structs/overview.html
 struct Size {
 // mut keyword is used to define mutable fields
 // pub keyword is used to define public fields
@@ -106,7 +106,7 @@ struct Node {
 // Sum types are a way to define a type that can be one of several types.
 // In V, sum types are defined with following syntax.
 // Learn more about sum types in the documentation:
-// https://docs.vlang.foundation/concepts/sum-types.html
+// https://docs.vosca.dev/concepts/sum-types.html
 type Tree = Empty | Node
 
 // Let's calculate the sum of all values in the tree.
@@ -127,7 +127,7 @@ fn main() {
 fn sum(tree Tree) f64 {
     // In V, you can use \`match\` expression to match a value against a sum type.
     // Learn more about match expression in the documentation:
-    // https://docs.vlang.foundation/concepts/control-flow/conditions.html#match-expression
+    // https://docs.vosca.dev/concepts/control-flow/conditions.html#match-expression
     return match tree {
         // if the value has type Empty, return 0
         Empty { 0 }
@@ -148,7 +148,7 @@ fn sum(tree Tree) f64 {
 // single capital letter.
 //
 // Learn more about generics in the documentation:
-// https://docs.vlang.foundation/concepts/generics.html
+// https://docs.vosca.dev/concepts/generics.html
 struct List[T] {
 mut:
     data []T
@@ -209,7 +209,7 @@ fn main() {
         `,runConfiguration:"Run"},{name:"Concurrency",code:`
 // V's model of concurrency is going to be very similar to Go's.
 // Learn more about concurrency in the documentation:
-// https://docs.vlang.foundation/concepts/concurrency.html
+// https://docs.vosca.dev/concepts/concurrency.html
 import time
 
 fn task(id int, duration int) {
@@ -236,7 +236,7 @@ fn main() {
         `,runConfiguration:"Run"},{name:"Channel Select",code:`
 // Channels in V very similar to Go's channels.
 // Learn more about channels in the documentation:
-// https://docs.vlang.foundation/concepts/concurrency.html#channels
+// https://docs.vosca.dev/concepts/concurrency.html#channels
 import time
 
 fn main() {
@@ -269,7 +269,7 @@ fn main() {
 
     // Select is powerful construct that allows you to work for multiple channels.
     // Learn more about select in the documentation:
-    // https://docs.vlang.foundation/concepts/concurrency.html#channel-select
+    // https://docs.vosca.dev/concepts/concurrency.html#channel-select
     select {
         a := <-ch {
             // do something with \`a\`
@@ -295,12 +295,12 @@ fn main() {
 // V very modular and has a lot of built-in modules.
 // In this example we will use the json module to encode and decode JSON data.
 // If you want to learn more about modules, visit
-// https://docs.vlang.foundation/concepts/modules/overview.html
+// https://docs.vosca.dev/concepts/modules/overview.html
 import json
 
 // Since V is statically typed, we need to define a struct to hold the data.
 // Learn more about structs in the documentation:
-// https://docs.vlang.foundation/concepts/structs/overview.html
+// https://docs.vosca.dev/concepts/structs/overview.html
 struct User {
     name string
     age  int
@@ -321,7 +321,7 @@ fn main() {
     // In this case it will return an array of User.
     //
     // Learn more about the json module in the documentation:
-    // https://docs.vlang.foundation/concepts/working-with-json.html
+    // https://docs.vosca.dev/concepts/working-with-json.html
     mut users := json.decode([]User, json_data) or {
         // But if the json data is invalid, it will return an error.
         // You can handle it with the 'or {}' syntax as in this example.
@@ -329,7 +329,7 @@ fn main() {
         // err is a special variable that contains the error message.
         //
         // Learn more about error handling in documentation:
-        // https://docs.vlang.foundation/concepts/error-handling.html
+        // https://docs.vosca.dev/concepts/error-handling.html
         eprintln('Failed to parse json, error: \${err}')
         return
     }
@@ -413,7 +413,7 @@ for line in lines {
 // DEBUG: create new file
 // DEBUG: write text to log file
 `,runConfiguration:"Run"},{name:"Compile-time Reflection",code:`
-// https://docs.vlang.foundation/concepts/compile-time/reflection.html
+// https://docs.vosca.dev/concepts/compile-time/reflection.html
 
 struct User {
     name string
@@ -463,7 +463,7 @@ fn get_int(data string, field string) int {
 //     return result
 // }
 `,runConfiguration:"Run"},{name:"Anonymous & higher order functions",code:`
-// https://docs.vlang.foundation/concepts/functions/anonymous-and-higher-order-functions.html
+// https://docs.vosca.dev/concepts/functions/anonymous-and-higher-order-functions.html
 
 fn sqr(n int) int {
     return n * n
@@ -512,7 +512,7 @@ fn main() {
 // Tests in V is very simple.
 // To define a test function, just add \`test_\` prefix to the function name.
 // Learn more about testing in the documentation:
-// https://docs.vlang.foundation/concepts/testing.html
+// https://docs.vosca.dev/concepts/testing.html
 fn test_hello() {
     // Inside test functions you can use \`assert\` to check if the result is correct.
     assert hello() == 'Hello world'

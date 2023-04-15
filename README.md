@@ -1,11 +1,11 @@
 # V Playground: Run, Edit, Share V Code Online
 
-[![Foundation Official Project][FoundationOfficialBadge]][FoundationUrl]
+[![Association Official Project][AssociationOfficialBadge]][AssociationUrl]
 
 The [V Playground](https://play.vlang.io) is an official place where you can run, edit and share V
 code online.
 Documentation can be found in the
-[V Playground Documentation](https://docs.vlang.foundation/tools/playground.html) section.
+[V Playground Documentation](https://docs.vosca.dev/tools/playground.html) section.
 
 ![](./docs/images/cover.png)
 
@@ -13,13 +13,13 @@ Documentation can be found in the
 
 - Nice and clean UI
 - Powerful editor with syntax highlighting and auto-completion
-- Ability to [run code as tests](https://docs.vlang.foundation/tools/playground.html#test)
+- Ability to [run code as tests](https://docs.vosca.dev/tools/playground.html#test)
 - Ability
-  to [see generated C code](https://docs.vlang.foundation/tools/playground.html#show-generated-c-code)
+  to [see generated C code](https://docs.vosca.dev/tools/playground.html#show-generated-c-code)
   for passed V code
-- Pass [flags](https://docs.vlang.foundation/tools/playground.html#pass-arguments-to-compiler) to V
+- Pass [flags](https://docs.vosca.dev/tools/playground.html#pass-arguments-to-compiler) to V
   compiler and binary
-- [Shareable](https://docs.vlang.foundation/tools/playground.html#share-code) code and editor state
+- [Shareable](https://docs.vosca.dev/tools/playground.html#share-code) code and editor state
   via URL or local storage
 
 ## Developing
@@ -103,9 +103,9 @@ See [server/README.md](./server/README.md) for more information about the server
 
 This project is under the **MIT License**.
 See the
-[LICENSE](https://github.com/vlang-foundation/playground/blob/main/LICENSE)
+[LICENSE](https://github.com/vlang-association/playground/blob/main/LICENSE)
 file for the full license text.
 
-[FoundationOfficialBadge]: https://vlang.foundation/badge.svg
+[AssociationOfficialBadge]: https://vosca.dev/badge.svg
 
-[FoundationUrl]: https://vlang.foundation
+[AssociationUrl]: https://vosca.dev
