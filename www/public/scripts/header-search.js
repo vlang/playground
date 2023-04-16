@@ -14,6 +14,7 @@ const localSearchCache = {};
 const pageIcon = `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M17 6v12c0 .52-.2 1-1 1H4c-.7 0-1-.33-1-1V2c0-.55.42-1 1-1h8l5 5zM14 8h-3.13c-.51 0-.87-.34-.87-.87V4" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linejoin="round"></path></svg>`
 const textIcon = `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M17 5H3h14zm0 5H3h14zm0 5H3h14z" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linejoin="round"></path></svg>`
 const subHeaderIcon = `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M13 13h4-4V8H7v5h6v4-4H7V8H3h4V3v5h6V3v5h4-4v5zm-6 0v4-4H3h4z" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>`;
+const moduleIcon = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.34925 4.24146C1.35394 3.69253 1.80026 3.25 2.34921 3.25H7.34174C7.60696 3.25 7.86131 3.35536 8.04885 3.54289L9.78967 5.28371C9.9772 5.47125 10.2316 5.57661 10.4968 5.57661H16.8767C17.429 5.57661 17.8767 6.02432 17.8767 6.57661V15.8606C17.8767 16.4129 17.429 16.8606 16.8767 16.8606H2.25003C1.69441 16.8606 1.24532 16.4077 1.25007 15.8521L1.34925 4.24146Z" stroke="white" stroke-width="1"/></svg>`
 
 const resetSearch = () => {
     searchInput.value = "";
@@ -85,20 +86,54 @@ function clearResults() {
     searchResultsList.innerHTML = "";
 }
 
-function setResults(hits) {
+function setResults(place, hits) {
     hits.forEach((result) => {
-        const formatted = result['_formatted']
-        const icon = formatted.title.includes("search-highlight") ? pageIcon : (result.parent !== "" ? subHeaderIcon : textIcon);
+        if (place === "modules") {
+            renderModuleResult(result);
+        } else {
+            renderResult(result);
+        }
+    });
+}
 
-        const searchResult = document.createElement("li");
-        searchResult.classList.add("search-result");
-        searchResult.setAttribute("role", "option");
-        searchResult.setAttribute("aria-selected", "false");
+function renderModuleResult(result) {
+    const formatted = result['_formatted']
+    const icon = moduleIcon
 
-        const link = document.createElement("a");
-        link.classList.add("search-result-content");
-        link.setAttribute("href", result.url.replace(".md", ".html"));
-        link.innerHTML = `
+    const searchResult = document.createElement("li");
+    searchResult.classList.add("search-result");
+    searchResult.setAttribute("role", "option");
+    searchResult.setAttribute("aria-selected", "false");
+
+    const link = document.createElement("a");
+    link.classList.add("search-result-content");
+    link.setAttribute("href", result.url);
+    link.innerHTML = `
+                        <div class="content-icon">
+                            ${icon}
+                        </div>
+                        <div class="content-wrapper">
+                            <span class="title">${formatted.fqn}</span>
+                            <span class="description">${formatted.description}</span>
+                        </div>
+                    `;
+    searchResult.appendChild(link);
+    searchResultsList.appendChild(searchResult);
+}
+
+function renderResult(result) {
+    const formatted = result['_formatted']
+    const icon = formatted.title.includes("search-highlight") ? pageIcon : (result.parent !== "" ? subHeaderIcon : textIcon);
+
+    const searchResult = document.createElement("li");
+    searchResult.classList.add("search-result");
+    searchResult.setAttribute("role", "option");
+    searchResult.setAttribute("aria-selected", "false");
+
+    const link = document.createElement("a");
+    link.classList.add("search-result-content");
+    link.setAttribute("href", result.url.replace(".md", ".html"));
+    link.innerHTML = `
                         <div class="content-icon">
                             ${icon}
                         </div>
@@ -107,9 +142,8 @@ function setResults(hits) {
                             <span class="description">${formatted.body}</span>
                         </div>
                     `;
-        searchResult.appendChild(link);
-        searchResultsList.appendChild(searchResult);
-    });
+    searchResult.appendChild(link);
+    searchResultsList.appendChild(searchResult);
 }
 
 function doSearch(searchQuery) {
@@ -118,7 +152,7 @@ function doSearch(searchQuery) {
     if (localSearchCacheElement && localSearchCacheElement.length > 0) {
         setWithResults();
         clearResults();
-        setResults(localSearchCacheElement);
+        setResults(place, localSearchCacheElement);
         setSearchElementsListeners();
         return
     }
@@ -144,7 +178,7 @@ function doSearch(searchQuery) {
 
             if (hits.length > 0) {
                 setWithResults();
-                setResults(hits);
+                setResults(place, hits);
                 setSearchElementsListeners();
 
                 localSearchCache[searchQuery + place] = hits;
