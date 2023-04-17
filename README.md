@@ -2,7 +2,7 @@
 
 [![Association Official Project][AssociationOfficialBadge]][AssociationUrl]
 
-The [V Playground](https://play.vlang.io) is an official place where you can run, edit and share V
+The [V Playground](https://play.vosca.dev) is a place where you can run, edit and share V
 code online.
 Documentation can be found in the
 [V Playground Documentation](https://docs.vosca.dev/tools/playground.html) section.
@@ -27,7 +27,7 @@ Documentation can be found in the
 First, clone the repository:
 
 ```bash
-git clone https://github.com/vlang/playground
+git clone https://github.com/vlang-association/playground
 cd playground
 ```
 
@@ -48,7 +48,7 @@ then access the playground at <http://localhost:5555>
 3. Install the
    [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
    extension for VS Code
-4. Clone <https://github.com/vlang/playground>
+4. Clone <https://github.com/vlang-association/playground>
 5. Create your application within a container (see gif below)
 
 Done.
@@ -72,7 +72,7 @@ npm run local-serve
 
 then access the playground at <http://localhost:5555>
 
-### Run the playground locally inside isolate (as on play,vlang.io)
+### Run the playground locally inside isolate (as on play.vosca.dev)
 
 > NOTE: Only works on Linux, since it uses `isolate`.
 
