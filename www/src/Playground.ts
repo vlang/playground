@@ -370,7 +370,7 @@ export class Playground {
     }
 
     private buildShareLink(result: ShareCodeResponse) {
-        return `https://vlngf.co/p/${result.hash}`
+        return `https://vosca.dev/p/${result.hash}`
     }
 
     public changeTheme(): void {
