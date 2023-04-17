@@ -1,5 +1,5 @@
 {
-  "name": "V Playground",
+  "name": "v-playground",
   "version": "0.3.0",
   "description": "Source code for V Playground website and backend",
   "scripts": {
@@ -7,6 +7,7 @@
     "watch-ts": "cd ./www && npm ci && npm run watch",
     "mkdir-bin": "mkdir -p ./server/bin",
     "build": "npm run build-ts && npm run mkdir-bin && v server -o ./server/bin/server",
+    "build-prod": "npm run build-ts && npm run mkdir-bin && v server -prod -o ./server/bin/server",
     "local-build": "npm run build-ts && npm run mkdir-bin && v -g -d local -d uselibbacktrace -o ./server/bin/server ./server",
     "serve": "npm run build && ./server/bin/server",
     "local-serve": "npm run local-build && ./server/bin/server",
