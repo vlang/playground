@@ -3,7 +3,6 @@ module main
 import vweb
 import runners
 import v.util.diff
-import logger
 
 struct CheckOutputResponse {
 	output   string

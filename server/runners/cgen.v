@@ -29,9 +29,7 @@ pub fn retrieve_cgen_code(snippet models.CodeStorage) !string {
 	}
 
 	path_to_cgen := $if macos { '/tmp/v_501/code.tmp.c' } $else { '/tmp/v_0/code.tmp.c' }
-	cgen_file := os.read_file(path_to_cgen) or {
-		return error('Failed to read generated C code.')
-	}
+	cgen_file := os.read_file(path_to_cgen) or { return error('Failed to read generated C code.') }
 
 	return cgen_file
 }

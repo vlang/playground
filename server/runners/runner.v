@@ -68,9 +68,9 @@ pub fn get_output(snippet models.CodeStorage) !string {
 	')
 
 	is_reached_resource_limit := run_res.exit_code == 1
-	&& run_res.output.contains('Resource temporarily unavailable')
+		&& run_res.output.contains('Resource temporarily unavailable')
 	is_out_of_memory := run_res.exit_code == 1
-	&& run_res.output.contains('GC Warning: Out of Memory!')
+		&& run_res.output.contains('GC Warning: Out of Memory!')
 
 	if is_reached_resource_limit || is_out_of_memory {
 		return error('The program reached the resource limit assigned to it.')
@@ -191,5 +191,5 @@ ${run_res_result}
 const regex_arguments_validator = pcre2.compile('[^\\w\\d\\-=]') or { panic(err) }
 
 fn prepare_user_arguments(args string) string {
-	return regex_arguments_validator.replace_all(args, ' ')
+	return runners.regex_arguments_validator.replace_all(args, ' ')
 }

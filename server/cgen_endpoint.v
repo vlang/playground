@@ -15,9 +15,11 @@ fn (mut app Server) cgen() vweb.Result {
 	snippet := app.get_request_code() or { return app.json(CgenResponse{
 		error: err.msg()
 	}) }
-	res := runners.retrieve_cgen_code(snippet) or { return app.json(CgenResponse{
-		error: err.msg()
-	}) }
+	res := runners.retrieve_cgen_code(snippet) or {
+		return app.json(CgenResponse{
+			error: err.msg()
+		})
+	}
 	return app.json(CgenResponse{
 		cgen_code: res
 	})

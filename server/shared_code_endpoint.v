@@ -26,9 +26,11 @@ fn (mut app Server) get_by_hash() vweb.Result {
 			error: 'No hash was provided.'
 		})
 	}
-	snippet := app.get_saved_code(hash) or { return app.json(GetByHashResponse{
-		found: false
-	}) }
+	snippet := app.get_saved_code(hash.trim_space()) or {
+		return app.json(GetByHashResponse{
+			found: false
+		})
+	}
 
 	return app.json(GetByHashResponse{
 		snippet: snippet
