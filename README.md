@@ -31,6 +31,12 @@ git clone https://github.com/vlang-association/playground
 cd playground
 ```
 
+Install V dependencies:
+
+```bash
+npm run install-server-deps
+```
+
 ### Quick, containerized local development (recommended)
 
 #### Using Docker Compose

@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "description": "Source code for V Playground website and backend",
   "scripts": {
+    "install-server-deps": "cd server && v install",
     "build-ts": "cd ./www && npm ci && npm run build",
     "watch-ts": "cd ./www && npm ci && npm run watch",
     "mkdir-bin": "mkdir -p ./server/bin",

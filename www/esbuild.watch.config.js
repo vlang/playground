@@ -15,7 +15,7 @@ const styleResult = esbuild.build({
   metafile: true,
   outfile: path.resolve(__dirname, "./public/style.css"),
   target: "esnext",
-  entryPoints: ["./css/index.css"],
+  entryPoints: ["./styles/index.css"],
   loader: {
     '.svg': 'base64',
     '.woff2': 'copy',

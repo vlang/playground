@@ -1,11 +1,14 @@
 .idea
 .vscode
 
-bin
-logs/*
+server/bin
+logs
 node_modules
 
 playground
 code_storage.db
 
 /code.v
+/code_test.v
+/code
+/code.dSYM
