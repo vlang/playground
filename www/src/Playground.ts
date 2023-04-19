@@ -134,6 +134,24 @@ export class Playground {
             this.disableCgenMode()
         })
 
+        this.registerAction("create-bug", () => {
+            this.writeToTerminal("Creating bug report url...")
+            const url = CodeRunner.createBugUrl(this.editor.getRunnableCodeSnippet(this.runConfigurationManager))
+            url.then((resp) => {
+                if (resp.error != '') {
+                    this.writeToTerminal("Error creating bug report url: " + resp.error)
+                    return
+                }
+                this.writeToTerminal("Bug report url created, opening GitHub in new tab...")
+
+                copyTextToClipboard(resp.link, () => {
+                    this.writeToTerminal("Bug report url copied to clipboard")
+                }).then(() => {
+                    window.open(resp.link, '_blank');
+                })
+            })
+        })
+
         this.terminal.registerCloseHandler(() => {
             this.closeTerminal()
         })

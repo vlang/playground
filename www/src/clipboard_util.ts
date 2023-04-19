@@ -23,12 +23,12 @@ function fallbackCopyTextToClipboard(text: string): void {
     document.body.removeChild(textArea)
 }
 
-export function copyTextToClipboard(text: string, onCopy: () => void): void {
+export function copyTextToClipboard(text: string, onCopy: () => void) {
     if (!navigator.clipboard) {
         fallbackCopyTextToClipboard(text)
-        return
+        return Promise.resolve()
     }
-    navigator.clipboard.writeText(text)
+    return navigator.clipboard.writeText(text)
         .then(() => {
             console.log("Async: Copying to clipboard was successful!")
             onCopy()

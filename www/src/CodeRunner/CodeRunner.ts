@@ -20,6 +20,11 @@ export type ShareCodeResponse = {
     error: string
 }
 
+type CreateBugResponse = {
+    link: string
+    error: string
+}
+
 export class RunnableCodeSnippet {
     constructor(
         public code: string,
@@ -114,5 +119,21 @@ export class CodeRunner {
             })
             .then(resp => resp.json())
             .then(data => data as ShareCodeResponse)
+    }
+
+    public static createBugUrl(snippet: RunnableCodeSnippet): Promise<CreateBugResponse> {
+        return fetch("/create_bug_url", {
+            method: "post",
+            body: snippet.toFormData(),
+        })
+            .then(resp => {
+                if (resp.status != 200) {
+                    throw new Error("Can't create bug url")
+                }
+
+                return resp
+            })
+            .then(resp => resp.json())
+            .then(data => data as CreateBugResponse)
     }
 }
