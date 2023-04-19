@@ -37,6 +37,7 @@ fn (mut app Server) create_bug_url() vweb.Result {
 	})
 
 	shared_link := 'https://vosca.dev/p/${hash}'
+	code := snippet.code.trim_right('\n')
 
 	mut values := urllib.new_values()
 	values.add('template', 'bug-report.yml')
@@ -44,8 +45,8 @@ fn (mut app Server) create_bug_url() vweb.Result {
 	values.add('description', '
 Code: ${shared_link}
 
-```
-${snippet.code}
+```v
+${code}
 ```
 '.trim_indent())
 
