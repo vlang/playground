@@ -135,6 +135,7 @@ export class Playground {
         })
 
         this.registerAction("create-bug", () => {
+            this.clearTerminal()
             this.writeToTerminal("Creating bug report url...")
             const url = CodeRunner.createBugUrl(this.editor.getRunnableCodeSnippet(this.runConfigurationManager))
             url.then((resp) => {
