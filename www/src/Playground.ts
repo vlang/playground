@@ -295,6 +295,10 @@ export class Playground {
                         if (next.length != 0) {
                             const parts = line.split(" ")
                             const lineNo = parseInt(parts[1])
+                            const file = parts[2]
+                            if (!file.includes("code.v")) {
+                                continue
+                            }
                             // @ts-ignore
                             mapping[lineNo] = next
                         }
@@ -333,6 +337,11 @@ export class Playground {
                 this.cgenEditor.setCode(resultCode)
                 this.cgenEditor.editor.scrollIntoView({line: mainIndex, ch: 0})
                 this.closeTerminal()
+
+                if (result.exitCode != 0) {
+                    this.writeToTerminal(result.buildOutput)
+                    this.openTerminal()
+                }
             })
             .catch(err => {
                 console.log(err)

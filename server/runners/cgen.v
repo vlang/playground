@@ -5,7 +5,7 @@ import logger
 import isolate
 import models
 
-pub fn retrieve_cgen_code(snippet models.CodeStorage) !string {
+pub fn retrieve_cgen_code(snippet models.CodeStorage) !(string, int, string) {
 	box_path, box_id := isolate.init_sandbox()
 	defer {
 		isolate.execute('isolate --box-id=${box_id} --cleanup')
@@ -25,11 +25,11 @@ pub fn retrieve_cgen_code(snippet models.CodeStorage) !string {
 	logger.log(snippet.code, build_output) or { eprintln('[WARNING] Failed to log code.') }
 
 	if build_res.exit_code != 0 {
-		return error(prettify(build_output))
+		// skip handling of errors for now
 	}
 
 	path_to_cgen := $if macos { '/tmp/v_501/code.tmp.c' } $else { '/tmp/v_0/code.tmp.c' }
 	cgen_file := os.read_file(path_to_cgen) or { return error('Failed to read generated C code.') }
 
-	return cgen_file
+	return cgen_file, build_res.exit_code, build_output
 }

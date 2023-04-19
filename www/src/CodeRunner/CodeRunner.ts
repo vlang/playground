@@ -7,6 +7,8 @@ type RunCodeResponse = {
 
 type RetrieveCgenCodeResponse = {
     cgenCode: string
+    exitCode: number
+    buildOutput: string
     error: string
 }
 
