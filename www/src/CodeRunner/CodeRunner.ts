@@ -25,6 +25,11 @@ type CreateBugResponse = {
     error: string
 }
 
+type VersionResponse = {
+    version: string
+    error: string
+}
+
 export class RunnableCodeSnippet {
     constructor(
         public code: string,
@@ -135,5 +140,20 @@ export class CodeRunner {
             })
             .then(resp => resp.json())
             .then(data => data as CreateBugResponse)
+    }
+
+    public static getVlangVersion(): Promise<VersionResponse> {
+        return fetch("/version", {
+            method: "post",
+        })
+            .then(resp => {
+                if (resp.status != 200) {
+                    throw new Error("Can't retrieve V version")
+                }
+
+                return resp
+            })
+            .then(resp => resp.json())
+            .then(data => data as VersionResponse)
     }
 }

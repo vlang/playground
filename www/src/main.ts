@@ -2,6 +2,12 @@ import "./v"
 import "./v-hint"
 
 import { Playground, PlaygroundDefaultAction } from "./Playground"
+import {CodeRunner} from "./CodeRunner/CodeRunner";
+
+CodeRunner.getVlangVersion().then(resp => {
+    const versionElement = document.querySelector('.js-version-info') as HTMLElement
+    versionElement.innerHTML = resp.version
+})
 
 const editorElement = document.querySelector('.js-playground') as HTMLElement
 const playground = new Playground(editorElement)

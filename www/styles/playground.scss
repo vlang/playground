@@ -17,8 +17,8 @@ html {
   --completion-module-icon: url("../public/images/module-light.svg");
   --completion-type-icon: url("../public/images/type-light.svg");
 
-  --inline-button-text-color: var(--gray-be);
-  --inline-button-hover-text-color: var(--gray-5a);
+  --inline-button-text-color: var(--gray-7e);
+  --inline-button-hover-text-color: var(--gray-be);
 }
 
 html[data-theme='dark'] {
@@ -40,8 +40,8 @@ html[data-theme='dark'] {
   --completion-module-icon: url("../public/images/module.svg");
   --completion-type-icon: url("../public/images/type.svg");
 
-  --inline-button-text-color: var(--gray-5a);
-  --inline-button-hover-text-color: var(--gray-7e);
+  --inline-button-text-color: var(--gray-7e);
+  --inline-button-hover-text-color: var(--gray-be);
 }
 
 * {
@@ -101,10 +101,18 @@ main {
     display: flex;
     flex-flow: row;
     column-gap: 15px;
+    align-items: center;
 
     margin-top: -60px;
     right: 20px;
     bottom: 20px;
+
+    .version-info {
+      color: var(--inline-button-text-color);
+      font-size: 13px;
+
+      margin-right: 10px;
+    }
 
     .inline-button {
       background-color: transparent;
