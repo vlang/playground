@@ -461,7 +461,7 @@ export class Playground {
             } else if (ev.ctrlKey && ev.key === "l") {
                 this.formatCode()
                 ev.preventDefault()
-            } else if (ev.ctrlKey && ev.key === "=") {
+            } else if (ev.ctrlKey && (ev.key === "=" || ev.key === "+")) {
                 this.editor.changeEditorFontSize(1)
                 ev.preventDefault()
             } else if (ev.ctrlKey && ev.key === "-") {
