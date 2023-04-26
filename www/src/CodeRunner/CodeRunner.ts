@@ -62,6 +62,9 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
+                    if (resp.status == 429) {
+                        throw new Error("Can't run code: Too many requests")
+                    }
                     throw new Error("Can't run code")
                 }
 
@@ -78,6 +81,9 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
+                    if (resp.status == 429) {
+                        throw new Error("Can't run test: Too many requests")
+                    }
                     throw new Error("Can't run test")
                 }
 
@@ -94,6 +100,9 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
+                    if (resp.status == 429) {
+                        throw new Error("Can't compile and get C code: Too many requests")
+                    }
                     throw new Error("Can't compile and get C code")
                 }
 
@@ -119,6 +128,9 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
+                    if (resp.status == 429) {
+                        throw new Error("Can't share code: Too many requests")
+                    }
                     throw new Error("Can't share code")
                 }
 
@@ -135,6 +147,9 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
+                    if (resp.status == 429) {
+                        throw new Error("Can't create bug url: Too many requests")
+                    }
                     throw new Error("Can't create bug url")
                 }
 
@@ -150,6 +165,9 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
+                    if (resp.status == 429) {
+                        throw new Error("Can't retrieve V version: Too many requests")
+                    }
                     throw new Error("Can't retrieve V version")
                 }
 
