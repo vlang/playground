@@ -32,6 +32,15 @@ fn (mut app Server) get_request_code() !models.CodeStorage {
 fn (mut app Server) add_new_code(snippet models.CodeStorage) {
 	println('Added new code snippet with hash: ${snippet.hash}, run configuration: ${snippet.run_configuration}')
 
+	count := sql app.db {
+		select count from models.CodeStorage where hash == snippet.hash
+	} or { 0 }
+
+	if count != 0 {
+		println('Code with ${snippet.hash} already added')
+		return
+	}
+
 	sql app.db {
 		insert snippet into models.CodeStorage
 	} or { panic(err) }
