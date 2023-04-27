@@ -6,13 +6,19 @@ import models
 import logger
 import srackham.pcre2
 
+pub struct RunResult {
+pub:
+	output       string
+	build_output string
+}
+
 // run runs the code in sandbox.
-pub fn run(snippet models.CodeStorage) !string {
+pub fn run(snippet models.CodeStorage) !RunResult {
 	return run_in_sandbox(snippet, false)
 }
 
 // test runs the code as tests in sandbox.
-pub fn test(snippet models.CodeStorage) !string {
+pub fn test(snippet models.CodeStorage) !RunResult {
 	return run_in_sandbox(snippet, true)
 }
 
@@ -87,7 +93,7 @@ pub fn get_output(snippet models.CodeStorage) !string {
 }
 
 // run_in_sandbox is common function for running tests and code in sandbox.
-fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
+fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !RunResult {
 	box_path, box_id := isolate.init_sandbox()
 	defer {
 		isolate.execute('isolate --box-id=${box_id} --cleanup')
@@ -119,7 +125,10 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 
 		logger.log(snippet.code, run_output) or { eprintln('[WARNING] Failed to log code.') }
 
-		return prettify(run_output)
+		return RunResult{
+			output: prettify(run_output)
+			build_output: ''
+		}
 	}
 
 	build_res := isolate.execute('
@@ -171,17 +180,10 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 
 	run_res_result := run_res.output.trim_right('\n')
 
-	if build_output.contains('warning:') || build_output.contains('notice:') {
-		return '
-Build log:
-${prettify(build_output)}
-
-Output:
-${run_res_result}
-		'.trim_indent()
+	return RunResult{
+		output: prettify(run_res_result)
+		build_output: prettify(build_output)
 	}
-
-	return prettify(run_res_result)
 }
 
 const regex_arguments_validator = pcre2.compile('[^\\w\\d\\-=]') or { panic(err) }

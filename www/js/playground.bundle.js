@@ -813,7 +813,7 @@ var Playground = /** @class */ (function () {
     Playground.prototype.runCode = function () {
         var _this = this;
         this.clearTerminal();
-        this.writeToTerminal("Running code...");
+        this.writeTerminalBuildLog("Running code...");
         var code = this.editor.getCode();
         CodeRunner.runCode(code)
             .then(function (result) {
@@ -828,7 +828,7 @@ var Playground = /** @class */ (function () {
     Playground.prototype.runTest = function () {
         var _this = this;
         this.clearTerminal();
-        this.writeToTerminal("Running tests...");
+        this.writeTerminalBuildLog("Running tests...");
         var code = this.editor.getCode();
         CodeRunner.runTest(code)
             .then(function (result) {
@@ -843,7 +843,7 @@ var Playground = /** @class */ (function () {
     Playground.prototype.retrieveCgenCode = function () {
         var _this = this;
         this.clearTerminal();
-        this.writeToTerminal("Running retrieving of generated C code...");
+        this.writeTerminalBuildLog("Running retrieving of generated C code...");
         var code = this.editor.getCode();
         CodeRunner.retrieveCgenCode(code)
             .then(function (result) {
@@ -896,7 +896,7 @@ var Playground = /** @class */ (function () {
     Playground.prototype.formatCode = function () {
         var _this = this;
         this.clearTerminal();
-        this.writeToTerminal("Formatting code...");
+        this.writeTerminalBuildLog("Formatting code...");
         var code = this.editor.getCode();
         CodeRunner.formatCode(code)
             .then(function (result) {

@@ -4,8 +4,9 @@ import vweb
 import runners
 
 struct RunResponse {
-	output string
-	error  string
+	output       string
+	build_output string [json: 'buildOutput']
+	error        string
 }
 
 // run endpoint is used to run code in sandbox.
@@ -21,6 +22,7 @@ fn (mut app Server) run() vweb.Result {
 	}) }
 
 	return app.json(RunResponse{
-		output: res
+		output: res.output
+		build_output: res.build_output
 	})
 }

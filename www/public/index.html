@@ -364,19 +364,22 @@
                             </svg>
                         </span>
                     </button>
-                    <input id="examples-input" class="dropdown__input_hidden" type="text" name="select-category" value=""/>
+                    <input id="examples-input" class="dropdown__input_hidden" type="text" name="select-category"
+                           value=""/>
                 </div>
             </div>
 
             <div class="additional-arguments">
                 <div class="additional-arguments-input">
                     <label for="build-arguments-input">Build arguments:</label>
-                    <input id="build-arguments-input" spellcheck="false" autocomplete="false" type="text" class="js-build-arguments-input">
+                    <input id="build-arguments-input" spellcheck="false" autocomplete="false" type="text"
+                           class="js-build-arguments-input">
                 </div>
 
                 <div class="additional-arguments-input">
                     <label for="run-arguments-input">Run arguments:</label>
-                    <input id="run-arguments-input" spellcheck="false" autocomplete="false" type="text" class="js-run-arguments-input">
+                    <input id="run-arguments-input" spellcheck="false" autocomplete="false" type="text"
+                           class="js-run-arguments-input">
                 </div>
             </div>
 
@@ -658,6 +661,10 @@
                         <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>+/-</kbd></span>
                     </div>
                     <div class="shortcut">
+                        <span class="description">Open/close terminal</span>
+                        <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>T</kbd></span>
+                    </div>
+                    <div class="shortcut">
                         <span class="description">Open/close this help</span>
                         <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>I</kbd></span>
                     </div>
@@ -673,14 +680,27 @@
 
         <div class="js-terminal playground__terminal">
             <div class="header">
-                <div class="title">Output</div>
+                <div class="title">Run</div>
+
+                <div class="js-terminal__tabs tabs">
+                    <input type="radio" id="terminal-tab-build-log" name="terminal-tab" value="build-log" checked>
+                    <label for="terminal-tab-build-log">
+                        Build log
+                    </label>
+                    <input type="radio" id="terminal-tab-output" name="terminal-tab" value="output">
+                    <label for="terminal-tab-output" class="active">
+                        Output
+                    </label>
+                </div>
+
                 <button class="js-terminal__close-buttom terminal__close-button">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect class="close-terminal-button-rect" x="1" y="8" width="13" height="1"/>
                     </svg>
                 </button>
             </div>
-            <pre class="js-terminal__output terminal__output"></pre>
+            <pre class="js-terminal__output terminal__output hidden"></pre>
+            <pre class="js-terminal__build-log terminal__output"></pre>
         </div>
     </div>
 </main>

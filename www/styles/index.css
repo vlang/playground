@@ -1744,6 +1744,7 @@ html {
   --terminal-header-text: #000;
   --terminal-close-button: #777b88;
   --terminal-close-button-hover: #ecedf1;
+  --terminal-tab-hover: #ecedf1;
   --terminal-text: #000;
   --terminal-background: #fff;
   --terminal-ok: #26ad2c;
@@ -1756,6 +1757,9 @@ html {
   --completion-type-icon: url("../public/images/type-light.svg");
   --inline-button-text-color: var(--gray-7e);
   --inline-button-hover-text-color: var(--gray-be);
+  --terminal-success-text-color: #26ad2c;
+  --terminal-error-text-color: #CD0000;
+  --terminal-warning-text-color: #A66F00;
 }
 
 html[data-theme=dark] {
@@ -1766,6 +1770,7 @@ html[data-theme=dark] {
   --terminal-header-text: #f7f8fa;
   --terminal-close-button: #d9dbe2;
   --terminal-close-button-hover: #393b41;
+  --terminal-tab-hover: #393b41;
   --terminal-text: #BBBBBB;
   --terminal-background: #000;
   --terminal-ok: #43c449;
@@ -1778,6 +1783,9 @@ html[data-theme=dark] {
   --completion-type-icon: url("../public/images/type.svg");
   --inline-button-text-color: var(--gray-7e);
   --inline-button-hover-text-color: var(--gray-be);
+  --terminal-success-text-color: #43c449;
+  --terminal-error-text-color: #FF6B68;
+  --terminal-warning-text-color: #ABC023;
 }
 
 * {
@@ -1924,29 +1932,52 @@ main {
   min-height: 150px;
   max-height: 75vh;
   display: grid;
-  grid-template-rows: 45px auto;
+  grid-template-rows: 35px auto;
 }
 .playground__terminal .header {
   display: grid;
-  grid-template-columns: auto max-content;
-  padding: 10px 20px 10px 20px;
-  font-size: 13px;
+  grid-template-columns: max-content auto max-content;
+  padding: 11px 10px 0 15px;
+  font-size: 12px;
   font-weight: 600;
-  line-height: 1.7;
   color: var(--terminal-header-text);
   border-top: 1px solid var(--terminal-header-border);
   border-bottom: 1px solid var(--terminal-header-border);
   background-color: var(--terminal-header);
+  line-height: 1.1;
 }
 .playground__terminal .header:hover {
   cursor: row-resize;
 }
+.playground__terminal .header .tabs {
+  padding: 0;
+  margin: -11px 0 0 20px;
+  list-style: none;
+  font-weight: 400;
+  display: flex;
+  flex-direction: row;
+}
+.playground__terminal .header .tabs input {
+  display: none;
+}
+.playground__terminal .header .tabs input:checked + label {
+  border-bottom: solid 3px var(--blue);
+}
+.playground__terminal .header .tabs label {
+  padding: 10px 10px 0;
+}
+.playground__terminal .header .tabs label:hover {
+  cursor: pointer;
+  background-color: var(--terminal-tab-hover);
+}
 .playground__terminal .terminal__close-button {
   padding: 2px 3px 0;
+  margin-top: -4px;
   border-radius: 5px;
   border: none;
   background-color: transparent;
   cursor: pointer;
+  height: max-content;
 }
 .playground__terminal .terminal__close-button .close-terminal-button-rect {
   fill: var(--terminal-close-button);
@@ -1965,6 +1996,9 @@ main {
   background-color: var(--terminal-background);
   color: var(--terminal-text);
 }
+.playground__terminal .terminal__output.hidden {
+  display: none;
+}
 .playground__terminal .terminal__output::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb-color);
   border-radius: 5px;
@@ -1974,6 +2008,19 @@ main {
 }
 .playground__terminal .terminal__output::-webkit-scrollbar-track-piece {
   background-color: var(--terminal-background);
+}
+.playground__terminal .terminal__output .message-success {
+  color: var(--terminal-success-text-color);
+}
+.playground__terminal .terminal__output .message-error {
+  color: var(--terminal-error-text-color);
+  font-weight: bold;
+}
+.playground__terminal .terminal__output .message-warning {
+  color: var(--terminal-warning-text-color);
+}
+.playground__terminal .terminal__output .message-notice {
+  color: var(--terminal-warning-text-color);
 }
 
 .CodeMirror {

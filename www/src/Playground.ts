@@ -68,7 +68,7 @@ export class Playground {
             if (snippet.code === SharedCodeRepository.CODE_NOT_FOUND) {
                 // If the code is not found, use the default Hello World example.
                 this.editor.setCode(codeIfSharedLinkBroken)
-                this.terminal.write("Code for shared link not found.")
+                this.writeTerminalBuildLog("Code for shared link not found.")
                 return
             }
 
@@ -136,17 +136,18 @@ export class Playground {
 
         this.registerAction("create-bug", () => {
             this.clearTerminal()
-            this.writeToTerminal("Creating bug report url...")
+            this.openOutputTab()
+            this.writeTerminalOutput("Creating bug report url...")
             const url = CodeRunner.createBugUrl(this.editor.getRunnableCodeSnippet(this.runConfigurationManager))
             url.then((resp) => {
                 if (resp.error != '') {
-                    this.writeToTerminal("Error creating bug report url: " + resp.error)
+                    this.writeTerminalOutput("Error creating bug report url: " + resp.error)
                     return
                 }
-                this.writeToTerminal("Bug report url created, opening GitHub in new tab...")
+                this.writeTerminalOutput("Bug report url created, opening GitHub in new tab...")
 
                 copyTextToClipboard(resp.link, () => {
-                    this.writeToTerminal("Bug report url copied to clipboard")
+                    this.writeTerminalOutput("Bug report url copied to clipboard")
                 }).then(() => {
                     window.open(resp.link, '_blank');
                 })
@@ -223,7 +224,8 @@ export class Playground {
 
     public runCode(): void {
         this.clearTerminal()
-        this.writeToTerminal("Running code...")
+        this.openBuildLogTab()
+        this.writeTerminalBuildLog("Running code...")
 
         const snippet = this.getRunnableCodeSnippet()
         CodeRunner.runCode(snippet)
@@ -233,18 +235,21 @@ export class Playground {
                 }
 
                 this.clearTerminal()
-                this.writeToTerminal(result.output)
+                this.writeTerminalBuildLog(result.buildOutput)
+                this.writeTerminalOutput(result.output)
+                this.openOutputTab()
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal(`Can't run code. ${err.message}`)
-                this.writeToTerminal("Please try again.")
+                this.writeTerminalBuildLog(`Can't run code. ${err.message}`)
+                this.writeTerminalBuildLog("Please try again.")
             })
     }
 
     public runTest(): void {
         this.clearTerminal()
-        this.writeToTerminal("Running tests...")
+        this.openBuildLogTab()
+        this.writeTerminalBuildLog("Running tests...")
 
         const snippet = this.getRunnableCodeSnippet()
         CodeRunner.runTest(snippet)
@@ -254,18 +259,21 @@ export class Playground {
                 }
 
                 this.clearTerminal()
-                this.writeToTerminal(result.output)
+                this.writeTerminalBuildLog(result.buildOutput)
+                this.writeTerminalOutput(result.output)
+                this.openOutputTab()
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal(`Can't run tests. ${err.message}`)
-                this.writeToTerminal("Please try again.")
+                this.writeTerminalBuildLog(`Can't run tests. ${err.message}`)
+                this.writeTerminalBuildLog("Please try again.")
             })
     }
 
     public retrieveCgenCode(): void {
         this.clearTerminal()
-        this.writeToTerminal("Running retrieving of generated C code...")
+        this.openBuildLogTab()
+        this.writeTerminalBuildLog("Running retrieving of generated C code...")
 
         const snippet = this.getRunnableCodeSnippet()
         CodeRunner.retrieveCgenCode(snippet)
@@ -330,17 +338,17 @@ export class Playground {
                 this.cgenEditor.show()
                 this.cgenEditor.setCode(resultCode)
                 this.cgenEditor.editor.scrollIntoView({line: mainIndex, ch: 0})
-                this.closeTerminal()
 
+                this.writeTerminalBuildLog(result.buildOutput)
+                this.closeTerminal()
                 if (result.exitCode != 0) {
-                    this.writeToTerminal(result.buildOutput)
                     this.openTerminal()
                 }
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal(`Can't compile and get C code. ${err.message}`)
-                this.writeToTerminal("Please try again.")
+                this.writeTerminalBuildLog(`Can't compile and get C code. ${err.message}`)
+                this.writeTerminalBuildLog("Please try again.")
             })
     }
 
@@ -358,13 +366,15 @@ export class Playground {
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal(`Can't format code. ${err.message}`)
-                this.writeToTerminal("Please try again.")
+                this.openOutputTab()
+                this.writeTerminalOutput(`Can't format code. ${err.message}`)
+                this.writeTerminalOutput("Please try again.")
             })
     }
 
     public shareCode(): void {
         this.clearTerminal()
+        this.openOutputTab()
 
         const snippet = this.getRunnableCodeSnippet()
         console.log(snippet)
@@ -374,19 +384,19 @@ export class Playground {
                     throw new Error(`The server returned an error:\n${result.error}`)
                 }
 
-                this.writeToTerminal("Code shared successfully!")
+                this.writeTerminalOutput("Code shared successfully!")
 
                 const link = this.buildShareLink(result)
-                this.writeToTerminal("Share link: " + link)
+                this.writeTerminalOutput("Share link: " + link)
 
                 copyTextToClipboard(link, () => {
-                    this.writeToTerminal("\nLink copied to clipboard.")
+                    this.writeTerminalOutput("\nLink copied to clipboard.")
                 })
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal(`Can't share code. ${err.message}`)
-                this.writeToTerminal("Please try again.")
+                this.writeTerminalOutput(`Can't share code. ${err.message}`)
+                this.writeTerminalOutput("Please try again.")
             })
     }
 
@@ -463,6 +473,9 @@ export class Playground {
             } else if (ev.ctrlKey && ev.key === "i") {
                 this.helpManager.toggleHelp()
                 ev.preventDefault()
+            } else if (ev.ctrlKey && ev.key === "t") {
+                this.toggleTerminal()
+                ev.preventDefault()
             } else if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") {
                 this.editor.saveCode()
                 ev.preventDefault()
@@ -507,8 +520,28 @@ export class Playground {
         this.terminal.clear()
     }
 
-    public writeToTerminal(text: string): void {
+    public writeTerminalOutput(text: string): void {
+        this.terminal.writeOutput(text)
+    }
+
+    public writeTerminalBuildLog(text: string): void {
         this.terminal.write(text)
+    }
+
+    public openOutputTab(): void {
+        this.terminal.openOutputTab()
+    }
+
+    public openBuildLogTab(): void {
+        this.terminal.openBuildLogTab()
+    }
+
+    public toggleTerminal() {
+        if (this.wrapperElement.classList.contains("closed-terminal")) {
+            this.openTerminal()
+        } else {
+            this.closeTerminal()
+        }
     }
 
     public openTerminal() {

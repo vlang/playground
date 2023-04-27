@@ -2161,6 +2161,7 @@ println('Hello, link 404!')
       this.onWrite = null;
       this.filters = [];
       this.element = element;
+      this.tabsElement = this.element.querySelector(".js-terminal__tabs");
       this.attachResizeHandler(element);
     }
     registerCloseHandler(handler) {
@@ -2172,18 +2173,61 @@ println('Hello, link 404!')
     registerFilter(filter) {
       this.filters.push(filter);
     }
+    getTabElement(name) {
+      return this.tabsElement.querySelector(`input[value='${name}']`);
+    }
+    openTab(name) {
+      const tabsInput = this.getTabElement(name);
+      if (tabsInput !== null) {
+        tabsInput.checked = true;
+        tabsInput.dispatchEvent(new Event("change"));
+      }
+    }
+    openOutputTab() {
+      this.openTab("output");
+    }
+    openBuildLogTab() {
+      this.openTab("build-log");
+    }
     write(text) {
+      this.writeImpl(text, true);
+    }
+    writeOutput(text) {
+      this.writeImpl(text, false);
+    }
+    writeImpl(text, buildLog) {
       const lines = text.split("\n");
-      const outputElement = this.getTerminalOutputElement();
+      const outputElement = this.getTerminalOutputElement(buildLog);
       const filteredLines = lines.filter((line) => this.filters.every((filter) => filter(line)));
-      const newText = filteredLines.join("\n");
+      const newText = filteredLines.map(this.highlightLine).join("\n");
       outputElement.innerHTML += newText + "\n";
       if (this.onWrite !== null) {
         this.onWrite(text);
       }
     }
+    highlightLine(line) {
+      if (line.startsWith("code.v:") || line.startsWith("code_test.v:")) {
+        const parts = line.split(":");
+        const name = parts[0];
+        const lineNo = parseInt(parts[1]);
+        const columnNo = parseInt(parts[2]);
+        const kind = parts[3].trim();
+        const message = parts.slice(4).join(":");
+        return `${name}:${lineNo}:${columnNo}: <span class="message-${kind}">${kind}</span>:<span class="error">${message}</span>`;
+      }
+      if (line.trim().startsWith("FAIL") && line.includes("code_test.v")) {
+        const data = line.trim().substring(4);
+        return `<span class="message-error">FAIL</span> ${data}`;
+      }
+      if (line.trim().startsWith("OK") && line.includes("code_test.v")) {
+        const data = line.trim().substring(2);
+        return `<span class="message-success">OK</span> ${data}`;
+      }
+      return line;
+    }
     clear() {
-      this.getTerminalOutputElement().innerHTML = "";
+      this.getTerminalOutputElement(false).innerHTML = "";
+      this.getTerminalOutputElement(true).innerHTML = "";
     }
     mount() {
       const closeButton = this.element.querySelector(".js-terminal__close-buttom");
@@ -2191,8 +2235,25 @@ println('Hello, link 404!')
         return;
       }
       closeButton.addEventListener("click", this.onClose);
+      const tabsElement = this.element.querySelector(".js-terminal__tabs");
+      const tabsInputs = tabsElement.querySelectorAll("input");
+      tabsInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          const value = input.value;
+          if (value === "output") {
+            this.getTerminalOutputElement(false).style.display = "block";
+            this.getTerminalOutputElement(true).style.display = "none";
+          } else {
+            this.getTerminalOutputElement(false).style.display = "none";
+            this.getTerminalOutputElement(true).style.display = "block";
+          }
+        });
+      });
     }
-    getTerminalOutputElement() {
+    getTerminalOutputElement(buildLog) {
+      if (buildLog) {
+        return this.element.querySelector(".js-terminal__build-log");
+      }
       return this.element.querySelector(".js-terminal__output");
     }
     attachResizeHandler(element) {
@@ -2200,11 +2261,17 @@ println('Hello, link 404!')
       if (!header)
         return;
       let mouseDown = false;
-      header.addEventListener("mousedown", () => {
+      header.addEventListener("mousedown", (e) => {
+        const target = e.target;
+        if (target.tagName.toLowerCase() === "label")
+          return;
         mouseDown = true;
         document.body.classList.add("dragging");
       });
-      header.addEventListener("touchstart", () => {
+      header.addEventListener("touchstart", (e) => {
+        const target = e.target;
+        if (target.tagName.toLowerCase() === "label")
+          return;
         mouseDown = true;
         document.body.classList.add("dragging");
       });
@@ -2292,7 +2359,7 @@ println('Hello, link 404!')
       this.repository.getCode((snippet) => {
         if (snippet.code === SharedCodeRepository.CODE_NOT_FOUND) {
           this.editor.setCode(codeIfSharedLinkBroken);
-          this.terminal.write("Code for shared link not found.");
+          this.writeTerminalBuildLog("Code for shared link not found.");
           return;
         }
         if (snippet.runConfiguration !== void 0) {
@@ -2343,16 +2410,17 @@ println('Hello, link 404!')
       });
       this.registerAction("create-bug", () => {
         this.clearTerminal();
-        this.writeToTerminal("Creating bug report url...");
+        this.openOutputTab();
+        this.writeTerminalOutput("Creating bug report url...");
         const url = CodeRunner.createBugUrl(this.editor.getRunnableCodeSnippet(this.runConfigurationManager));
         url.then((resp) => {
           if (resp.error != "") {
-            this.writeToTerminal("Error creating bug report url: " + resp.error);
+            this.writeTerminalOutput("Error creating bug report url: " + resp.error);
             return;
           }
-          this.writeToTerminal("Bug report url created, opening GitHub in new tab...");
+          this.writeTerminalOutput("Bug report url created, opening GitHub in new tab...");
           copyTextToClipboard(resp.link, () => {
-            this.writeToTerminal("Bug report url copied to clipboard");
+            this.writeTerminalOutput("Bug report url copied to clipboard");
           }).then(() => {
             window.open(resp.link, "_blank");
           });
@@ -2417,7 +2485,8 @@ println('Hello, link 404!')
     }
     runCode() {
       this.clearTerminal();
-      this.writeToTerminal("Running code...");
+      this.openBuildLogTab();
+      this.writeTerminalBuildLog("Running code...");
       const snippet = this.getRunnableCodeSnippet();
       CodeRunner.runCode(snippet).then((result) => {
         if (result.error != "") {
@@ -2425,16 +2494,19 @@ println('Hello, link 404!')
 ${result.error}`);
         }
         this.clearTerminal();
-        this.writeToTerminal(result.output);
+        this.writeTerminalBuildLog(result.buildOutput);
+        this.writeTerminalOutput(result.output);
+        this.openOutputTab();
       }).catch((err) => {
         console.log(err);
-        this.writeToTerminal(`Can't run code. ${err.message}`);
-        this.writeToTerminal("Please try again.");
+        this.writeTerminalBuildLog(`Can't run code. ${err.message}`);
+        this.writeTerminalBuildLog("Please try again.");
       });
     }
     runTest() {
       this.clearTerminal();
-      this.writeToTerminal("Running tests...");
+      this.openBuildLogTab();
+      this.writeTerminalBuildLog("Running tests...");
       const snippet = this.getRunnableCodeSnippet();
       CodeRunner.runTest(snippet).then((result) => {
         if (result.error != "") {
@@ -2442,16 +2514,19 @@ ${result.error}`);
 ${result.error}`);
         }
         this.clearTerminal();
-        this.writeToTerminal(result.output);
+        this.writeTerminalBuildLog(result.buildOutput);
+        this.writeTerminalOutput(result.output);
+        this.openOutputTab();
       }).catch((err) => {
         console.log(err);
-        this.writeToTerminal(`Can't run tests. ${err.message}`);
-        this.writeToTerminal("Please try again.");
+        this.writeTerminalBuildLog(`Can't run tests. ${err.message}`);
+        this.writeTerminalBuildLog("Please try again.");
       });
     }
     retrieveCgenCode() {
       this.clearTerminal();
-      this.writeToTerminal("Running retrieving of generated C code...");
+      this.openBuildLogTab();
+      this.writeTerminalBuildLog("Running retrieving of generated C code...");
       const snippet = this.getRunnableCodeSnippet();
       CodeRunner.retrieveCgenCode(snippet).then((result) => {
         if (result.error != "") {
@@ -2501,15 +2576,15 @@ ${result.error}`);
         this.cgenEditor.show();
         this.cgenEditor.setCode(resultCode);
         this.cgenEditor.editor.scrollIntoView({ line: mainIndex, ch: 0 });
+        this.writeTerminalBuildLog(result.buildOutput);
         this.closeTerminal();
         if (result.exitCode != 0) {
-          this.writeToTerminal(result.buildOutput);
           this.openTerminal();
         }
       }).catch((err) => {
         console.log(err);
-        this.writeToTerminal(`Can't compile and get C code. ${err.message}`);
-        this.writeToTerminal("Please try again.");
+        this.writeTerminalBuildLog(`Can't compile and get C code. ${err.message}`);
+        this.writeTerminalBuildLog("Please try again.");
       });
     }
     formatCode() {
@@ -2523,12 +2598,14 @@ ${result.error}`);
         this.editor.setCode(result.output, true);
       }).catch((err) => {
         console.log(err);
-        this.writeToTerminal(`Can't format code. ${err.message}`);
-        this.writeToTerminal("Please try again.");
+        this.openOutputTab();
+        this.writeTerminalOutput(`Can't format code. ${err.message}`);
+        this.writeTerminalOutput("Please try again.");
       });
     }
     shareCode() {
       this.clearTerminal();
+      this.openOutputTab();
       const snippet = this.getRunnableCodeSnippet();
       console.log(snippet);
       CodeRunner.shareCode(snippet).then((result) => {
@@ -2536,16 +2613,16 @@ ${result.error}`);
           throw new Error(`The server returned an error:
 ${result.error}`);
         }
-        this.writeToTerminal("Code shared successfully!");
+        this.writeTerminalOutput("Code shared successfully!");
         const link = this.buildShareLink(result);
-        this.writeToTerminal("Share link: " + link);
+        this.writeTerminalOutput("Share link: " + link);
         copyTextToClipboard(link, () => {
-          this.writeToTerminal("\nLink copied to clipboard.");
+          this.writeTerminalOutput("\nLink copied to clipboard.");
         });
       }).catch((err) => {
         console.log(err);
-        this.writeToTerminal(`Can't share code. ${err.message}`);
-        this.writeToTerminal("Please try again.");
+        this.writeTerminalOutput(`Can't share code. ${err.message}`);
+        this.writeTerminalOutput("Please try again.");
       });
     }
     buildShareLink(result) {
@@ -2608,6 +2685,9 @@ ${result.error}`);
         } else if (ev.ctrlKey && ev.key === "i") {
           this.helpManager.toggleHelp();
           ev.preventDefault();
+        } else if (ev.ctrlKey && ev.key === "t") {
+          this.toggleTerminal();
+          ev.preventDefault();
         } else if ((ev.ctrlKey || ev.metaKey) && ev.key === "s") {
           this.editor.saveCode();
           ev.preventDefault();
@@ -2644,8 +2724,24 @@ ${result.error}`);
     clearTerminal() {
       this.terminal.clear();
     }
-    writeToTerminal(text) {
+    writeTerminalOutput(text) {
+      this.terminal.writeOutput(text);
+    }
+    writeTerminalBuildLog(text) {
       this.terminal.write(text);
+    }
+    openOutputTab() {
+      this.terminal.openOutputTab();
+    }
+    openBuildLogTab() {
+      this.terminal.openBuildLogTab();
+    }
+    toggleTerminal() {
+      if (this.wrapperElement.classList.contains("closed-terminal")) {
+        this.openTerminal();
+      } else {
+        this.closeTerminal();
+      }
     }
     openTerminal() {
       this.wrapperElement.classList.remove("closed-terminal");

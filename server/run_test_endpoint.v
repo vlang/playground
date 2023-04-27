@@ -18,6 +18,6 @@ fn (mut app Server) run_test() vweb.Result {
 	}) }
 
 	return app.json(RunTestResponse{
-		output: res
+		output: res.output
 	})
 }

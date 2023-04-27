@@ -20,7 +20,11 @@ fn (mut app Server) create_bug_url() vweb.Result {
 		})
 	}
 
-	output := runners.run(snippet) or { err.msg() }
+	output := runners.run(snippet) or {
+		runners.RunResult{
+			output: err.msg()
+		}
+	}
 
 	version := runners.get_version()
 	doctor_output := runners.get_doctor_output() or {
@@ -54,7 +58,7 @@ ${code}
 Output:
 
 ```
-${output}
+${output.output}
 ```
 '.trim_indent())
 

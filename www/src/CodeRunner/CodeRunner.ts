@@ -2,6 +2,7 @@ import {SharedCodeRunConfiguration} from "../Repositories";
 
 type RunCodeResponse = {
     output: string
+    buildOutput: string
     error: string
 }
 
