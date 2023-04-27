@@ -6,6 +6,7 @@
     "install-server-deps": "cd server && v install",
     "build-ts": "cd ./www && npm ci && npm run build",
     "watch-ts": "cd ./www && npm ci && npm run watch",
+    "sass-watch": "cd ./www && sass --watch styles/index.scss:styles/index.css",
     "mkdir-bin": "mkdir -p ./server/bin",
     "build": "npm run build-ts && npm run mkdir-bin && v server -o ./server/bin/server",
     "build-prod": "npm run build-ts && npm run mkdir-bin && v server -prod -o ./server/bin/server",
@@ -27,5 +28,7 @@
     "url": "https://github.com/vlang-association/playground/issues"
   },
   "homepage": "https://play.vosca.dev/",
-  "dependencies": {}
+  "dependencies": {
+    "sass": "^1.62.0"
+  }
 }

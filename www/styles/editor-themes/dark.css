@@ -29,7 +29,8 @@
 .cm-s-dark .cm-start-interpolation { color: #CC7832; }
 .cm-s-dark .cm-end-interpolation { color: #CC7832; }
 .cm-s-dark .cm-import-name { color: #AFBF7E; }
-.CodeMirror-line.cgen-highlight { background: #20407f !important; }
+
+.CodeMirror.cm-s-dark .CodeMirror-line.cgen-highlight { background: #20407f; }
 
 .CodeMirror.cm-s-dark  span.CodeMirror-matchingbracket {
     background-color: #336146;

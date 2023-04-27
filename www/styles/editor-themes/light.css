@@ -26,6 +26,8 @@
 .cm-s-light .cm-end-interpolation { color: #0037A6; }
 .cm-s-light .cm-import-name { font-weight: 700; }
 
+.CodeMirror.cm-s-light .CodeMirror-line.cgen-highlight { background: #9cc5ef; }
+
 .CodeMirror.cm-s-light  span.CodeMirror-matchingbracket {
     background-color: #93d9d9;
     color: #000;
