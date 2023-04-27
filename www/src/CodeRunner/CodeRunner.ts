@@ -62,10 +62,7 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
-                    if (resp.status == 429) {
-                        throw new Error("Can't run code: Too many requests")
-                    }
-                    throw new Error("Can't run code")
+                    throw new Error(CodeRunner.buildErrorMessage("run", resp))
                 }
 
                 return resp
@@ -81,10 +78,7 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
-                    if (resp.status == 429) {
-                        throw new Error("Can't run test: Too many requests")
-                    }
-                    throw new Error("Can't run test")
+                    throw new Error(CodeRunner.buildErrorMessage("test", resp))
                 }
 
                 return resp
@@ -100,10 +94,7 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
-                    if (resp.status == 429) {
-                        throw new Error("Can't compile and get C code: Too many requests")
-                    }
-                    throw new Error("Can't compile and get C code")
+                    throw new Error(CodeRunner.buildErrorMessage("cgen", resp))
                 }
 
                 return resp
@@ -128,10 +119,7 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
-                    if (resp.status == 429) {
-                        throw new Error("Can't share code: Too many requests")
-                    }
-                    throw new Error("Can't share code")
+                    throw new Error(CodeRunner.buildErrorMessage("share", resp))
                 }
 
                 return resp
@@ -147,10 +135,7 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
-                    if (resp.status == 429) {
-                        throw new Error("Can't create bug url: Too many requests")
-                    }
-                    throw new Error("Can't create bug url")
+                    throw new Error(CodeRunner.buildErrorMessage("create_bug_url", resp))
                 }
 
                 return resp
@@ -165,15 +150,18 @@ export class CodeRunner {
         })
             .then(resp => {
                 if (resp.status != 200) {
-                    if (resp.status == 429) {
-                        throw new Error("Can't retrieve V version: Too many requests")
-                    }
-                    throw new Error("Can't retrieve V version")
+                    throw new Error(CodeRunner.buildErrorMessage("version", resp))
                 }
 
                 return resp
             })
             .then(resp => resp.json())
             .then(data => data as VersionResponse)
+    }
+
+    private static buildErrorMessage(kind: string, response: Response): string {
+        const base = `Failed to invoke \`/${kind}\` endpoint`
+        const responseStatus = response.status.toString() + " " + response.statusText
+        return `${base}: ${responseStatus}`
     }
 }

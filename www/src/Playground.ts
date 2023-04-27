@@ -229,9 +229,7 @@ export class Playground {
         CodeRunner.runCode(snippet)
             .then(result => {
                 if (result.error != "") {
-                    this.writeToTerminal(result.error)
-                    this.writeToTerminal("Can't run code. Please try again.")
-                    return
+                    throw new Error(`The server returned an error:\n${result.error}`)
                 }
 
                 this.clearTerminal()
@@ -239,7 +237,8 @@ export class Playground {
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal("Can't run code. Please try again.")
+                this.writeToTerminal(`Can't run code. ${err.message}`)
+                this.writeToTerminal("Please try again.")
             })
     }
 
@@ -251,9 +250,7 @@ export class Playground {
         CodeRunner.runTest(snippet)
             .then(result => {
                 if (result.error != "") {
-                    this.writeToTerminal(result.error)
-                    this.writeToTerminal("Can't run tests. Please try again.")
-                    return
+                    throw new Error(`The server returned an error:\n${result.error}`)
                 }
 
                 this.clearTerminal()
@@ -261,7 +258,8 @@ export class Playground {
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal("Can't run tests. Please try again.")
+                this.writeToTerminal(`Can't run tests. ${err.message}`)
+                this.writeToTerminal("Please try again.")
             })
     }
 
@@ -273,9 +271,7 @@ export class Playground {
         CodeRunner.retrieveCgenCode(snippet)
             .then(result => {
                 if (result.error != "") {
-                    this.clearTerminal()
-                    this.writeToTerminal(result.error)
-                    return
+                    throw new Error(`The server returned an error:\n${result.error}`)
                 }
 
                 const code = result.cgenCode
@@ -328,8 +324,6 @@ export class Playground {
                     mainIndex = 0
                 }
 
-                console.log(v2c)
-
                 window.localStorage.setItem("cgen-mapping", JSON.stringify(v2c))
 
                 this.clearTerminal()
@@ -345,7 +339,8 @@ export class Playground {
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal("Can't compile and get C code. Please try again.")
+                this.writeToTerminal(`Can't compile and get C code. ${err.message}`)
+                this.writeToTerminal("Please try again.")
             })
     }
 
@@ -356,16 +351,15 @@ export class Playground {
         CodeRunner.formatCode(snippet)
             .then(result => {
                 if (result.error != "") {
-                    this.clearTerminal()
-                    this.writeToTerminal(result.error)
-                    return
+                    throw new Error(`The server returned an error:\n${result.error}`)
                 }
 
                 this.editor.setCode(result.output, true)
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal("Can't format code. Please try again.")
+                this.writeToTerminal(`Can't format code. ${err.message}`)
+                this.writeToTerminal("Please try again.")
             })
     }
 
@@ -377,9 +371,7 @@ export class Playground {
         CodeRunner.shareCode(snippet)
             .then(result => {
                 if (result.error != "") {
-                    this.writeToTerminal("Can't share code. Please try again.")
-                    this.writeToTerminal(result.error)
-                    return
+                    throw new Error(`The server returned an error:\n${result.error}`)
                 }
 
                 this.writeToTerminal("Code shared successfully!")
@@ -393,7 +385,8 @@ export class Playground {
             })
             .catch(err => {
                 console.log(err)
-                this.writeToTerminal("Can't share code. Please try again.")
+                this.writeToTerminal(`Can't share code. ${err.message}`)
+                this.writeToTerminal("Please try again.")
             })
     }
 

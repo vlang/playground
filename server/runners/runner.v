@@ -119,10 +119,6 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !string {
 
 		logger.log(snippet.code, run_output) or { eprintln('[WARNING] Failed to log code.') }
 
-		if run_res.exit_code != 0 {
-			return error(prettify(run_output))
-		}
-
 		return prettify(run_output)
 	}
 
