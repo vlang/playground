@@ -178,7 +178,15 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !RunResult {
 		return error('The program reached the resource limit assigned to it.')
 	}
 
-	run_res_result := run_res.output.trim_right('\n')
+	mut run_res_result := run_res.output.trim_right('\n')
+	mut run_res_result_lines := run_res_result.split_into_lines()
+
+	// isolate output message like "OK (0.033 sec real, 0.219 sec wall)"
+	// we want to remove it
+	if run_res_result_lines.last().starts_with('OK (') {
+		run_res_result_lines = run_res_result_lines#[..-1]
+		run_res_result = run_res_result_lines.join('\n')
+	}
 
 	return RunResult{
 		output: prettify(run_res_result)

@@ -1888,7 +1888,7 @@ main {
   border-bottom: solid 3px var(--blue);
 }
 .playground__terminal .header .tabs label {
-  padding: 10px 10px 0;
+  padding: 11px 10px 0;
 }
 .playground__terminal .header .tabs label:hover {
   cursor: pointer;
