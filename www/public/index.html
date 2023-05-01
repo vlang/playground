@@ -7,10 +7,9 @@
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="https://vosca.dev/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://vosca.dev/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://vosca.dev/images/favicon-16x16.png">
-    <link rel="manifest" href="https://vosca.dev/images/site.webmanifest">
-    <link rel="icon" type="image/x-icon" href="https://vosca.dev/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <!-- End Favicons -->
 
     <!-- Preload -->
@@ -32,7 +31,7 @@
     <meta property="og:site_name" content="V Playground">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="en_US">
-    <meta property="og:url" content="https://play.vosca.dev/">
+    <meta property="og:url" content="https://play.vlang.io/">
     <!-- End Open Graph -->
 
     <!-- Twitter Card -->
@@ -60,8 +59,8 @@
     <!-- Schema.org WebSite -->
     <script type="application/ld+json"> {
             "@type": "WebSite",
-            "@id": "https://docs.vosca.dev/#website",
-            "url": "https://docs.vosca.dev/",
+            "@id": "https://play.vlang.io/,
+            "url": "https://play.vlang.io/",
             "name": "V Playground"
         }</script>
     <!-- End Schema.org -->
@@ -77,13 +76,21 @@
     <header>
         <div class="header-container">
             <div class="logo">
-                <a href="https://vosca.dev/">
-                    <img src="https://vosca.dev/images/logo.svg" alt="V Open Source Community Association (VOSCA) Logo">
+                <a href="https://vlang.io/">
+			<svg width="33" height="23" viewBox="0 0 33 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z"
+                              fill="#536B8A"/>
+                        <path d="M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954 7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635 20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074 3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z"
+                              fill="#5D87BF"/>
+                        <path d="M28.6948 15.9266L22.5937 19.4338C22.2604 19.6254 21.8446 19.3848 21.8446 19.0003V11.9859C21.8446 11.6014 22.2604 11.3608 22.5937 11.5524L28.6948 15.0596C29.0292 15.2518 29.0292 15.7343 28.6948 15.9266Z"
+                              fill="#659360" stroke="#659360"/>
+			</svg>
                 </a>
 
                 <a class="title" href="/">Playground</a>
             </div>
 
+	    <!--
             <div class="mobile-header-logo">
                 <a href="/" aria-label="Go to main V Open Source Community Association page">
                     <img width="30" height="31" src="https://vosca.dev/images/logo.svg"
@@ -153,6 +160,7 @@
                         <span itemprop="name">GitHub</span>
                     </a>
                 </li>
+	    -->
 
                 <li class="js-change-theme__action change-theme" aria-label="Change theme">
                     <svg class="theme-icon sun" width="30" height="30" viewBox="0 0 30 30" fill="none"
@@ -224,6 +232,7 @@
                     </div>
                 </div>
             </div>
+	    <!--
             <ul class="aside-navigation">
                 <li class="navigation-item">
                     <a href="https://docs.vosca.dev">Documentation</a>
@@ -260,6 +269,7 @@
                     <span>Change theme</span>
                 </li>
             </ul>
+	    -->
         </nav>
     </aside>
     <div class="header-mobile-overlay js-header-mobile-overlay"></div>
@@ -670,9 +680,10 @@
                     </div>
 
                     <div class="about-link">
-                        <a href="https://docs.vosca.dev/tools/playground.html" target="_blank">
-                            Go to Documentation
-                        </a> →
+			    Developed by 
+                        <a href="https://vosca.dev" target="_blank">
+                            VOSCA
+                        </a>
                     </div>
                 </div>
             </div>

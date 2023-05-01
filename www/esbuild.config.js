@@ -21,7 +21,7 @@ const styleResult = esbuild.buildSync({
   },
 });
 
-printResult(styleResult?.metafile?.outputs || {});
+//printResult(styleResult?.metafile?.outputs || {});
 
 const codeResult = esbuild.buildSync({
   minify: true,
@@ -36,4 +36,4 @@ const codeResult = esbuild.buildSync({
   entryPoints: ["./src/main.ts"],
 });
 
-printResult(codeResult?.metafile?.outputs || {});
+//printResult(codeResult?.metafile?.outputs || {});
