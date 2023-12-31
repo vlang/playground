@@ -11,7 +11,7 @@ struct ShareResponse {
 
 // share endpoint is used to share code snippets.
 // Returns ShareResponse with the hash of the code snippet.
-['/share'; post]
+@['/share'; post]
 fn (mut app Server) share() vweb.Result {
 	snippet := app.get_request_code() or {
 		return app.json(ShareResponse{

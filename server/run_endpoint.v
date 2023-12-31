@@ -5,13 +5,13 @@ import runners
 
 struct RunResponse {
 	output       string
-	build_output string [json: 'buildOutput']
+	build_output string @[json: 'buildOutput']
 	error        string
 }
 
 // run endpoint is used to run code in sandbox.
 // Returns RunResponse with result output or error.
-['/run'; post]
+@['/run'; post]
 fn (mut app Server) run() vweb.Result {
 	snippet := app.get_request_code() or { return app.json(RunResponse{
 		error: err.msg()

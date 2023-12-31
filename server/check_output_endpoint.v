@@ -13,7 +13,7 @@ struct CheckOutputResponse {
 
 // check_output endpoint is used to check the output of the code.
 // Returns CheckOutputResponse with result output or error.
-['/check_output'; post]
+@['/check_output'; post]
 fn (mut app Server) check_output() vweb.Result {
 	snippet := app.get_request_code() or {
 		return app.json(CheckOutputResponse{

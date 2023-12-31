@@ -184,7 +184,7 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !RunResult {
 	// isolate output message like "OK (0.033 sec real, 0.219 sec wall)"
 	// we want to remove it
 	if run_res_result_lines.last().starts_with('OK (') {
-		run_res_result_lines = run_res_result_lines#[..-1]
+		run_res_result_lines = unsafe { run_res_result_lines#[..-1] }
 		run_res_result = run_res_result_lines.join('\n')
 	}
 

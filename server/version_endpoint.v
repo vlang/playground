@@ -10,7 +10,7 @@ struct VersionResponse {
 
 // version endpoint is used to get the version of the V.
 // Returns VersionResponse with version or error.
-['/version'; post]
+@['/version'; post]
 fn (mut app Server) version() vweb.Result {
 	res := os.execute('v -version')
 	if res.exit_code != 0 {

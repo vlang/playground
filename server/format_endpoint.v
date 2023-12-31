@@ -10,7 +10,7 @@ struct FormatResponse {
 
 // format endpoint is used to format code in sandbox.
 // Returns FormatResponse with result output or error.
-['/format'; post]
+@['/format'; post]
 fn (mut app Server) format() vweb.Result {
 	code := app.form['code'] or {
 		return app.json(FormatResponse{

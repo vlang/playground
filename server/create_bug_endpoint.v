@@ -12,7 +12,7 @@ struct CreateBugResponse {
 
 // create_bug_url endpoint is used to create link to submit a bug on GitHub.
 // Returns CreateBugResponse with link or error.
-['/create_bug_url'; post]
+@['/create_bug_url'; post]
 fn (mut app Server) create_bug_url() vweb.Result {
 	snippet := app.get_request_code() or {
 		return app.json(CreateBugResponse{

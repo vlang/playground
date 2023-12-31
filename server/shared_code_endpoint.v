@@ -3,7 +3,7 @@ module main
 import vweb
 import models
 
-['/p/:hash'; get]
+@['/p/:hash'; get]
 fn (mut app Server) shared_code(hash string) vweb.Result {
 	if hash == '' {
 		return app.index()
@@ -19,7 +19,7 @@ struct GetByHashResponse {
 
 // get_by_hash endpoint is used to retrieve code snippet by hash.
 // Returns GetByHashResponse with snippet, found and error fields.
-['/query'; post]
+@['/query'; post]
 fn (mut app Server) get_by_hash() vweb.Result {
 	hash := app.form['hash'] or {
 		return app.json(GetByHashResponse{
