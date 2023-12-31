@@ -1,0 +1,213 @@
+html {
+  // common colors
+  --dark-gray: #1e1f22;
+  --almost-black: #1a1a1a;
+
+  --gray-22: #222226;
+  --gray-24: #242424;
+  --gray-32: #323438;
+  --gray-3a: #3a3a3a;
+  --gray-3b: #3b3c3c;
+  --gray-5a: #5a5a5c;
+  --gray-7e: #7e7e80;
+  --gray-be: #bebebf;
+  --gray-cb: #cbc9c9;
+  --gray-ef: #efefef;
+  --gray-ec: #ecedf1;
+  --gray-e0: #e0e0e0;
+  --gray-87: rgba(255, 255, 255, .87);
+  --gray-f9: #f9f9f9;
+  --dark-transparent-gray: rgba(25, 25, 28, .7);
+  --background-transparent-gray: rgba(30, 31, 34, .7);
+  --semi-dark-transparent-gray: rgba(0, 0, 0, 0.32);
+  --light-transparent-gray: rgba(255, 255, 255, 0.05);
+  --light-dark-transparent-gray: rgba(0, 0, 0, 0.05);
+  --background-light-transparent-gray: rgba(255, 255, 255, .7);
+  --light-white: #f3f3f3;
+  --white: #fff;
+  --black: #000;
+  --blue: #3890fa;
+  --dark-blue: #0969da;
+
+  --light-salat-green: #AFBF7E;
+  --light-green: rgb(77, 187, 95);
+  --dark-transparent-green: rgba(77, 187, 95, 0.2);
+
+  --orange: rgb(244, 92, 75);
+  --dark-transparent-orange: rgba(244, 92, 74, 0.2);
+
+  --brand-color: #ff6b00;
+  --brand-color-dark: #cc5307;
+}
+
+// light theme
+html {
+  // common colors
+  --main-color: var(--white);
+
+  --background-color: var(--main-color);
+  --border-color: var(--gray-e0);
+  --divider-color: var(--gray-e0);
+  --text-color: var(--black);
+  --secondary-color: var(--gray-7e);
+
+  --scrollbar-thumb-color: var(--gray-ef);
+
+  // header
+  --header-background-color: var(--main-color);
+  --header-transparent-background-color: var(--background-light-transparent-gray);
+
+  // footer
+  --footer-background-color: var(--main-color);
+
+  // overlay
+  --overlay-background-color: var(--semi-dark-transparent-gray);
+
+  // <aside>
+  --aside-background-color: var(--gray-f9);
+  --aside-link-text-color: var(--gray-5a);
+  --aside-link-text-color-hover: var(--text-color);
+  --aside-link-text-color-active: var(--brand-color);
+
+  // inline <code>
+  --inline-code-background-color: var(--gray-f9);
+  --inline-code-text-color: var(--text-color);
+
+  // block <code>
+  --block-code-background-color: var(--white);
+  --block-code-border-color: var(--gray-ec);
+  --block-code-text-color: var(--black);
+
+  // <blockquote>
+  --blockquote-text-color: var(--dark-transparent-gray);
+  // > note
+  --blockquote-note-background-color: var(--dark-transparent-green);
+  --blockquote-note-icon-color: var(--light-green);
+  // > tip
+  --blockquote-tip-background-color: var(--light-dark-transparent-gray);
+  --blockquote-tip-icon-color: var(--gray-5a);
+  // > warning
+  --blockquote-warning-background-color: var(--dark-transparent-orange);
+  --blockquote-warning-icon-color: var(--orange);
+
+  // tags
+  --tag-unsafe-color: var(--brand-color);
+  --tag-deprecated-color: var(--gray-be);
+
+  // buttons
+  --button-hover-background-color: var(--gray-ec);
+
+  // code-related
+  --keyword-color: #0033b3;
+  --comment-color: #8c8c8c;
+  --number-color: #1750eb;
+  --string-color: #067d17;
+
+  // search
+  --search-button-background-color: var(--gray-f9);
+  --search-button-hover-border-color: var(--brand-color);
+  --search-button-text-color: var(--gray-7e);
+  --search-input-placeholder-color: var(--gray-be);
+  --search-labels-text-color: var(--gray-7e);
+  --search-result-active-background-color: var(--brand-color);
+  --search-result-active-text-color: var(--text-color);
+  --search-result-footer-hint-text-color: var(--gray-7e);
+  --search-result-footer-hint-key-background-color: var(--gray-ef);
+  --search-result-footer-hint-keytext-color: var(--gray-3b);
+
+  // symbol and module references
+  --symbol-ref-link-color: var(--brand-color-dark);
+  --symbol-ref-underline: none;
+  --symbol-ref-hover-color: var(--symbol-ref-link-color);
+  --module-ref-link-color: var(--brand-color-dark);
+
+  // playground
+  --playground-header-background-color: var(--white);
+  --tools-background-color: var(--white);
+}
+
+// dark theme
+html[data-theme="dark"] {
+  // common colors
+  --main-color: var(--dark-gray);
+
+  --background-color: var(--main-color);
+  --border-color: var(--gray-3a);
+  --divider-color: var(--gray-3a);
+  --text-color: var(--gray-87);
+  --secondary-color: var(--gray-be);
+
+  --scrollbar-thumb-color: var(--gray-32);
+
+  // header
+  --header-background-color: var(--main-color);
+  --header-transparent-background-color: var(--background-transparent-gray);
+
+  // footer
+  --footer-background-color: var(--main-color);
+
+  // overlay
+  --overlay-background-color: var(--semi-dark-transparent-gray);
+
+  // <aside>
+  --aside-background-color: var(--almost-black);
+  --aside-link-text-color: var(--gray-be);
+  --aside-link-text-color-hover: var(--text-color);
+  --aside-link-text-color-active: var(--brand-color);
+
+  // inline <code>
+  --inline-code-background-color: var(--gray-3b);
+  --inline-code-text-color: var(--text-color);
+
+  // block <code>
+  --block-code-background-color: var(--almost-black);
+  --block-code-border-color: var(--gray-32);
+  --block-code-text-color: var(--gray-be);
+
+  // <blockquote>
+  --blockquote-text-color: var(--gray-be);
+  // > note
+  --blockquote-note-background-color: var(--dark-transparent-green);
+  --blockquote-note-icon-color: var(--light-green);
+  // > tip
+  --blockquote-tip-background-color: var(--light-transparent-gray);
+  --blockquote-tip-icon-color: var(--gray-be);
+  // > warning
+  --blockquote-warning-background-color: var(--dark-transparent-orange);
+  --blockquote-warning-icon-color: var(--orange);
+
+  // tags
+  --tag-unsafe-color: var(--brand-color);
+  --tag-deprecated-color: var(--gray-be);
+
+  // buttons
+  --button-hover-background-color: var(--gray-32);
+
+  // search
+  --search-button-background-color: var(--almost-black);
+  --search-button-hover-border-color: var(--brand-color);
+  --search-button-text-color: var(--gray-be);
+  --search-input-placeholder-color: var(--gray-5a);
+  --search-labels-text-color: var(--gray-5a);
+  --search-result-active-background-color: var(--brand-color);
+  --search-result-active-text-color: var(--text-color);
+  --search-result-footer-hint-text-color: var(--gray-5a);
+  --search-result-footer-hint-key-background-color: var(--gray-22);
+  --search-result-footer-hint-keytext-color: var(--gray-be);
+
+  // code-related
+  --keyword-color: #cc7832;
+  --comment-color: gray;
+  --number-color: #2AACB8;
+  --string-color: #6AAB73;
+
+  // symbol and module references
+  --symbol-ref-link-color: var(--keyword-color);
+  --symbol-ref-underline: underline;
+  --symbol-ref-hover-color: var(--keyword-color);
+  --module-ref-link-color: var(--light-salat-green);
+
+  // playground
+  --playground-header-background-color: var(--gray-24);
+  --tools-background-color: var(--dark-gray);
+}

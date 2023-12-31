@@ -1,0 +1,34 @@
+{
+  "name": "v-playground",
+  "version": "0.3.0",
+  "description": "Source code for V Playground website and backend",
+  "scripts": {
+    "install-server-deps": "cd server && v install",
+    "build-ts": "cd ./www && npm ci && npm run build",
+    "watch-ts": "cd ./www && npm ci && npm run watch",
+    "sass-watch": "cd ./www && sass --watch styles/index.scss:styles/index.css",
+    "mkdir-bin": "mkdir -p ./server/bin",
+    "build": "npm run build-ts && npm run mkdir-bin && v server -o ./server/bin/server",
+    "build-prod": "npm run build-ts && npm run mkdir-bin && v server -prod -o ./server/bin/server",
+    "local-build": "npm run build-ts && npm run mkdir-bin && v -g -d local -d uselibbacktrace -o ./server/bin/server ./server",
+    "serve": "npm run build && ./server/bin/server",
+    "local-serve": "npm run local-build && ./server/bin/server",
+    "run-docker": "docker-compose up -d",
+    "clean": "rm -rf ./server/bin"
+  },
+  "author": {
+    "name": "V Open Source Community Association",
+    "url": "https://vosca.dev/"
+  },
+  "contributors": [
+    "Petr Makhnev",
+    "Mark @walkingdevel"
+  ],
+  "bugs": {
+    "url": "https://github.com/vlang-association/playground/issues"
+  },
+  "homepage": "https://play.vosca.dev/",
+  "dependencies": {
+    "sass": "^1.62.0"
+  }
+}

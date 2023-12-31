@@ -1,0 +1,16 @@
+.idea
+.vscode
+
+server/bin
+logs
+node_modules
+
+playground
+code_storage.db
+
+/code.v
+/code_test.v
+/code
+/code.dSYM
+.vmodules/cache/README.md
+server/server
