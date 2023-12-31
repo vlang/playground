@@ -33,11 +33,11 @@ const (
 	wall_time_in_seconds          = 3
 )
 
-[table: 'code_storage']
+@[table: 'code_storage']
 struct CodeStorage {
-	id   int    [primary; sql: serial]
-	code string [nonull]
-	hash string [nonull]
+	id   int    @[primary; sql: serial]
+	code string
+	hash string
 }
 
 struct App {
@@ -46,13 +46,13 @@ mut:
 	db sqlite.DB
 }
 
-['/'; get]
+@['/'; get]
 fn (mut app App) index() vweb.Result {
 	file := os.read_file('www/public/index.html') or { panic(err) }
 	return app.html(file)
 }
 
-['/p/:hash'; get]
+@['/p/:hash'; get]
 fn (mut app App) shared_code(hash string) vweb.Result {
 	if hash == '' {
 		return app.index()
@@ -117,8 +117,8 @@ fn prettify(output string) string {
 	return pretty
 }
 
-fn ddhhmmss(time time.Time) string {
-	return '${time.day:02d}-${time.hour:02d}:${time.minute:02d}:${time.second:02d}'
+fn ddhhmmss(time_ time.Time) string {
+	return '${time_.day:02d}-${time_.hour:02d}:${time_.minute:02d}:${time_.second:02d}'
 }
 
 fn log_code(code string, build_res string) ! {
@@ -215,7 +215,7 @@ fn run_in_sandbox(code string, as_test bool) (string, bool) {
 	return prettify(run_res.output.trim_right('\n')), true
 }
 
-['/run'; post]
+@['/run'; post]
 fn (mut app App) run() vweb.Result {
 	code := app.form['code'] or {
 		resp := RunResp{
@@ -233,7 +233,7 @@ fn (mut app App) run() vweb.Result {
 	return app.json(json.encode(resp))
 }
 
-['/run_test'; post]
+@['/run_test'; post]
 fn (mut app App) run_test() vweb.Result {
 	code := app.form['code'] or {
 		resp := RunResp{
@@ -253,7 +253,7 @@ fn (mut app App) run_test() vweb.Result {
 	return app.json(json.encode(resp))
 }
 
-['/share'; post]
+@['/share'; post]
 fn (mut app App) share() vweb.Result {
 	code := app.form['code'] or { return app.text('No code was provided.') }
 	// using 10 chars is enough for now
@@ -262,7 +262,7 @@ fn (mut app App) share() vweb.Result {
 	return app.text(hash)
 }
 
-['/query'; post]
+@['/query'; post]
 fn (mut app App) get_by_hash() vweb.Result {
 	hash := app.form['hash'] or { return app.text('No hash was provided.') }
 	code := app.get_saved_code(hash) or { return app.text('Not found.') }
@@ -277,13 +277,13 @@ fn (mut app App) add_new_code(code string, hash string) {
 
 	sql app.db {
 		insert new_code into CodeStorage
-	}
+	} or {}
 }
 
 fn (mut app App) get_saved_code(hash string) ?string {
 	found := sql app.db {
 		select from CodeStorage where hash == hash
-	}
+	} or { return none }
 
 	if found.len == 0 {
 		return none
@@ -328,7 +328,7 @@ struct FormatResp {
 	ok     bool
 }
 
-['/format'; post]
+@['/format'; post]
 fn (mut app App) format() vweb.Result {
 	code := app.form['code'] or {
 		resp := FormatResp{
@@ -350,7 +350,7 @@ fn (mut app App) init_once() {
 	app.db = sqlite.connect('code_storage.db') or { panic(err) }
 	sql app.db {
 		create table CodeStorage
-	}
+	} or {}
 	isolate_cmd('isolate --cleanup')
 	app.handle_static('./www/public', true)
 	app.serve_static('./', 'www/public/')

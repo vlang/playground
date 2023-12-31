@@ -253,7 +253,7 @@ export class Playground {
     }
 
     public writeToTerminal(text: string): void {
-        this.editor.terminal.write(text)
+        this.editor.terminal.write(text.replace("<", "&lt;").replace(">", "&gt;"))
     }
 
     private markCodeAsUnsaved() {
