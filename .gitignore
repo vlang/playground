@@ -13,3 +13,4 @@ code_storage.db
 /code
 /code.dSYM
 .vmodules/cache/README.md
+server/server
