@@ -39,10 +39,8 @@
     "url": "https://github.com/vlang/playground/issues"
   },
   "homepage": "https://play.vlang.io/",
-  "dependencies": {
-    "sass": "^1.62.0"
-  },
   "devDependencies": {
-    "esbuild": "0.19.11"
+    "esbuild": "0.19.11",
+    "sass": "1.69.6"
   }
 }
