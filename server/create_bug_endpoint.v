@@ -40,7 +40,7 @@ fn (mut app Server) create_bug_url() vweb.Result {
 		hash: hash
 	})
 
-	shared_link := 'https://vosca.dev/p/${hash}'
+	shared_link := 'https://play.vlang.io/p/${hash}'
 	code := snippet.code.trim_right('\n')
 
 	mut values := urllib.new_values()

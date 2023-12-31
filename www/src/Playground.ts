@@ -401,7 +401,7 @@ export class Playground {
     }
 
     private buildShareLink(result: ShareCodeResponse) {
-        return `https://vosca.dev/p/${result.hash}`
+        return `https://play.vlang.io/p/${result.hash}`
     }
 
     public changeTheme(): void {

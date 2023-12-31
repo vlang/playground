@@ -19,7 +19,7 @@ println('Hello, Playground!')
 // More examples are available in top dropdown list.
 // You can find Help for shortcuts in the bottom right corner or just press Ctrl + I.
 // See also change theme button in the top right corner.
-// If you want to learn more about V, visit https://docs.vosca.dev/ and https://learn.vosca.dev/
+// If you want to learn more about V, visit https://vlang.io/, https://github.com/vlang/v/blob/master/doc/docs.md, and https://modules.vlang.io/
 // Join us on Discord: https://discord.gg/vlang
 // Enjoy!
 `.trimStart()

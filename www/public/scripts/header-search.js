@@ -157,7 +157,7 @@ function doSearch(searchQuery) {
         return
     }
 
-    const searchEndpoint = "https://vosca.dev/search"
+    const searchEndpoint = "https://play.vlang.io/search"
 
     fetch(searchEndpoint + "?" + new URLSearchParams({
         place: place,

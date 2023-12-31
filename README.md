@@ -1,11 +1,7 @@
 # V Playground: Run, Edit, Share V Code Online
 
-[![Association Official Project][AssociationOfficialBadge]][AssociationUrl]
-
-The [V Playground](https://play.vosca.dev) is a place where you can run, edit and share V
+The [V Playground](https://play.vlang.io/) is a place where you can run, edit and share V
 code online.
-Documentation can be found in the
-[V Playground Documentation](https://docs.vosca.dev/tools/playground.html) section.
 
 ![](./docs/images/cover.png)
 
@@ -13,21 +9,17 @@ Documentation can be found in the
 
 - Nice and clean UI
 - Powerful editor with syntax highlighting and auto-completion
-- Ability to [run code as tests](https://docs.vosca.dev/tools/playground.html#test)
-- Ability
-  to [see generated C code](https://docs.vosca.dev/tools/playground.html#show-generated-c-code)
-  for passed V code
-- Pass [flags](https://docs.vosca.dev/tools/playground.html#pass-arguments-to-compiler) to V
-  compiler and binary
-- [Shareable](https://docs.vosca.dev/tools/playground.html#share-code) code and editor state
-  via URL or local storage
+- Ability to run test code.
+- Ability to see the generated C code, for the passed V code.
+- Pass compilation flags to the V compiler, and separate for your program.
+- Shareable code and editor state via URL or local storage.
 
 ## Developing
 
-First, clone the repository:
+If you wish to improve the playground, first you have to clone the repository:
 
 ```bash
-git clone https://github.com/vlang-association/playground
+git clone https://github.com/vlang/playground
 cd playground
 ```
 
@@ -54,11 +46,12 @@ then access the playground at <http://localhost:5555>
 3. Install the
    [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
    extension for VS Code
-4. Clone <https://github.com/vlang-association/playground>
+4. Clone <https://github.com/vlang/playground>
 5. Create your application within a container (see gif below)
 
 Done.
-And your system will remain "clean".
+
+Since you are using a docker container, your main system will remain "clean".
 
 ![vscode-open-in-container](https://user-images.githubusercontent.com/17727170/197407889-88fe33b0-8e95-47fe-b2db-598fd307140e.gif)
 
@@ -99,7 +92,7 @@ make install
 npm run serve
 ```
 
-then access the playground at <http://localhost:5555>
+... then access the playground at <http://localhost:5555>
 
 ## Server API
 
@@ -108,10 +101,6 @@ See [server/README.md](./server/README.md) for more information about the server
 ## License
 
 This project is under the **MIT License**.
-See the
-[LICENSE](https://github.com/vlang-association/playground/blob/main/LICENSE)
+See the [LICENSE](https://github.com/vlang/playground/blob/main/LICENSE)
 file for the full license text.
 
-[AssociationOfficialBadge]: https://vosca.dev/badge.svg
-
-[AssociationUrl]: https://vosca.dev

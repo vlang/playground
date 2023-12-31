@@ -1,6 +1,6 @@
 {
   "name": "v-playground",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Source code for V Playground website and backend",
   "scripts": {
     "install-server-deps": "cd server && v install",
@@ -17,17 +17,28 @@
     "clean": "rm -rf ./server/bin"
   },
   "author": {
-    "name": "V Open Source Community Association",
-    "url": "https://vosca.dev/"
+    "name": "The V language contributors",
+    "url": "https://vlang.io/"
   },
   "contributors": [
     "Petr Makhnev",
-    "Mark @walkingdevel"
+	"shadowninja55",
+    "Mark @walkingdevel",
+	"Delyan Angelov",
+	"Alexander Medvednikov",
+	"Carlos Silva",
+	"Carlos Esquerdo Bernat",
+	"RGBCube",
+	"Ulises Jeremias Cornejo Fandos,
+	"Enzo Baldisserri",
+	"JalonSolov",
+	"Raúl Hernández",
+	"shove"
   ],
   "bugs": {
-    "url": "https://github.com/vlang-association/playground/issues"
+    "url": "https://github.com/vlang/playground/issues"
   },
-  "homepage": "https://play.vosca.dev/",
+  "homepage": "https://play.vlang.io/",
   "dependencies": {
     "sass": "^1.62.0"
   }

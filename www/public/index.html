@@ -6,19 +6,16 @@
     <meta name="description" content="Place where you can run, edit and share V code online.">
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://vosca.dev/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <!-- End Favicons -->
 
     <!-- Preload -->
-    <link rel="preload" href="https://vosca.dev/fonts/JetBrainsSans-Regular.woff2"
-          as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="https://vosca.dev/fonts/JetBrainsSans-Medium.woff2"
-          as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="https://vosca.dev/fonts/JetBrainsSans-Bold.woff2"
-          as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/JetBrainsSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/JetBrainsSans-Medium.woff2"  as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/JetBrainsSans-Bold.woff2"    as="font" type="font/woff2" crossorigin>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
@@ -27,11 +24,11 @@
     <!-- Open Graph-->
     <meta property="og:title" content="V Playground: Run, Edit, Share V Code Online">
     <meta property="og:description" content="Place where you can run, edit and share V code online.">
-    <meta property="og:image" content="/images/open-graph/play-cover.png">
     <meta property="og:site_name" content="V Playground">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="en_US">
     <meta property="og:url" content="https://play.vlang.io/">
+    <meta property="og:image" content="https://play.vlang.io/images/open-graph/play-cover.png">
     <!-- End Open Graph -->
 
     <!-- Twitter Card -->
@@ -39,19 +36,19 @@
     <meta name="twitter:site" content="@vlang">
     <meta name="twitter:title" content="V Playground: Run, Edit, Share V Code Online">
     <meta name="twitter:description" content="Place where you can run, edit and share V code online.">
-    <meta name="twitter:creator" content="@vlang-association">
-    <meta name="twitter:image:src" content="/images/open-graph/play-cover.png">
+    <meta name="twitter:creator" content="@vlang">
+    <meta name="twitter:image:src" content="https://play.vlang.io/images/open-graph/play-cover.png">
     <!-- End Twitter Card -->
 
     <!-- Schema.org WebPage -->
     <script type="application/ld+json"> {
             "@context": "http://schema.org",
             "@type": "WebPage",
-            "@id": "https://docs.vosca.dev/#webpage",
-            "url": "https://docs.vosca.dev/",
+            "@id": "https://play.vlang.io/",
+            "url": "https://play.vlang.io/",
             "name": "V Playground: Run, Edit, Share V Code Online",
             "description": "Place where you can run, edit and share V code online.",
-            "image": "/images/open-graph/play-cover.png",
+            "image": "https://play.vlang.io/images/open-graph/play-cover.png",
             "inLanguage": "en-US"
         }</script>
     <!-- End Schema.org -->
@@ -66,7 +63,7 @@
     <!-- End Schema.org -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"/>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/style.css">
 
     <title>V Playground: Run, Edit, Share V Code Online</title>
 </head>
@@ -89,79 +86,7 @@
 
                 <a class="title" href="/">Playground</a>
             </div>
-
-	    <!--
-            <div class="mobile-header-logo">
-                <a href="/" aria-label="Go to main V Open Source Community Association page">
-                    <img width="30" height="31" src="https://vosca.dev/images/logo.svg"
-                         alt="V Open Source Community Association (VOSCA) Logo">
-                </a>
-
-                <a class="title" href="/">Playground</a>
-            </div>
-
-            <div class="search-container">
-                <button class="search-button js-search-button" aria-label="Search">
-                    <span class="search-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle class="icon-stroke" cx="6.15425" cy="6.5229" r="4.43781"
-                                    transform="rotate(44.8191 6.15425 6.5229)"
-                                    stroke="black"/>
-                            <path class="icon-data"
-                                  d="M10.4302 9.76331L10.0755 9.41088L9.37066 10.1202L9.72532 10.4726L10.4302 9.76331ZM13.3535 14.078C13.5494 14.2726 13.866 14.2716 14.0606 14.0758C14.2553 13.8799 14.2543 13.5633 14.0584 13.3687L13.3535 14.078ZM9.72532 10.4726L13.3535 14.078L14.0584 13.3687L10.4302 9.76331L9.72532 10.4726Z"
-                                  fill="black"/>
-                        </svg>
-                    </span>
-                    <span class="search-label">Search</span>
-                    <span class="shortcut"><span class="ctrl-key">Ctrl + </span>K</span>
-                </button>
-            </div>
-
-            <ul itemscope itemtype="http://schema.org/SiteNavigationElement" class="main-header-list">
-                <li class="navigation-item">
-                    <a itemprop="url" href="https://docs.vosca.dev">
-                        <span itemprop="name">Documentation</span>
-                    </a>
-                </li>
-                <li class="navigation-item">
-                    <a itemprop="url" href="https://modules.vosca.dev">
-                        <span itemprop="name">Modules</span>
-                    </a>
-                </li>
-                <li class="navigation-item with-items">
-                    <span class="with-icon js-open-menu">
-                        Play
-                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
-                             viewBox="0 0 24 24">
-                            <path class="icon-data"
-                                  d="M12,16c-0.3,0-0.5-0.1-0.7-0.3l-6-6c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l5.3,5.3l5.3-5.3c0.4-0.4,1-0.4,1.4,0s0.4,1,0,1.4l-6,6C12.5,15.9,12.3,16,12,16z"></path>
-                        </svg>
-                    </span>
-                    <ul class="sub-menu">
-                        <li class="sub-menu-item">
-                            <a itemprop="url" href="https://play.vosca.dev/">
-                                <span itemprop="name">Playground</span>
-                            </a>
-                        </li>
-                        <li class="sub-menu-item">
-                            <a itemprop="url" href="https://learn.vosca.dev/">
-                                <span itemprop="name">Vings</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="navigation-item">
-                    <a itemprop="url" href="https://blog.vosca.dev/">
-                        <span itemprop="name">Blog</span>
-                    </a>
-                </li>
-                <li class="navigation-item">
-                    <a itemprop="url" href="https://github.com/vlang-association/" target="_blank">
-                        <span itemprop="name">GitHub</span>
-                    </a>
-                </li>
-	    -->
-
+			<ul>
                 <li class="js-change-theme__action change-theme" aria-label="Change theme">
                     <svg class="theme-icon sun" width="30" height="30" viewBox="0 0 30 30" fill="none"
                          xmlns="http://www.w3.org/2000/svg">
@@ -215,8 +140,10 @@
                     </button>
                 </li>
             </ul>
+			
         </div>
     </header>
+	
     <aside class="mobile-header-aside">
         <nav>
             <div class="aside-header">
@@ -232,46 +159,9 @@
                     </div>
                 </div>
             </div>
-	    <!--
-            <ul class="aside-navigation">
-                <li class="navigation-item">
-                    <a href="https://docs.vosca.dev">Documentation</a>
-                </li>
-                <li class="navigation-item">
-                    <a href="https://modules.vosca.dev">Modules</a>
-                </li>
-                <li class="navigation-item with-mobile-items">
-                    <span class="with-icon js-open-menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
-                             viewBox="0 0 24 24">
-                            <path class="icon-data"
-                                  d="M12,16c-0.3,0-0.5-0.1-0.7-0.3l-6-6c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l5.3,5.3l5.3-5.3c0.4-0.4,1-0.4,1.4,0s0.4,1,0,1.4l-6,6C12.5,15.9,12.3,16,12,16z"></path>
-                        </svg>
-                        Play
-                    </span>
-
-                    <ul class="sub-menu">
-                        <li class="sub-menu-item">
-                            <a href="https://play.vosca.dev/">Playground</a>
-                        </li>
-                        <li class="sub-menu-item">
-                            <a href="https://learn.vosca.dev/">Vings</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="navigation-item">
-                    <a href="https://blog.vosca.dev/">Blog</a>
-                </li>
-                <li class="navigation-item">
-                    <a href="https://github.com/vlang-association/" target="_blank">GitHub</a>
-                </li>
-                <li class="navigation-item js-change-theme__action">
-                    <span>Change theme</span>
-                </li>
-            </ul>
-	    -->
         </nav>
     </aside>
+	
     <div class="header-mobile-overlay js-header-mobile-overlay"></div>
 
     <div class="search-window">

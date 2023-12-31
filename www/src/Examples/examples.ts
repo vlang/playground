@@ -24,7 +24,7 @@ for area in areas {
     // V uses the \${} notation to interpolate a variable
     // or expression right on the string.
     // Learn more about string interpolation in the documentation:
-    // https://docs.vosca.dev/concepts/types/strings.html#string-interpolation
+    // https://github.com/vlang/v/blob/master/doc/docs.md#string-interpolation
     println('Hello, \${area} developers!')
 }
         `,
@@ -36,12 +36,12 @@ for area in areas {
         code: `
 // As in other languages, you can define functions in V.
 // Learn more about functions in the documentation:
-// https://docs.vosca.dev/concepts/functions/overview.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#functions
 fn fib(n int) u64 {
     // To define a array of specific type, use the following syntax.
     // Here we define an array of int with the length of n + 2.
     // Learn more about arrays in the documentation:
-    // https://docs.vosca.dev/concepts/types/arrays.html
+    // https://github.com/vlang/v/blob/master/doc/docs.md#arrays
     mut f := []u64{len: n + 2}
     f[0] = 0
     f[1] = 1
@@ -55,7 +55,7 @@ fn fib(n int) u64 {
 
 // main function is the entry point of the program.
 // See note about the main function in the documentation:
-// https://docs.vosca.dev/getting-started/hello-world.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#hello-world
 fn main() {
     for i in 0 .. 30 {
         println(fib(i))
@@ -71,7 +71,7 @@ fn main() {
 // Structs are a way to define a new type with a set of fields.
 // You can define a struct with the following syntax:
 // Learn more about structs in the documentation:
-// https://docs.vosca.dev/concepts/structs/overview.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#structs
 struct Size {
 // mut keyword is used to define mutable fields
 // pub keyword is used to define public fields
@@ -127,7 +127,7 @@ struct Node {
 // Sum types are a way to define a type that can be one of several types.
 // In V, sum types are defined with following syntax.
 // Learn more about sum types in the documentation:
-// https://docs.vosca.dev/concepts/sum-types.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#sum-types
 type Tree = Empty | Node
 
 // Let's calculate the sum of all values in the tree.
@@ -147,8 +147,8 @@ fn main() {
 // sum up all node values
 fn sum(tree Tree) f64 {
     // In V, you can use \`match\` expression to match a value against a sum type.
-    // Learn more about match expression in the documentation:
-    // https://docs.vosca.dev/concepts/control-flow/conditions.html#match-expression
+    // Learn more about matching sumtype values in the documentation:
+    // https://github.com/vlang/v/blob/master/doc/docs.md#matching-sum-types
     return match tree {
         // if the value has type Empty, return 0
         Empty { 0 }
@@ -175,7 +175,7 @@ fn sum(tree Tree) f64 {
 // single capital letter.
 //
 // Learn more about generics in the documentation:
-// https://docs.vosca.dev/concepts/generics.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#generics
 struct List[T] {
 mut:
     data []T
@@ -242,7 +242,7 @@ fn main() {
         code: `
 // V's model of concurrency is going to be very similar to Go's.
 // Learn more about concurrency in the documentation:
-// https://docs.vosca.dev/concepts/concurrency.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#concurrency
 import time
 
 fn task(id int, duration int) {
@@ -275,7 +275,7 @@ fn main() {
         code: `
 // Channels in V very similar to Go's channels.
 // Learn more about channels in the documentation:
-// https://docs.vosca.dev/concepts/concurrency.html#channels
+// https://github.com/vlang/v/blob/master/doc/docs.md#channels
 import time
 
 fn main() {
@@ -308,7 +308,7 @@ fn main() {
 
     // Select is powerful construct that allows you to work for multiple channels.
     // Learn more about select in the documentation:
-    // https://docs.vosca.dev/concepts/concurrency.html#channel-select
+    // https://github.com/vlang/v/blob/master/doc/docs.md#channel-select
     select {
         a := <-ch {
             // do something with \`a\`
@@ -337,15 +337,15 @@ fn main() {
         name: "JSON Encoding/Decoding",
         // language=v
         code: `
-// V very modular and has a lot of built-in modules.
+// V is very modular and has a lot of built-in modules.
 // In this example we will use the json module to encode and decode JSON data.
 // If you want to learn more about modules, visit
-// https://docs.vosca.dev/concepts/modules/overview.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#modules
 import json
 
 // Since V is statically typed, we need to define a struct to hold the data.
 // Learn more about structs in the documentation:
-// https://docs.vosca.dev/concepts/structs/overview.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#structs
 struct User {
     name string
     age  int
@@ -366,7 +366,7 @@ fn main() {
     // In this case it will return an array of User.
     //
     // Learn more about the json module in the documentation:
-    // https://docs.vosca.dev/concepts/working-with-json.html
+    // https://github.com/vlang/v/blob/master/doc/docs.md#json
     mut users := json.decode([]User, json_data) or {
         // But if the json data is invalid, it will return an error.
         // You can handle it with the 'or {}' syntax as in this example.
@@ -374,7 +374,7 @@ fn main() {
         // err is a special variable that contains the error message.
         //
         // Learn more about error handling in documentation:
-        // https://docs.vosca.dev/concepts/error-handling.html
+        // https://github.com/vlang/v/blob/master/doc/docs.md#optionresult-types-and-error-handling
         eprintln('Failed to parse json, error: \${err}')
         return
     }
@@ -469,7 +469,7 @@ for line in lines {
     {
         name: "Compile-time Reflection",
         code: `
-// https://docs.vosca.dev/concepts/compile-time/reflection.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#compile-time-reflection
 
 struct User {
     name string
@@ -525,7 +525,7 @@ fn get_int(data string, field string) int {
         name: "Anonymous & higher order functions",
         // language=V
         code: `
-// https://docs.vosca.dev/concepts/functions/anonymous-and-higher-order-functions.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#anonymous--higher-order-functions
 
 fn sqr(n int) int {
     return n * n
@@ -580,7 +580,7 @@ fn main() {
 // Tests in V is very simple.
 // To define a test function, just add \`test_\` prefix to the function name.
 // Learn more about testing in the documentation:
-// https://docs.vosca.dev/concepts/testing.html
+// https://github.com/vlang/v/blob/master/doc/docs.md#testing
 fn test_hello() {
     // Inside test functions you can use \`assert\` to check if the result is correct.
     assert hello() == 'Hello world'
