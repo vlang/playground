@@ -12,3 +12,4 @@ code_storage.db
 /code_test.v
 /code
 /code.dSYM
+.vmodules/cache/README.md
