@@ -22,18 +22,18 @@
   },
   "contributors": [
     "Petr Makhnev",
-	"shadowninja55",
+    "shadowninja55",
     "Mark @walkingdevel",
-	"Delyan Angelov",
-	"Alexander Medvednikov",
-	"Carlos Silva",
-	"Carlos Esquerdo Bernat",
-	"RGBCube",
-	"Ulises Jeremias Cornejo Fandos,
-	"Enzo Baldisserri",
-	"JalonSolov",
-	"Raúl Hernández",
-	"shove"
+    "Delyan Angelov",
+    "Alexander Medvednikov",
+    "Carlos Silva",
+    "Carlos Esquerdo Bernat",
+    "RGBCube",
+    "Ulises Jeremias Cornejo Fandos",
+    "Enzo Baldisserri",
+    "JalonSolov",
+    "Raúl Hernández",
+    "shove"
   ],
   "bugs": {
     "url": "https://github.com/vlang/playground/issues"
@@ -41,5 +41,8 @@
   "homepage": "https://play.vlang.io/",
   "dependencies": {
     "sass": "^1.62.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.19.11"
   }
 }
