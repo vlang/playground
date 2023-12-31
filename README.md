@@ -71,7 +71,7 @@ npm run local-serve
 
 then access the playground at <http://localhost:5555>
 
-### Run the playground locally inside isolate (as on play.vosca.dev)
+### Run the playground locally inside isolate (as on https://play.vlang.io/)
 
 > NOTE: Only works on Linux, since it uses `isolate`.
 
