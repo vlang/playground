@@ -1,43 +1,43 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 @font-face {
-  font-family: "JetBrainsSans";
-  src: url("https://play.vlang.io/fonts/JetBrainsSans-ExtraBold.woff2");
+  font-family: "FiraSans";
+  src: url("https://play.vlang.io/fonts/FiraSans-ExtraBold.woff2");
   font-weight: 800;
   font-display: swap;
 }
 @font-face {
-  font-family: "JetBrainsSans";
-  src: url("https://play.vlang.io/fonts/JetBrainsSans-Bold.woff2");
+  font-family: "FiraSans";
+  src: url("https://play.vlang.io/fonts/FiraSans-Bold.woff2");
   font-weight: 700;
   font-display: swap;
 }
 @font-face {
-  font-family: "JetBrainsSans";
-  src: url("https://play.vlang.io/fonts/JetBrainsSans-SemiBold.woff2");
+  font-family: "FiraSans";
+  src: url("https://play.vlang.io/fonts/FiraSans-SemiBold.woff2");
   font-weight: 600;
   font-display: swap;
 }
 @font-face {
-  font-family: "JetBrainsSans";
-  src: url("https://play.vlang.io/fonts/JetBrainsSans-Medium.woff2");
+  font-family: "FiraSans";
+  src: url("https://play.vlang.io/fonts/FiraSans-Medium.woff2");
   font-weight: 500;
   font-display: swap;
 }
 @font-face {
-  font-family: "JetBrainsSans";
-  src: url("https://play.vlang.io/fonts/JetBrainsSans-Regular.woff2");
+  font-family: "FiraSans";
+  src: url("https://play.vlang.io/fonts/FiraSans-Regular.woff2");
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
-  font-family: "JetBrainsSans";
-  src: url("https://play.vlang.io/fonts/JetBrainsSans-Book.woff2");
+  font-family: "FiraSans";
+  src: url("https://play.vlang.io/fonts/FiraSans-Book.woff2");
   font-weight: 350;
   font-display: swap;
 }
 @font-face {
-  font-family: "JetBrainsSans";
-  src: url("https://play.vlang.io/fonts/JetBrainsSans-Light.woff2");
+  font-family: "FiraSans";
+  src: url("https://play.vlang.io/fonts/FiraSans-Light.woff2");
   font-weight: 300;
   font-display: swap;
 }
@@ -275,7 +275,7 @@ header {
   height: 70px;
   width: 100%;
   z-index: 997;
-  font: 400 14px/1.5 "JetBrainsSans", Helvetica, Arial, sans-serif;
+  font: 400 14px/1.5 "FiraSans", Helvetica, Arial, sans-serif;
   border-bottom: 1px solid var(--header-background-color);
   background: var(--header-background-color);
 }
@@ -1202,7 +1202,7 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
 }
 .playground__help-tip .shortcut .key kbd {
   display: inline-block;
-  font-family: "JetBrainsSans", Helvetica, Arial, sans-serif;
+  font-family: "FiraSans", Helvetica, Arial, sans-serif;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 0.05em 0.3em 0.1em;
@@ -1546,7 +1546,7 @@ html[data-theme=dark] {
 .dropdown {
   max-width: 400px;
   position: relative;
-  font-family: "JetBrainsSans", Helvetica, Arial, sans-serif;
+  font-family: "FiraSans", Helvetica, Arial, sans-serif;
   font-size: 14px;
   outline: none;
 }
@@ -1799,7 +1799,7 @@ html[data-theme=dark] {
 body {
   margin: 0;
   padding: 70px 0 0 0;
-  font: 400 14px "JetBrainsSans", Helvetica, Arial, sans-serif;
+  font: 400 14px "FiraSans", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   background-color: var(--background-color);
   color: var(--text-color);
