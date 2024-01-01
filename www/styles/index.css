@@ -988,7 +988,7 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
   border: none;
   color: #fff;
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.4;
   display: grid;
   transition: background-color 150ms ease 100ms;
   margin-left: 20px;
