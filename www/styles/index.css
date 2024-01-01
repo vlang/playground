@@ -431,7 +431,7 @@ header .header-container ul.main-header-list .change-theme {
   user-select: none;
 }
 header .header-container ul.main-header-list .change-theme:active:hover svg {
-  width: 88%;
+  width: 80%;
 }
 header .header-container ul.main-header-list .change-theme:hover {
   cursor: pointer;
