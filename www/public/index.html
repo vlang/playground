@@ -1,608 +1,655 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark" style="opacity: 0">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <meta name="description" content="Place where you can run, edit and share V code online.">
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<meta name="description" content="Place where you can run, edit and share V code online.">
 
-    <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <!-- End Favicons -->
+	<!-- Favicons -->
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	<!-- End Favicons -->
 
-    <!-- Preload -->
-    <link rel="preload" href="/fonts/JetBrainsSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/JetBrainsSans-Medium.woff2"  as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/JetBrainsSans-Bold.woff2"    as="font" type="font/woff2" crossorigin>
+	<!-- Preload -->
+	<link rel="preload" href="/fonts/JetBrainsSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/JetBrainsSans-Medium.woff2"  as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/JetBrainsSans-Bold.woff2"	  as="font" type="font/woff2" crossorigin>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
-    <!-- End Preload -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+	<!-- End Preload -->
 
-    <!-- Open Graph-->
-    <meta property="og:title" content="V Playground: Run, Edit, Share V Code Online">
-    <meta property="og:description" content="Place where you can run, edit and share V code online.">
-    <meta property="og:site_name" content="V Playground">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:url" content="https://play.vlang.io/">
-    <meta property="og:image" content="https://play.vlang.io/images/open-graph/play-cover.png">
-    <!-- End Open Graph -->
+	<!-- Open Graph-->
+	<meta property="og:title" content="V Playground: Run, Edit, Share V Code Online">
+	<meta property="og:description" content="Place where you can run, edit and share V code online.">
+	<meta property="og:site_name" content="V Playground">
+	<meta property="og:type" content="website">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:url" content="https://play.vlang.io/">
+	<meta property="og:image" content="https://play.vlang.io/images/open-graph/play-cover.png">
+	<!-- End Open Graph -->
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@vlang">
-    <meta name="twitter:title" content="V Playground: Run, Edit, Share V Code Online">
-    <meta name="twitter:description" content="Place where you can run, edit and share V code online.">
-    <meta name="twitter:creator" content="@vlang">
-    <meta name="twitter:image:src" content="https://play.vlang.io/images/open-graph/play-cover.png">
-    <!-- End Twitter Card -->
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:site" content="@vlang">
+	<meta name="twitter:title" content="V Playground: Run, Edit, Share V Code Online">
+	<meta name="twitter:description" content="Place where you can run, edit and share V code online.">
+	<meta name="twitter:creator" content="@vlang">
+	<meta name="twitter:image:src" content="https://play.vlang.io/images/open-graph/play-cover.png">
+	<!-- End Twitter Card -->
 
-    <!-- Schema.org WebPage -->
-    <script type="application/ld+json"> {
-            "@context": "http://schema.org",
-            "@type": "WebPage",
-            "@id": "https://play.vlang.io/",
-            "url": "https://play.vlang.io/",
-            "name": "V Playground: Run, Edit, Share V Code Online",
-            "description": "Place where you can run, edit and share V code online.",
-            "image": "https://play.vlang.io/images/open-graph/play-cover.png",
-            "inLanguage": "en-US"
-        }</script>
-    <!-- End Schema.org -->
+	<!-- Schema.org WebPage -->
+	<script type="application/ld+json"> {
+			"@context": "http://schema.org",
+			"@type": "WebPage",
+			"@id": "https://play.vlang.io/",
+			"url": "https://play.vlang.io/",
+			"name": "V Playground: Run, Edit, Share V Code Online",
+			"description": "Place where you can run, edit and share V code online.",
+			"image": "https://play.vlang.io/images/open-graph/play-cover.png",
+			"inLanguage": "en-US"
+		}</script>
+	<!-- End Schema.org -->
 
-    <!-- Schema.org WebSite -->
-    <script type="application/ld+json"> {
-            "@type": "WebSite",
-            "@id": "https://play.vlang.io/,
-            "url": "https://play.vlang.io/",
-            "name": "V Playground"
-        }</script>
-    <!-- End Schema.org -->
+	<!-- Schema.org WebSite -->
+	<script type="application/ld+json"> {
+			"@type": "WebSite",
+			"@id": "https://play.vlang.io/,
+			"url": "https://play.vlang.io/",
+			"name": "V Playground"
+		}</script>
+	<!-- End Schema.org -->
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"/>
-    <link rel="stylesheet" href="/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"/>
+	<link rel="stylesheet" href="/style.css">
 
-    <title>V Playground: Run, Edit, Share V Code Online</title>
+	<title>V Playground: Run, Edit, Share V Code Online</title>
 </head>
 <body>
 
 <div class="header-component fixed underline with-search-desktop search-desktop-after-logo">
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <a href="https://vlang.io/">
-			<svg width="33" height="23" viewBox="0 0 33 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237 19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332 3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506 20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299 19.8013Z"
-                              fill="#536B8A"/>
-                        <path d="M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954 7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635 20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074 3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z"
-                              fill="#5D87BF"/>
-                        <path d="M28.6948 15.9266L22.5937 19.4338C22.2604 19.6254 21.8446 19.3848 21.8446 19.0003V11.9859C21.8446 11.6014 22.2604 11.3608 22.5937 11.5524L28.6948 15.0596C29.0292 15.2518 29.0292 15.7343 28.6948 15.9266Z"
-                              fill="#659360" stroke="#659360"/>
-			</svg>
-                </a>
-
-                <a class="title" href="/">Playground</a>
-            </div>
+	<header>
+		<div class="header-container">
+			<div class="logo">
+				<a href="https://vlang.io/">
+					<svg width="33" height="23" viewBox="0 0 33 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M13.7299 19.8013L19.7647 3.09237C19.8671 2.80897 19.7058 2.60237
+							19.4046 2.63127L14.6589 3.08648C14.3578 3.11539 14.0326 3.36967 13.9332
+							3.65405L8.34737 19.6224C8.24785 19.9067 8.41265 20.1376 8.71506
+							20.1376H13.3343C13.4856 20.1376 13.6499 20.0226 13.7011 19.8809L13.7299
+							19.8013Z" fill="#536B8A"/>
+						<path d="M2.37076 2.63127L7.11662 3.08648C7.41765 3.11539 7.74316 3.36954
+							7.84309 3.65377L13.5471 19.8801C13.597 20.0223 13.5148 20.1376 13.3635
+							20.1376H8.71501C8.4126 20.1376 8.08399 19.9075 7.98162 19.6241L2.01074
+							3.09237C1.90842 2.80897 2.0697 2.60237 2.37076 2.63127Z" fill="#5D87BF"/>
+					</svg>
+				</a>
+				<a class="title" href="/">Playground</a>
+			</div>
 			<ul>
-                <li class="js-change-theme__action change-theme" aria-label="Change theme">
-                    <svg class="theme-icon sun" width="30" height="30" viewBox="0 0 30 30" fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_4_47)">
-                            <path d="M14.9854 1.92059C14.7382 1.92445 14.5026 2.02624 14.3304 2.20361C14.1581 2.38099 14.0633 2.61946 14.0667 2.86668V5.66668C14.0649 5.79036 14.0878 5.91315 14.1339 6.02792C14.18 6.14269 14.2485 6.24715 14.3353 6.33523C14.4222 6.42331 14.5256 6.49325 14.6398 6.54098C14.7539 6.58872 14.8763 6.61331 15 6.61331C15.1237 6.61331 15.2462 6.58872 15.3603 6.54098C15.4744 6.49325 15.5778 6.42331 15.6647 6.33523C15.7515 6.24715 15.82 6.14269 15.8661 6.02792C15.9122 5.91315 15.9351 5.79036 15.9333 5.66668V2.86668C15.935 2.74181 15.9117 2.61786 15.8646 2.50219C15.8176 2.38651 15.7478 2.28145 15.6594 2.19323C15.571 2.10501 15.4658 2.03542 15.35 1.98859C15.2343 1.94176 15.1103 1.91863 14.9854 1.92059ZM6.41042 5.47892C6.2249 5.47933 6.04372 5.53501 5.88999 5.63885C5.73626 5.7427 5.61696 5.89 5.54732 6.06195C5.47768 6.2339 5.46086 6.4227 5.499 6.60425C5.53714 6.7858 5.62852 6.95187 5.76146 7.08126L7.74115 9.06095C7.82715 9.15052 7.93016 9.22204 8.04415 9.2713C8.15814 9.32056 8.28081 9.34659 8.40498 9.34785C8.52915 9.34912 8.65232 9.32559 8.76728 9.27865C8.88225 9.23172 8.98669 9.16231 9.0745 9.07451C9.1623 8.9867 9.23171 8.88226 9.27864 8.76729C9.32558 8.65233 9.34911 8.52915 9.34784 8.40498C9.34658 8.28081 9.32056 8.15814 9.27129 8.04416C9.22203 7.93017 9.15051 7.82716 9.06094 7.74116L7.08125 5.76147C6.99406 5.67184 6.88975 5.60065 6.77451 5.55211C6.65928 5.50357 6.53546 5.47868 6.41042 5.47892V5.47892ZM23.5604 5.47892C23.3179 5.48614 23.0878 5.58748 22.9188 5.76147L20.9391 7.74116C20.8495 7.82716 20.778 7.93017 20.7287 8.04416C20.6795 8.15814 20.6534 8.28081 20.6522 8.40498C20.6509 8.52915 20.6744 8.65233 20.7214 8.76729C20.7683 8.88225 20.8377 8.9867 20.9255 9.0745C21.0133 9.16231 21.1178 9.23171 21.2327 9.27865C21.3477 9.32558 21.4709 9.34911 21.595 9.34785C21.7192 9.34659 21.8419 9.32056 21.9559 9.2713C22.0698 9.22203 22.1729 9.15052 22.2589 9.06095L24.2385 7.08126C24.3734 6.95016 24.4655 6.78138 24.5028 6.59703C24.5401 6.41268 24.5209 6.22136 24.4476 6.04814C24.3742 5.87493 24.2503 5.7279 24.092 5.62633C23.9337 5.52475 23.7484 5.47337 23.5604 5.47892ZM15 8.46668C13.2673 8.46668 11.6055 9.15501 10.3802 10.3802C9.155 11.6055 8.46667 13.2673 8.46667 15C8.46667 16.7328 9.155 18.3945 10.3802 19.6198C11.6055 20.845 13.2673 21.5333 15 21.5333C16.7328 21.5333 18.3945 20.845 19.6198 19.6198C20.845 18.3945 21.5333 16.7328 21.5333 15C21.5333 13.2673 20.845 11.6055 19.6198 10.3802C18.3945 9.15501 16.7328 8.46668 15 8.46668V8.46668ZM2.86667 14.0667C2.74299 14.0649 2.6202 14.0878 2.50543 14.1339C2.39066 14.18 2.2862 14.2485 2.19812 14.3353C2.11004 14.4222 2.0401 14.5257 1.99237 14.6398C1.94463 14.7539 1.92004 14.8763 1.92004 15C1.92004 15.1237 1.94463 15.2462 1.99237 15.3603C2.0401 15.4744 2.11004 15.5779 2.19812 15.6647C2.2862 15.7515 2.39066 15.82 2.50543 15.8661C2.6202 15.9122 2.74299 15.9351 2.86667 15.9333H5.66667C5.79035 15.9351 5.91314 15.9122 6.02791 15.8661C6.14268 15.82 6.24714 15.7515 6.33522 15.6647C6.4233 15.5779 6.49324 15.4744 6.54098 15.3603C6.58871 15.2462 6.6133 15.1237 6.6133 15C6.6133 14.8763 6.58871 14.7539 6.54098 14.6398C6.49324 14.5257 6.4233 14.4222 6.33522 14.3353C6.24714 14.2485 6.14268 14.18 6.02791 14.1339C5.91314 14.0878 5.79035 14.0649 5.66667 14.0667H2.86667ZM24.3333 14.0667C24.2097 14.0649 24.0869 14.0878 23.9721 14.1339C23.8573 14.18 23.7529 14.2485 23.6648 14.3353C23.5767 14.4222 23.5068 14.5257 23.459 14.6398C23.4113 14.7539 23.3867 14.8763 23.3867 15C23.3867 15.1237 23.4113 15.2462 23.459 15.3603C23.5068 15.4744 23.5767 15.5779 23.6648 15.6647C23.7529 15.7515 23.8573 15.82 23.9721 15.8661C24.0869 15.9122 24.2097 15.9351 24.3333 15.9333H27.1333C27.257 15.9351 27.3798 15.9122 27.4946 15.8661C27.6093 15.82 27.7138 15.7515 27.8019 15.6647C27.89 15.5779 27.9599 15.4744 28.0076 15.3603C28.0554 15.2462 28.08 15.1237 28.08 15C28.08 14.8763 28.0554 14.7539 28.0076 14.6398C27.9599 14.5257 27.89 14.4222 27.8019 14.3353C27.7138 14.2485 27.6093 14.18 27.4946 14.1339C27.3798 14.0878 27.257 14.0649 27.1333 14.0667H24.3333ZM8.38282 20.6565C8.14034 20.6637 7.9102 20.7651 7.74115 20.9391L5.76146 22.9188C5.67189 23.0048 5.60038 23.1078 5.55111 23.2218C5.50185 23.3357 5.47582 23.4584 5.47456 23.5826C5.4733 23.7068 5.49683 23.8299 5.54376 23.9449C5.5907 24.0599 5.6601 24.1643 5.74791 24.2521C5.83572 24.3399 5.94016 24.4093 6.05512 24.4563C6.17009 24.5032 6.29326 24.5267 6.41743 24.5255C6.5416 24.5242 6.66427 24.4982 6.77825 24.4489C6.89224 24.3996 6.99525 24.3281 7.08125 24.2386L9.06094 22.2589C9.19581 22.1278 9.28793 21.959 9.32522 21.7746C9.36252 21.5903 9.34325 21.399 9.26995 21.2257C9.19664 21.0525 9.07272 20.9055 8.91442 20.8039C8.75612 20.7024 8.57082 20.651 8.38282 20.6565ZM21.5898 20.6565C21.4042 20.6566 21.2227 20.712 21.0687 20.8157C20.9147 20.9194 20.7951 21.0667 20.7253 21.2387C20.6554 21.4107 20.6384 21.5997 20.6765 21.7814C20.7146 21.9631 20.806 22.1294 20.9391 22.2589L22.9188 24.2386C23.0048 24.3281 23.1078 24.3996 23.2218 24.4489C23.3357 24.4982 23.4584 24.5242 23.5826 24.5254C23.7067 24.5267 23.8299 24.5032 23.9449 24.4562C24.0598 24.4093 24.1643 24.3399 24.2521 24.2521C24.3399 24.1643 24.4093 24.0599 24.4562 23.9449C24.5032 23.8299 24.5267 23.7068 24.5254 23.5826C24.5242 23.4584 24.4982 23.3357 24.4489 23.2218C24.3996 23.1078 24.3281 23.0048 24.2385 22.9188L22.2589 20.9391C22.1719 20.8497 22.0679 20.7786 21.953 20.7301C21.8381 20.6815 21.7146 20.6565 21.5898 20.6565V20.6565ZM14.9854 23.3873C14.7382 23.3911 14.5026 23.4929 14.3304 23.6703C14.1581 23.8477 14.0633 24.0861 14.0667 24.3333V27.1333C14.0649 27.257 14.0878 27.3798 14.1339 27.4946C14.18 27.6094 14.2485 27.7138 14.3353 27.8019C14.4222 27.89 14.5256 27.9599 14.6398 28.0077C14.7539 28.0554 14.8763 28.08 15 28.08C15.1237 28.08 15.2462 28.0554 15.3603 28.0077C15.4744 27.9599 15.5778 27.89 15.6647 27.8019C15.7515 27.7138 15.82 27.6094 15.8661 27.4946C15.9122 27.3798 15.9351 27.257 15.9333 27.1333V24.3333C15.935 24.2085 15.9117 24.0845 15.8646 23.9689C15.8176 23.8532 15.7478 23.7481 15.6594 23.6599C15.571 23.5717 15.4658 23.5021 15.35 23.4553C15.2343 23.4084 15.1103 23.3853 14.9854 23.3873V23.3873Z"
-                                  fill="white"/>
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_4_47">
-                                <rect width="28" height="28" fill="white" transform="translate(1 1)"/>
-                            </clipPath>
-                        </defs>
-                    </svg>
+				<li class="js-change-theme__action change-theme" aria-label="Change theme">
+					<svg class="theme-icon sun" fill="white" width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" >
+						<path transform="translate(7.2 7.2)"
+							d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0
+							8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0
+							1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5
+							0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1
+							0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5
+							0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1
+							0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707
+							0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1
+							.707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707
+							0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+					</svg>
+					<svg class="theme-icon moon" fill="none" width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M27.1371 20.5912C25.7519
+							21.0833 24.2605 21.3512 22.7065 21.3512C15.3985 21.3512 9.47424
+							15.4269 9.47424 8.11889C9.47424 6.10409 9.92454 4.19447 10.73
+							2.48517C5.60094 4.30725 1.92825 9.20347 1.92825 14.9575C1.92825
+							22.2655 7.85255 28.1898 15.1605 28.1898C20.4537 28.1898 25.021
+							25.0818 27.1371 20.5912Z" fill="black"/>
+					</svg>
+				</li>
+			</ul>
 
-                    <svg class="theme-icon moon" width="30" height="30" viewBox="0 0 30 30" fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                              d="M27.1371 20.5912C25.7519 21.0833 24.2605 21.3512 22.7065 21.3512C15.3985 21.3512 9.47424 15.4269 9.47424 8.11889C9.47424 6.10409 9.92454 4.19447 10.73 2.48517C5.60094 4.30725 1.92825 9.20347 1.92825 14.9575C1.92825 22.2655 7.85255 28.1898 15.1605 28.1898C20.4537 28.1898 25.021 25.0818 27.1371 20.5912Z"
-                              fill="black"/>
-                    </svg>
-                </li>
-            </ul>
+			<ul class="mobile-header-list">
+				<li>
+					<button class="search js-search-button" aria-label="Search">
+						<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<g clip-path="url(#clip0_126_9)">
+								<circle class="icon-stroke" cx="6.15425" cy="6.5229" r="4.43781" transform="rotate(44.8191 6.15425 6.5229)" stroke="black"/>
+									<path class="icon-data" d="M10.4302 9.76331L10.0755
+										9.41088L9.37066 10.1202L9.72532 10.4726L10.4302
+										9.76331ZM13.3535 14.078C13.5494 14.2726 13.866
+										14.2716 14.0606 14.0758C14.2553 13.8799 14.2543
+										13.5633 14.0584 13.3687L13.3535 14.078ZM9.72532
+										10.4726L13.3535 14.078L14.0584 13.3687L10.4302
+										9.76331L9.72532 10.4726Z" fill="black"/>
+							</g>
+							<defs>
+								<clipPath id="clip0_126_9">
+									<rect width="16" height="16" fill="white"/>
+								</clipPath>
+							</defs>
+						</svg>
+					</button>
+				</li>
+				<li>
+					<button class="open-menu js-open-mobile-menu" aria-label="Open mobile right menu">
+						<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<rect class="icon-data" x="1" y="2.00775" width="14" height="1" rx="0.5" fill="black"/>
+							<rect class="icon-data" x="1" y="13.0379" width="14" height="1" rx="0.5" fill="black"/>
+							<rect class="icon-data" x="1" y="7.5" width="14" height="1" rx="0.5" fill="black"/>
+						</svg>
+					</button>
+				</li>
+			</ul>
 
-            <ul class="mobile-header-list">
-                <li>
-                    <button class="search js-search-button" aria-label="Search">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g clip-path="url(#clip0_126_9)">
-                                <circle class="icon-stroke" cx="6.15425" cy="6.5229" r="4.43781"
-                                        transform="rotate(44.8191 6.15425 6.5229)"
-                                        stroke="black"/>
-                                <path class="icon-data"
-                                      d="M10.4302 9.76331L10.0755 9.41088L9.37066 10.1202L9.72532 10.4726L10.4302 9.76331ZM13.3535 14.078C13.5494 14.2726 13.866 14.2716 14.0606 14.0758C14.2553 13.8799 14.2543 13.5633 14.0584 13.3687L13.3535 14.078ZM9.72532 10.4726L13.3535 14.078L14.0584 13.3687L10.4302 9.76331L9.72532 10.4726Z"
-                                      fill="black"/>
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_126_9">
-                                    <rect width="16" height="16" fill="white"/>
-                                </clipPath>
-                            </defs>
-                        </svg>
-                    </button>
-                </li>
-                <li>
-                    <button class="open-menu js-open-mobile-menu" aria-label="Open mobile right menu">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect class="icon-data" x="1" y="2.00775" width="14" height="1" rx="0.5" fill="black"/>
-                            <rect class="icon-data" x="1" y="13.0379" width="14" height="1" rx="0.5" fill="black"/>
-                            <rect class="icon-data" x="1" y="7.5" width="14" height="1" rx="0.5" fill="black"/>
-                        </svg>
-                    </button>
-                </li>
-            </ul>
-			
-        </div>
-    </header>
-	
-    <aside class="mobile-header-aside">
-        <nav>
-            <div class="aside-header">
-                <div class="close-button-wrapper">
-                    <div class="close-button js-close-header-aside-button" role="button"
-                         aria-label="Close mobile right menu">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path class="icon-stroke" d="M2.32349 2.34091L13.7059 13.7233" stroke="black"
-                                  stroke-linecap="round"/>
-                            <path class="icon-stroke" d="M2.32349 13.7233L13.7059 2.34091" stroke="black"
-                                  stroke-linecap="round"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </aside>
-	
-    <div class="header-mobile-overlay js-header-mobile-overlay"></div>
+		</div>
+	</header>
 
-    <div class="search-window">
-        <div class="search-form">
-            <div class="search-header">
-                <div class="search-input">
-                    <label for="search-input">
-                    <span class="icon">
-                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle class="icon-stroke" cx="6.15425" cy="6.5229" r="4.43781"
-                                    transform="rotate(44.8191 6.15425 6.5229)"
-                                    stroke="black"/>
-                            <path class="icon-data"
-                                  d="M10.4302 9.76331L10.0755 9.41088L9.37066 10.1202L9.72532 10.4726L10.4302 9.76331ZM13.3535 14.078C13.5494 14.2726 13.866 14.2716 14.0606 14.0758C14.2553 13.8799 14.2543 13.5633 14.0584 13.3687L13.3535 14.078ZM9.72532 10.4726L13.3535 14.078L14.0584 13.3687L10.4302 9.76331L9.72532 10.4726Z"
-                                  fill="black"/>
-                        </svg>
-                    </span>
-                    </label>
+	<aside class="mobile-header-aside">
+		<nav>
+			<div class="aside-header">
+				<div class="close-button-wrapper">
+					<div class="close-button js-close-header-aside-button" role="button"
+						 aria-label="Close mobile right menu">
+						<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path class="icon-stroke" d="M2.32349 2.34091L13.7059 13.7233" stroke="black" stroke-linecap="round"/>
+							<path class="icon-stroke" d="M2.32349 13.7233L13.7059 2.34091" stroke="black" stroke-linecap="round"/>
+						</svg>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</aside>
 
-                    <input id="search-input" type="text"
-                           autocorrect="off" autocapitalize="off" spellcheck="false"
-                           autocomplete="off"
-                           placeholder="Search everywhere..."
-                           data-place="all"
-                           class="js-search-input">
+	<div class="header-mobile-overlay js-header-mobile-overlay"></div>
 
-                    <button class="close-button clear-input js-clear-input-button" aria-label="Clear search">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path class="icon-stroke" d="M2.32349 2.34091L13.7059 13.7233" stroke="black"
-                                  stroke-linecap="round"/>
-                            <path class="icon-stroke" d="M2.32349 13.7233L13.7059 2.34091" stroke="black"
-                                  stroke-linecap="round"/>
-                        </svg>
-                    </button>
-                </div>
+	<div class="search-window">
+		<div class="search-form">
+			<div class="search-header">
+				<div class="search-input">
+					<label for="search-input">
+					<span class="icon">
+						 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<circle class="icon-stroke" cx="6.15425" cy="6.5229" r="4.43781" transform="rotate(44.8191 6.15425 6.5229)" stroke="black"/>
+							<path class="icon-data"
+								  d="M10.4302 9.76331L10.0755 9.41088L9.37066 10.1202L9.72532
+								  10.4726L10.4302 9.76331ZM13.3535 14.078C13.5494 14.2726 13.866
+								  14.2716 14.0606 14.0758C14.2553 13.8799 14.2543 13.5633 14.0584
+								  13.3687L13.3535 14.078ZM9.72532 10.4726L13.3535 14.078L14.0584
+								  13.3687L10.4302 9.76331L9.72532 10.4726Z"
+								  fill="black"/>
+						</svg>
+					</span>
+					</label>
 
-                <button class="close-search-button js-close-search-button" aria-label="Cancel search">Cancel</button>
-            </div>
+					<input id="search-input" type="text"
+						   autocorrect="off" autocapitalize="off" spellcheck="false"
+						   autocomplete="off"
+						   placeholder="Search everywhere..."
+						   data-place="all"
+						   class="js-search-input">
 
-            <div class="search-place">
-                <span class="search-in-label">Search in:</span>
-                <ul>
-                    <li class="search-place-item selected">
-                        <input type="radio" id="search-place-all" name="search-place" value="all">
-                        <label for="search-place-all">All</label><br>
-                    </li>
-                    <li class="search-place-item">
-                        <input type="radio" id="search-place-docs" name="search-place" value="documentation" checked>
-                        <label for="search-place-docs">Documentation</label><br>
-                    </li>
-                    <li class="search-place-item">
-                        <input type="radio" id="search-place-blog" name="search-place" value="blog">
-                        <label for="search-place-blog">Blog</label><br>
-                    </li>
-                    <li class="search-place-item">
-                        <input type="radio" id="search-place-modules" name="search-place" value="modules">
-                        <label for="search-place-modules">Modules</label><br>
-                    </li>
-                </ul>
-            </div>
+					<button class="close-button clear-input js-clear-input-button" aria-label="Clear search">
+						<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path class="icon-stroke" d="M2.32349 2.34091L13.7059 13.7233" stroke="black" stroke-linecap="round"/>
+							<path class="icon-stroke" d="M2.32349 13.7233L13.7059 2.34091" stroke="black" stroke-linecap="round"/>
+						</svg>
+					</button>
+				</div>
 
-            <div class="search-results with-caption">
-                <div class="caption">
-                    <span>Type something to search</span>
-                </div>
+				<button class="close-search-button js-close-search-button" aria-label="Cancel search">Cancel</button>
+			</div>
 
-                <ul class="search-results-list" role="listbox"></ul>
-            </div>
-            <div class="search-footer">
-                <div class="search-footer-content">
-                    <div class="search-hints">
-                        <span class="search-hint"><span class="search-key">Enter</span> to search</span>
-                        <span class="search-hint"><span class="search-key">↑</span> or <span class="search-key">↓</span> to navigate</span>
-                        <span class="search-hint"><span class="search-key">Esc</span> to close</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="search-overlay js-search-overlay"></div>
+			<div class="search-place">
+				<span class="search-in-label">Search in:</span>
+				<ul>
+					<li class="search-place-item selected">
+						<input type="radio" id="search-place-all" name="search-place" value="all">
+						<label for="search-place-all">All</label><br>
+					</li>
+					<li class="search-place-item">
+						<input type="radio" id="search-place-docs" name="search-place" value="documentation" checked>
+						<label for="search-place-docs">Documentation</label><br>
+					</li>
+					<li class="search-place-item">
+						<input type="radio" id="search-place-blog" name="search-place" value="blog">
+						<label for="search-place-blog">Blog</label><br>
+					</li>
+					<li class="search-place-item">
+						<input type="radio" id="search-place-modules" name="search-place" value="modules">
+						<label for="search-place-modules">Modules</label><br>
+					</li>
+				</ul>
+			</div>
+
+			<div class="search-results with-caption">
+				<div class="caption">
+					<span>Type something to search</span>
+				</div>
+
+				<ul class="search-results-list" role="listbox"></ul>
+			</div>
+			<div class="search-footer">
+				<div class="search-footer-content">
+					<div class="search-hints">
+						<span class="search-hint"><span class="search-key">Enter</span> to search</span>
+						<span class="search-hint"><span class="search-key">↑</span> or <span class="search-key">↓</span> to navigate</span>
+						<span class="search-hint"><span class="search-key">Esc</span> to close</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="search-overlay js-search-overlay"></div>
 </div>
 
 <main>
-    <div class="tools">
-        <div class="container">
-            <div class="playground__examples__select">
-                <label for="examples-input">Examples:</label>
+	<div class="tools">
+		<div class="container">
+			<div class="playground__examples__select">
+				<label for="examples-input">Examples:</label>
 
-                <div class="dropdown js-examples__select">
-                    <button class="dropdown__button" type="button">
-                        <span>Hello World</span>
+				<div class="dropdown js-examples__select">
+					<button class="dropdown__button" type="button">
+						<span>Hello World</span>
+						<span class="open-icon">
+							<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+								 xmlns="http://www.w3.org/2000/svg">
+								<rect x="8.13306" y="11.6247" width="8" height="1" transform="rotate(-135 8.13306 11.6247)" fill="white"/>
+								<rect x="7.43687" y="10.9072" width="8" height="1" transform="rotate(-45 7.43687 10.9072)" fill="white"/>
+							</svg>
+						</span>
+					</button>
+					<input id="examples-input" class="dropdown__input_hidden" type="text" name="select-category" value=""/>
+				</div>
+			</div>
 
-                        <span class="open-icon">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <rect x="8.13306" y="11.6247" width="8" height="1"
-                                      transform="rotate(-135 8.13306 11.6247)" fill="white"/>
-                                <rect x="7.43687" y="10.9072" width="8" height="1"
-                                      transform="rotate(-45 7.43687 10.9072)" fill="white"/>
-                            </svg>
-                        </span>
-                    </button>
-                    <input id="examples-input" class="dropdown__input_hidden" type="text" name="select-category"
-                           value=""/>
-                </div>
-            </div>
+			<div class="additional-arguments">
+				<div class="additional-arguments-input">
+					<label for="build-arguments-input">Build arguments:</label>
+					<input id="build-arguments-input" spellcheck="false" autocomplete="false" type="text" class="js-build-arguments-input">
+				</div>
 
-            <div class="additional-arguments">
-                <div class="additional-arguments-input">
-                    <label for="build-arguments-input">Build arguments:</label>
-                    <input id="build-arguments-input" spellcheck="false" autocomplete="false" type="text"
-                           class="js-build-arguments-input">
-                </div>
+				<div class="additional-arguments-input">
+					<label for="run-arguments-input">Run arguments:</label>
+					<input id="run-arguments-input" spellcheck="false" autocomplete="false" type="text" class="js-run-arguments-input">
+				</div>
+			</div>
 
-                <div class="additional-arguments-input">
-                    <label for="run-arguments-input">Run arguments:</label>
-                    <input id="run-arguments-input" spellcheck="false" autocomplete="false" type="text"
-                           class="js-run-arguments-input">
-                </div>
-            </div>
+			<div class="buttons">
+				<button class="js-share__action">
+					<span class="icon">
+						<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<g clip-path="url(#clip0_2_15)">
+								<rect y="7.98141" width="8" height="2" transform="rotate(-45 0 7.98141)" fill="white"/>
+								<rect x="1.41422" y="6.61746" width="8" height="2"
+									  transform="rotate(45 1.41422 6.61746)"
+									  fill="white"/>
+								<rect x="16.0711" y="8.03168" width="8" height="2"
+									  transform="rotate(135 16.0711 8.03168)"
+									  fill="white"/>
+								<rect x="14.6569" y="9.39563" width="8" height="2"
+									  transform="rotate(-135 14.6569 9.39563)"
+									  fill="white"/>
+							</g>
+							<defs>
+								<clipPath id="clip0_2_15">
+									<rect width="16" height="16" fill="white"/>
+								</clipPath>
+							</defs>
+						</svg>
+					</span>
+					<span>Share</span>
+				</button>
+				<button class="js-format__action">
+					<span class="icon">
+						<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M1.16003 8.28796V7.21729C1.77438 7.21729 2.20052 7.09478
+								2.43844 6.84975C2.67637 6.60472 2.79533 6.20877 2.79533
+								5.6619V4.48469C2.79533 3.82773 2.88589 3.30217 3.06699
+								2.90799C3.25165 2.51026 3.50734 2.21019 3.83404 2.00778C4.1643
+								1.80536 4.55492 1.67042 5.00591 1.60295C5.45691 1.53548 5.95052
+								1.50174 6.48674 1.50174V3.19563C6.0677 3.19563 5.7481 3.25067
+								5.52793 3.36076C5.31131 3.46729 5.16394 3.6342 5.08582
+								3.86147C5.00769 4.08519 4.96863 4.36928 4.96863
+								4.71374V6.26914C4.96863 6.53903 4.91891 6.79648 4.81948
+								7.04151C4.72005 7.28299 4.53539 7.49783 4.2655 7.68604C3.99562
+								7.8707 3.61032 8.01807 3.10961 8.12816C2.6089 8.23469 1.95904
+								8.28796 1.16003 8.28796ZM6.48674 14.9836C5.95052 14.9836 5.45691
+								14.9499 5.00591 14.8824C4.55492 14.8149 4.1643 14.68 3.83404
+								14.4776C3.50734 14.2752 3.25165 13.9751 3.06699 13.5774C2.88589
+								13.1832 2.79533 12.6576 2.79533 12.0007V10.8181C2.79533 10.2713
+								2.67637 9.87532 2.43844 9.63029C2.20052 9.38526 1.77438 9.26275
+								1.16003 9.26275V8.19208C1.95904 8.19208 2.6089 8.24712 3.10961
+								8.35721C3.61032 8.46374 3.99562 8.61111 4.2655 8.79932C4.53539
+								8.98398 4.72005 9.19883 4.81948 9.44386C4.91891 9.68533 4.96863
+								9.94279 4.96863 10.2162V11.7716C4.96863 12.1125 5.00769 12.3949
+								5.08582 12.6186C5.16394 12.8458 5.31131 13.0127 5.52793
+								13.1193C5.7481 13.2294 6.0677 13.2844 6.48674
+								13.2844V14.9836ZM1.16003 9.26275V7.21729H3.07232V9.26275H1.16003Z" fill="white"/>
+							<path d="M14.5072 8.19208V9.26275C13.8965 9.26275 13.4703 9.38526
+								13.2288 9.63029C12.9909 9.87532 12.8719 10.2713 12.8719
+								10.8181V12.0007C12.8719 12.6576 12.7796 13.1832 12.595
+								13.5774C12.4139 13.9751 12.1582 14.2752 11.8279 14.4776C11.5012
+								14.68 11.1124 14.8149 10.6614 14.8824C10.2139 14.9499 9.72031
+								14.9836 9.18054 14.9836V13.2844C9.59958 13.2844 9.9174 13.2294
+								10.134 13.1193C10.3542 13.0127 10.5033 12.8458 10.5815
+								12.6186C10.6596 12.3949 10.6987 12.1125 10.6987
+								11.7716V10.2162C10.6987 9.94279 10.7484 9.68533 10.8478
+								9.44386C10.9472 9.19883 11.1319 8.98398 11.4018 8.79932C11.6717
+								8.61111 12.057 8.46374 12.5577 8.35721C13.0584 8.24712 13.7082
+								8.19208 14.5072 8.19208ZM9.18054 1.50174C9.72031 1.50174 10.2139
+								1.53548 10.6614 1.60295C11.1124 1.67042 11.5012 1.80536 11.8279
+								2.00778C12.1582 2.21019 12.4139 2.51026 12.595 2.90799C12.7796
+								3.30217 12.8719 3.82773 12.8719 4.48469V5.6619C12.8719 6.20877
+								12.9909 6.60472 13.2288 6.84975C13.4703 7.09478 13.8965 7.21729
+								14.5072 7.21729V8.28796C13.7082 8.28796 13.0584 8.23469 12.5577
+								8.12816C12.057 8.01807 11.6717 7.8707 11.4018 7.68604C11.1319
+								7.49783 10.9472 7.28299 10.8478 7.04151C10.7484 6.79648 10.6987
+								6.53903 10.6987 6.26914V4.71374C10.6987 4.36928 10.6596 4.08519
+								10.5815 3.86147C10.5033 3.6342 10.3542 3.46729 10.134
+								3.36076C9.9174 3.25067 9.59958 3.19563 9.18054
+								3.19563V1.50174ZM14.5072 7.21729V9.26275H12.595V7.21729H14.5072Z" fill="white"/>
+						</svg>
+					</span>
+					<span>Format</span>
+				</button>
+				<div class="run-button-select">
+					<button class="js-run__action" data-type="Run">
+						<span class="icon">
+							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g clip-path="url(#clip0_1_5)">
+									<path class="run-icon" d="M14.4657 8.20966L2.4657 15.1379L2.4657 1.28145L14.4657 8.20966Z"/>
+								</g>
+								<defs>
+									<clipPath id="clip0_1_5">
+										<rect width="16" height="16" fill="white"/>
+									</clipPath>
+								</defs>
+							</svg>
+						</span>
+						<span class="label">Run</span>
+					</button>
 
-            <div class="buttons">
-                <button class="js-share__action">
-                    <span class="icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g clip-path="url(#clip0_2_15)">
-                                <rect y="7.98141" width="8" height="2" transform="rotate(-45 0 7.98141)" fill="white"/>
-                                <rect x="1.41422" y="6.61746" width="8" height="2"
-                                      transform="rotate(45 1.41422 6.61746)"
-                                      fill="white"/>
-                                <rect x="16.0711" y="8.03168" width="8" height="2"
-                                      transform="rotate(135 16.0711 8.03168)"
-                                      fill="white"/>
-                                <rect x="14.6569" y="9.39563" width="8" height="2"
-                                      transform="rotate(-135 14.6569 9.39563)"
-                                      fill="white"/>
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_2_15">
-                                    <rect width="16" height="16" fill="white"/>
-                                </clipPath>
-                            </defs>
-                        </svg>
-                    </span>
-                    <span>Share</span>
-                </button>
-                <button class="js-format__action">
-                    <span class="icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1.16003 8.28796V7.21729C1.77438 7.21729 2.20052 7.09478 2.43844 6.84975C2.67637 6.60472 2.79533 6.20877 2.79533 5.6619V4.48469C2.79533 3.82773 2.88589 3.30217 3.06699 2.90799C3.25165 2.51026 3.50734 2.21019 3.83404 2.00778C4.1643 1.80536 4.55492 1.67042 5.00591 1.60295C5.45691 1.53548 5.95052 1.50174 6.48674 1.50174V3.19563C6.0677 3.19563 5.7481 3.25067 5.52793 3.36076C5.31131 3.46729 5.16394 3.6342 5.08582 3.86147C5.00769 4.08519 4.96863 4.36928 4.96863 4.71374V6.26914C4.96863 6.53903 4.91891 6.79648 4.81948 7.04151C4.72005 7.28299 4.53539 7.49783 4.2655 7.68604C3.99562 7.8707 3.61032 8.01807 3.10961 8.12816C2.6089 8.23469 1.95904 8.28796 1.16003 8.28796ZM6.48674 14.9836C5.95052 14.9836 5.45691 14.9499 5.00591 14.8824C4.55492 14.8149 4.1643 14.68 3.83404 14.4776C3.50734 14.2752 3.25165 13.9751 3.06699 13.5774C2.88589 13.1832 2.79533 12.6576 2.79533 12.0007V10.8181C2.79533 10.2713 2.67637 9.87532 2.43844 9.63029C2.20052 9.38526 1.77438 9.26275 1.16003 9.26275V8.19208C1.95904 8.19208 2.6089 8.24712 3.10961 8.35721C3.61032 8.46374 3.99562 8.61111 4.2655 8.79932C4.53539 8.98398 4.72005 9.19883 4.81948 9.44386C4.91891 9.68533 4.96863 9.94279 4.96863 10.2162V11.7716C4.96863 12.1125 5.00769 12.3949 5.08582 12.6186C5.16394 12.8458 5.31131 13.0127 5.52793 13.1193C5.7481 13.2294 6.0677 13.2844 6.48674 13.2844V14.9836ZM1.16003 9.26275V7.21729H3.07232V9.26275H1.16003Z"
-                                  fill="white"/>
-                            <path d="M14.5072 8.19208V9.26275C13.8965 9.26275 13.4703 9.38526 13.2288 9.63029C12.9909 9.87532 12.8719 10.2713 12.8719 10.8181V12.0007C12.8719 12.6576 12.7796 13.1832 12.595 13.5774C12.4139 13.9751 12.1582 14.2752 11.8279 14.4776C11.5012 14.68 11.1124 14.8149 10.6614 14.8824C10.2139 14.9499 9.72031 14.9836 9.18054 14.9836V13.2844C9.59958 13.2844 9.9174 13.2294 10.134 13.1193C10.3542 13.0127 10.5033 12.8458 10.5815 12.6186C10.6596 12.3949 10.6987 12.1125 10.6987 11.7716V10.2162C10.6987 9.94279 10.7484 9.68533 10.8478 9.44386C10.9472 9.19883 11.1319 8.98398 11.4018 8.79932C11.6717 8.61111 12.057 8.46374 12.5577 8.35721C13.0584 8.24712 13.7082 8.19208 14.5072 8.19208ZM9.18054 1.50174C9.72031 1.50174 10.2139 1.53548 10.6614 1.60295C11.1124 1.67042 11.5012 1.80536 11.8279 2.00778C12.1582 2.21019 12.4139 2.51026 12.595 2.90799C12.7796 3.30217 12.8719 3.82773 12.8719 4.48469V5.6619C12.8719 6.20877 12.9909 6.60472 13.2288 6.84975C13.4703 7.09478 13.8965 7.21729 14.5072 7.21729V8.28796C13.7082 8.28796 13.0584 8.23469 12.5577 8.12816C12.057 8.01807 11.6717 7.8707 11.4018 7.68604C11.1319 7.49783 10.9472 7.28299 10.8478 7.04151C10.7484 6.79648 10.6987 6.53903 10.6987 6.26914V4.71374C10.6987 4.36928 10.6596 4.08519 10.5815 3.86147C10.5033 3.6342 10.3542 3.46729 10.134 3.36076C9.9174 3.25067 9.59958 3.19563 9.18054 3.19563V1.50174ZM14.5072 7.21729V9.26275H12.595V7.21729H14.5072Z"
-                                  fill="white"/>
-                        </svg>
-                    </span>
-                    <span>Format</span>
-                </button>
-                <div class="run-button-select">
-                    <button class="js-run__action" data-type="Run">
-                        <span class="icon">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_1_5)">
-                                    <path class="run-icon"
-                                          d="M14.4657 8.20966L2.4657 15.1379L2.4657 1.28145L14.4657 8.20966Z"/>
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_1_5">
-                                        <rect width="16" height="16" fill="white"/>
-                                    </clipPath>
-                                </defs>
-                            </svg>
-                        </span>
-                        <span class="label">Run</span>
-                    </button>
+					<div class="js-open-run-select open-run-select">
+						<div class="open-icon">
+							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<rect x="8.13306" y="11.6247" width="8" height="1" transform="rotate(-135 8.13306 11.6247)" fill="white"/>
+								<rect x="7.43687" y="10.9072" width="8" height="1" transform="rotate(-45 7.43687 10.9072)" fill="white"/>
+							</svg>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-                    <div class="js-open-run-select open-run-select">
-                        <div class="open-icon">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <rect x="8.13306" y="11.6247" width="8" height="1"
-                                      transform="rotate(-135 8.13306 11.6247)" fill="white"/>
-                                <rect x="7.43687" y="10.9072" width="8" height="1"
-                                      transform="rotate(-45 7.43687 10.9072)" fill="white"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<ul class="playground-examples-list dropdown__list">
+	</ul>
 
-    <ul class="playground-examples-list dropdown__list">
-    </ul>
+	<div class="js-run-configurations-list run-configurations-list hidden">
+		<h4>Configurations</h4>
 
-    <div class="js-run-configurations-list run-configurations-list hidden">
-        <h4>Configurations</h4>
+		<div class="js-configuration configuration" data-type="Run">
+			<svg width="15" height="15" viewBox="0 0 16 16" fill="none"
+				 xmlns="http://www.w3.org/2000/svg">
+				<g clip-path="url(#clip0_14_12)">
+					<path d="M14.0548 8.75068L3.25542 14.9857C2.92209 15.1782 2.50542 14.9376
+						2.50542 14.5527L2.50542 2.08263C2.50542 1.69774 2.92208 1.45717 3.25542
+						1.64962L14.0548 7.88465C14.3881 8.0771 14.3881 8.55823 14.0548 8.75068Z"
+						fill="#659360" fill-opacity="0.2" stroke="#659360"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_14_12">
+						<rect width="16" height="16" fill="white"/>
+					</clipPath>
+				</defs>
+			</svg>
 
-        <div class="js-configuration configuration" data-type="Run">
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"
-                 xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_14_12)">
-                    <path d="M14.0548 8.75068L3.25542 14.9857C2.92209 15.1782 2.50542 14.9376 2.50542 14.5527L2.50542 2.08263C2.50542 1.69774 2.92208 1.45717 3.25542 1.64962L14.0548 7.88465C14.3881 8.0771 14.3881 8.55823 14.0548 8.75068Z"
-                          fill="#659360" fill-opacity="0.2" stroke="#659360"/>
-                </g>
-                <defs>
-                    <clipPath id="clip0_14_12">
-                        <rect width="16" height="16" fill="white"/>
-                    </clipPath>
-                </defs>
-            </svg>
+			<span>Run</span>
+		</div>
 
-            <span>Run</span>
-        </div>
+		<div class="js-configuration configuration" data-type="Test">
+			<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+				 xmlns="http://www.w3.org/2000/svg">
+				<g clip-path="url(#clip0_10_21)">
+					<path d="M14.2435 11.7122L9.12788 14.6657C8.79455 14.8582 8.37788 14.6176
+						8.37788 14.2327V8.32568C8.37788 7.94078 8.79455 7.70022 9.12788
+						7.89267L14.2435 10.8462C14.5769 11.0386 14.5769 11.5198 14.2435
+						11.7122Z"
+						fill="#659360" fill-opacity="0.2" stroke="#659360"/>
+					<mask id="mask0_10_21" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-1" y="0" width="17" height="17">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M16 0H-2.24113e-05V6.69516H-0.575562V16.4948H7.32227V14H8.49998L8.74439 7.85167L16 12V0Z" fill="#D9D9D9"/>
+					</mask>
+					<g mask="url(#mask0_10_21)">
+						<circle cx="6.68359" cy="7.13858" r="5.9928" fill="#659360" fill-opacity="0.2"/>
+						<circle cx="6.68359" cy="7.13858" r="5.4928" stroke="#659360"/>
+						<path d="M4.19995 4.58716H9.09369V5.43183H7.10044V10.844H6.19767V5.43183H4.19995V4.58716Z" fill="#659360"/>
+					</g>
+				</g>
+				<defs>
+					<clipPath id="clip0_10_21">
+						<rect width="16" height="16" fill="white"/>
+					</clipPath>
+				</defs>
+			</svg>
+			<span>Test</span>
+		</div>
 
-        <div class="js-configuration configuration" data-type="Test">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                 xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_10_21)">
-                    <path d="M14.2435 11.7122L9.12788 14.6657C8.79455 14.8582 8.37788 14.6176 8.37788 14.2327V8.32568C8.37788 7.94078 8.79455 7.70022 9.12788 7.89267L14.2435 10.8462C14.5769 11.0386 14.5769 11.5198 14.2435 11.7122Z"
-                          fill="#659360" fill-opacity="0.2" stroke="#659360"/>
-                    <mask id="mask0_10_21" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-1"
-                          y="0" width="17"
-                          height="17">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                              d="M16 0H-2.24113e-05V6.69516H-0.575562V16.4948H7.32227V14H8.49998L8.74439 7.85167L16 12V0Z"
-                              fill="#D9D9D9"/>
-                    </mask>
-                    <g mask="url(#mask0_10_21)">
-                        <circle cx="6.68359" cy="7.13858" r="5.9928" fill="#659360" fill-opacity="0.2"/>
-                        <circle cx="6.68359" cy="7.13858" r="5.4928" stroke="#659360"/>
-                        <path d="M4.19995 4.58716H9.09369V5.43183H7.10044V10.844H6.19767V5.43183H4.19995V4.58716Z"
-                              fill="#659360"/>
-                    </g>
-                </g>
-                <defs>
-                    <clipPath id="clip0_10_21">
-                        <rect width="16" height="16" fill="white"/>
-                    </clipPath>
-                </defs>
-            </svg>
-            <span>Test</span>
-        </div>
+		<div class="js-configuration configuration" data-type="Cgen">
+			<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+				 xmlns="http://www.w3.org/2000/svg">
+				<circle cx="7.73236" cy="7.97623" r="6.47858" fill="#4572E8" fill-opacity="0.2"/>
+				<circle cx="7.73236" cy="7.97623" r="5.97858" stroke="#4572E8"/>
+				<path d="M7.64877 11.7798C6.98052 11.7798 6.37317 11.6162 5.82674 11.2891C5.28378
+					10.9584 4.85742 10.506 4.54765 9.93167C4.23789 9.35391 4.08301 8.71002 4.08301
+					8C4.08301 7.28998 4.23789 6.64783 4.54765 6.07355C4.85742 5.49579 5.28378
+					5.04332 5.82674 4.71615C6.37317 4.38551 6.98052 4.22018 7.64877
+					4.22018C8.19869 4.22018 8.71206 4.33852 9.18889 4.57519C9.6692 4.80839
+					10.0642 5.11815 10.374 5.50449C10.6838 5.89082 10.8717 6.30152 10.9378
+					6.73658H10.0712C10.0016 6.44074 9.85019 6.16056 9.61699 5.89604C9.3838
+					5.63152 9.09318 5.41921 8.74513 5.25911C8.40056 5.09553 8.03511 5.01374
+					7.64877 5.01374C7.14062 5.01374 6.68294 5.14251 6.27572 5.40007C5.87198
+					5.65415 5.55526 6.00916 5.32554 6.4651C5.09583 6.91757 4.98098 7.4292
+					4.98098 8C4.98098 8.5708 5.09583 9.08417 5.32554 9.54012C5.55526 9.99258
+					5.87198 10.3476 6.27572 10.6051C6.68294 10.8592 7.14062 10.9863 7.64877
+					10.9863C8.03511 10.9863 8.40056 10.9062 8.74513 10.7461C9.09318 10.5825
+					9.3838 10.3685 9.61699 10.104C9.85019 9.83944 10.0016 9.55926 10.0712
+					9.26342H10.9378C10.8717 9.69848 10.6838 10.1092 10.374 10.4955C10.0642
+					10.8818 9.6692 11.1934 9.18889 11.43C8.71206 11.6632 8.19869 11.7798
+					7.64877 11.7798Z"
+					fill="#4572E8"/>
+			</svg>
 
-        <div class="js-configuration configuration" data-type="Cgen">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                 xmlns="http://www.w3.org/2000/svg">
-                <circle cx="7.73236" cy="7.97623" r="6.47858" fill="#4572E8" fill-opacity="0.2"/>
-                <circle cx="7.73236" cy="7.97623" r="5.97858" stroke="#4572E8"/>
-                <path d="M7.64877 11.7798C6.98052 11.7798 6.37317 11.6162 5.82674 11.2891C5.28378 10.9584 4.85742 10.506 4.54765 9.93167C4.23789 9.35391 4.08301 8.71002 4.08301 8C4.08301 7.28998 4.23789 6.64783 4.54765 6.07355C4.85742 5.49579 5.28378 5.04332 5.82674 4.71615C6.37317 4.38551 6.98052 4.22018 7.64877 4.22018C8.19869 4.22018 8.71206 4.33852 9.18889 4.57519C9.6692 4.80839 10.0642 5.11815 10.374 5.50449C10.6838 5.89082 10.8717 6.30152 10.9378 6.73658H10.0712C10.0016 6.44074 9.85019 6.16056 9.61699 5.89604C9.3838 5.63152 9.09318 5.41921 8.74513 5.25911C8.40056 5.09553 8.03511 5.01374 7.64877 5.01374C7.14062 5.01374 6.68294 5.14251 6.27572 5.40007C5.87198 5.65415 5.55526 6.00916 5.32554 6.4651C5.09583 6.91757 4.98098 7.4292 4.98098 8C4.98098 8.5708 5.09583 9.08417 5.32554 9.54012C5.55526 9.99258 5.87198 10.3476 6.27572 10.6051C6.68294 10.8592 7.14062 10.9863 7.64877 10.9863C8.03511 10.9863 8.40056 10.9062 8.74513 10.7461C9.09318 10.5825 9.3838 10.3685 9.61699 10.104C9.85019 9.83944 10.0016 9.55926 10.0712 9.26342H10.9378C10.8717 9.69848 10.6838 10.1092 10.374 10.4955C10.0642 10.8818 9.6692 11.1934 9.18889 11.43C8.71206 11.6632 8.19869 11.7798 7.64877 11.7798Z"
-                      fill="#4572E8"/>
-            </svg>
+			<span>Show generated C code</span>
+		</div>
+	</div>
+	<div class="js-run-configurations-list-overlay run-configurations-list-overlay"></div>
 
-            <span>Show generated C code</span>
-        </div>
-    </div>
-    <div class="js-run-configurations-list-overlay run-configurations-list-overlay"></div>
+	<div class="js-playground v-playground">
+		<div class="js-tips-layer tips-layer">
+			<button class="js-tips-layer__close close-button">
+				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="2.28027" y="13.3691" width="16" height="0.83856" transform="rotate(-45 2.28027 13.3691)" fill="white"/>
+					<rect x="2.87329" y="2.05539" width="16" height="0.83856" transform="rotate(45 2.87329 2.05539)" fill="white"/>
+				</svg>
+			</button>
 
-    <div class="js-playground v-playground">
-        <div class="js-tips-layer tips-layer">
-            <button class="js-tips-layer__close close-button">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2.28027" y="13.3691" width="16" height="0.83856" transform="rotate(-45 2.28027 13.3691)"
-                          fill="white"/>
-                    <rect x="2.87329" y="2.05539" width="16" height="0.83856" transform="rotate(45 2.87329 2.05539)"
-                          fill="white"/>
-                </svg>
-            </button>
+			<div class="tip" style="top: 170px; left: 50px;">
+				<div class="big title">
+					Looks like you are new here!
+				</div>
 
-            <div class="tip" style="top: 170px; left: 50px;">
-                <div class="big title">
-                    Looks like you are new here!
-                </div>
+				<div class="description">
+					This mode allows you to <span>translate V code to C code</span>.
+				</div>
+			</div>
 
-                <div class="description">
-                    This mode allows you to <span>translate V code to C code</span>.
-                </div>
-            </div>
+			<div class="tip" style="top: 30%; left: 500px;">
+				<div class="title">
+					Generated C code
+				</div>
 
-            <div class="tip" style="top: 30%; left: 500px;">
-                <div class="title">
-                    Generated C code
-                </div>
+				<div class="description">
+					<span>Right</span> editor represent the C code<br>
+					that was generated from the V code.
+				</div>
+			</div>
 
-                <div class="description">
-                    <span>Right</span> editor represent the C code<br>
-                    that was generated from the V code.
-                </div>
-            </div>
+			<div class="tip" style="top: 50%; left: 300px;">
+				<div class="title">
+					V code
+				</div>
 
-            <div class="tip" style="top: 50%; left: 300px;">
-                <div class="title">
-                    V code
-                </div>
+				<div class="description">
+					<span>Left</span> editor represent the V code<br>
+					that was translated to C code.
+				</div>
+			</div>
 
-                <div class="description">
-                    <span>Left</span> editor represent the V code<br>
-                    that was translated to C code.
-                </div>
-            </div>
+			<div class="tip" style="top: 70%; left: 150px;">
+				<div class="title">
+					Line matching
+				</div>
 
-            <div class="tip" style="top: 70%; left: 150px;">
-                <div class="title">
-                    Line matching
-                </div>
+				<div class="description">
+					<span>Click</span> on a line in the V code<br>
+					to see the corresponding line in the C code.
+				</div>
+			</div>
+		</div>
 
-                <div class="description">
-                    <span>Click</span> on a line in the V code<br>
-                    to see the corresponding line in the C code.
-                </div>
-            </div>
-        </div>
-        <div class="playground__editors">
-            <div class="playground__editor">
-                <div class="tabs">
-                    <ul>
-                        <li class="tab">
-                            <button class="close-button">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="2.28027" y="13.3691" width="16" height="0.83856"
-                                          transform="rotate(-45 2.28027 13.3691)"
-                                          fill="white"/>
-                                    <rect x="2.87329" y="2.05539" width="16" height="0.83856"
-                                          transform="rotate(45 2.87329 2.05539)"
-                                          fill="white"/>
-                                </svg>
-                            </button>
-                            <span>code.v</span>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Place for CodeMirror editor -->
-                <textarea class="main"></textarea>
-            </div>
+		<div class="playground__editors">
+			<div class="playground__editor">
+				<div class="tabs">
+					<ul>
+						<li class="tab">
+							<button class="close-button">
+								<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+									 xmlns="http://www.w3.org/2000/svg">
+									<rect x="2.28027" y="13.3691" width="16" height="0.83856"
+										  transform="rotate(-45 2.28027 13.3691)"
+										  fill="white"/>
+									<rect x="2.87329" y="2.05539" width="16" height="0.83856"
+										  transform="rotate(45 2.87329 2.05539)"
+										  fill="white"/>
+								</svg>
+							</button>
+							<span>code.v</span>
+						</li>
+					</ul>
+				</div>
+				<!-- Place for CodeMirror editor -->
+				<textarea class="main"></textarea>
+			</div>
 
-            <div class="playground__editor">
-                <div class="tabs">
-                    <ul>
-                        <li class="tab">
-                            <button class="js-close-cgen__action close-button">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="2.28027" y="13.3691" width="16" height="0.83856"
-                                          transform="rotate(-45 2.28027 13.3691)"
-                                          fill="white"/>
-                                    <rect x="2.87329" y="2.05539" width="16" height="0.83856"
-                                          transform="rotate(45 2.87329 2.05539)"
-                                          fill="white"/>
-                                </svg>
-                            </button>
+			<div class="playground__editor">
+				<div class="tabs">
+					<ul>
+						<li class="tab">
+							<button class="js-close-cgen__action close-button">
+								<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+									 xmlns="http://www.w3.org/2000/svg">
+									<rect x="2.28027" y="13.3691" width="16" height="0.83856"
+										  transform="rotate(-45 2.28027 13.3691)"
+										  fill="white"/>
+									<rect x="2.87329" y="2.05539" width="16" height="0.83856"
+										  transform="rotate(45 2.87329 2.05539)"
+										  fill="white"/>
+								</svg>
+							</button>
 
-                            <span>gen.c</span>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Place for CodeMirror editor -->
-                <textarea class="cgen"></textarea>
-            </div>
+							<span>gen.c</span>
+						</li>
+					</ul>
+				</div>
+				<!-- Place for CodeMirror editor -->
+				<textarea class="cgen"></textarea>
+			</div>
 
-            <div class="js-help-wrapper playground__help-wrapper">
-                <button class="js-create-bug__action inline-button">Report code as bug</button>
+			<div class="js-help-wrapper playground__help-wrapper">
+				<button class="js-create-bug__action inline-button">Report code as bug</button>
+				<span class="js-version-info version-info">Loading V version...</span>
 
-                <span class="js-version-info version-info">Loading V version...</span>
+				<button class="js-show-help playground__help-button"></button>
+				<div class="js-help-overlay playground__help-overlay"></div>
+				<div class="js-help playground__help-tip">
+					<div class="header">
+						<h3 class="title">Keyboards Shortcuts</h3>
+						<button class="js-close-help playground__close-help-tip-button">
+							<svg width="20" height="30" viewBox="0 0 30 30" fill="none"
+								 xmlns="http://www.w3.org/2000/svg">
+								<rect x="4.27553" y="25.067" width="30" height="3"
+									  transform="rotate(-45 4.27553 25.067)"
+									  fill="black"/>
+								<rect x="5.38731" y="3.85385" width="30" height="3"
+									  transform="rotate(45 5.38731 3.85385)"
+									  fill="black"/>
+							</svg>
+						</button>
+					</div>
+					<div class="shortcut">
+						<span class="description">Run code</span>
+						<span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>R</kbd></span>
+					</div>
+					<div class="shortcut">
+						<span class="description">Format code</span>
+						<span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>L</kbd></span>
+					</div>
+					<div class="shortcut">
+						<span class="description">Comment lines</span>
+						<span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>/</kbd></span>
+					</div>
+					<div class="shortcut">
+						<span class="description">Change font size</span>
+						<span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>+/-</kbd></span>
+					</div>
+					<div class="shortcut">
+						<span class="description">Open/close terminal</span>
+						<span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>T</kbd></span>
+					</div>
+					<div class="shortcut">
+						<span class="description">Open/close this help</span>
+						<span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>I</kbd></span>
+					</div>
 
-                <button class="js-show-help playground__help-button"></button>
-                <div class="js-help-overlay playground__help-overlay"></div>
-                <div class="js-help playground__help-tip">
-                    <div class="header">
-                        <h3 class="title">Keyboards Shortcuts</h3>
-                        <button class="js-close-help playground__close-help-tip-button">
-                            <svg width="20" height="30" viewBox="0 0 30 30" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <rect x="4.27553" y="25.067" width="30" height="3"
-                                      transform="rotate(-45 4.27553 25.067)"
-                                      fill="black"/>
-                                <rect x="5.38731" y="3.85385" width="30" height="3"
-                                      transform="rotate(45 5.38731 3.85385)"
-                                      fill="black"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="shortcut">
-                        <span class="description">Run code</span>
-                        <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>R</kbd></span>
-                    </div>
-                    <div class="shortcut">
-                        <span class="description">Format code</span>
-                        <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>L</kbd></span>
-                    </div>
-                    <div class="shortcut">
-                        <span class="description">Comment lines</span>
-                        <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>/</kbd></span>
-                    </div>
-                    <div class="shortcut">
-                        <span class="description">Change font size</span>
-                        <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>+/-</kbd></span>
-                    </div>
-                    <div class="shortcut">
-                        <span class="description">Open/close terminal</span>
-                        <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>T</kbd></span>
-                    </div>
-                    <div class="shortcut">
-                        <span class="description">Open/close this help</span>
-                        <span class="js-shortcut key"><kbd class="ctrl">⌃</kbd> + <kbd>I</kbd></span>
-                    </div>
+				</div>
+			</div>
+		</div>
 
-                </div>
-            </div>
-        </div>
+		<div class="js-terminal playground__terminal">
+			<div class="header">
+				<div class="title">Run</div>
 
-        <div class="js-terminal playground__terminal">
-            <div class="header">
-                <div class="title">Run</div>
+				<div class="js-terminal__tabs tabs">
+					<input type="radio" id="terminal-tab-build-log" name="terminal-tab" value="build-log" checked>
+					<label for="terminal-tab-build-log">
+						Build log
+					</label>
+					<input type="radio" id="terminal-tab-output" name="terminal-tab" value="output">
+					<label for="terminal-tab-output" class="active">
+						Output
+					</label>
+				</div>
 
-                <div class="js-terminal__tabs tabs">
-                    <input type="radio" id="terminal-tab-build-log" name="terminal-tab" value="build-log" checked>
-                    <label for="terminal-tab-build-log">
-                        Build log
-                    </label>
-                    <input type="radio" id="terminal-tab-output" name="terminal-tab" value="output">
-                    <label for="terminal-tab-output" class="active">
-                        Output
-                    </label>
-                </div>
-
-                <button class="js-terminal__close-buttom terminal__close-button">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect class="close-terminal-button-rect" x="1" y="8" width="13" height="1"/>
-                    </svg>
-                </button>
-            </div>
-            <pre class="js-terminal__output terminal__output hidden"></pre>
-            <pre class="js-terminal__build-log terminal__output"></pre>
-        </div>
-    </div>
+				<button class="js-terminal__close-buttom terminal__close-button">
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<rect class="close-terminal-button-rect" x="1" y="8" width="13" height="1"/>
+					</svg>
+				</button>
+			</div>
+			<pre class="js-terminal__output terminal__output hidden"></pre>
+			<pre class="js-terminal__build-log terminal__output"></pre>
+		</div>
+	</div>
 </main>
-</body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/comment/continuecomment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/comment/comment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
@@ -614,4 +661,6 @@
 <script src="/scripts/header.js"></script>
 <script src="/scripts/header-search.js"></script>
 <script src="/main.bundle.js"></script>
+
+</body>
 </html>
