@@ -29,6 +29,13 @@ Install V dependencies:
 npm run install-server-deps
 ```
 
+### Run the playground locally
+```bash
+npm run local-serve
+```
+then access the playground at <http://localhost:5555>
+
+
 ### Quick, containerized local development (recommended)
 
 #### Using Docker Compose
@@ -59,14 +66,6 @@ Then just run:
 
 ```sh
 npm run serve
-```
-
-then access the playground at <http://localhost:5555>
-
-### Run the playground locally
-
-```bash
-npm run local-serve
 ```
 
 then access the playground at <http://localhost:5555>
