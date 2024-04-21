@@ -6,7 +6,7 @@ import isolate
 pub fn format_code(code string) !string {
 	box_path, box_id := isolate.init_sandbox()
 	defer {
-		isolate.execute('isolate --box-id=${box_id} --cleanup')
+		isolate.cleanup_sandbox(box_id)
 	}
 
 	os.write_file(os.join_path(box_path, 'code.v'), code) or {

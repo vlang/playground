@@ -26,7 +26,7 @@ pub fn test(snippet models.CodeStorage) !RunResult {
 pub fn get_output(snippet models.CodeStorage) !string {
 	box_path, box_id := isolate.init_sandbox()
 	defer {
-		isolate.execute('isolate --box-id=${box_id} --cleanup')
+		isolate.cleanup_sandbox(box_id)
 	}
 
 	file := 'code.v'
@@ -96,7 +96,7 @@ pub fn get_output(snippet models.CodeStorage) !string {
 fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !RunResult {
 	box_path, box_id := isolate.init_sandbox()
 	defer {
-		isolate.execute('isolate --box-id=${box_id} --cleanup')
+		isolate.cleanup_sandbox(box_id)
 	}
 
 	file := if as_test { 'code_test.v' } else { 'code.v' }

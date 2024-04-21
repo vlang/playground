@@ -45,3 +45,11 @@ pub fn init_sandbox() (string, int) {
 	log.error('> init_sandbox failed to find usable sandbox')
 	return '', -1
 }
+
+// cleanup_sandbox will cleanup all the artefacts left in a sandbox, given its id.
+pub fn cleanup_sandbox(box_id int) {
+	if box_id == -1 {
+		return
+	}
+	execute('isolate --box-id=${box_id} --cleanup')
+}

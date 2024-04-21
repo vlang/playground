@@ -8,7 +8,7 @@ import models
 pub fn retrieve_cgen_code(snippet models.CodeStorage) !(string, int, string) {
 	box_path, box_id := isolate.init_sandbox()
 	defer {
-		isolate.execute('isolate --box-id=${box_id} --cleanup')
+		isolate.cleanup_sandbox(box_id)
 	}
 
 	os.write_file(os.join_path(box_path, 'code.v'), snippet.code) or {
