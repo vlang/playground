@@ -30,25 +30,21 @@ pub fn get_output(snippet models.CodeStorage) !string {
 	}
 
 	file := 'code.v'
-
 	os.write_file(os.join_path(box_path, file), snippet.code) or {
 		return error('Failed to write code to sandbox.')
 	}
 
 	build_res := isolate.execute('
 		isolate
-		 --box-id=${box_id}
-		 --dir=${@VEXEROOT}
-		 --env=HOME=/box
-		 --processes=${max_run_processes_and_threads}
-		 --mem=${max_compiler_memory_in_kb}
-		 --wall-time=${wall_time_in_seconds}
-		 --run
-		 --
-
-		${@VEXEROOT}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g
-		${prepare_user_arguments(snippet.build_arguments)}
-		${file}
+		--box-id=${box_id}
+		--dir=${@VEXEROOT}
+		--env=HOME=/box
+		--processes=${max_run_processes_and_threads}
+		--mem=${max_compiler_memory_in_kb}
+		--wall-time=${wall_time_in_seconds}
+		--run
+		--
+		${@VEXEROOT}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g ${prepare_user_arguments(snippet.build_arguments)} ${file} 
 	')
 	build_output := build_res.output.trim_right('\n')
 
@@ -60,17 +56,16 @@ pub fn get_output(snippet models.CodeStorage) !string {
 
 	run_res := isolate.execute('
 		isolate
-		 --box-id=${box_id}
-		 --dir=${@VEXEROOT}
-		 --env=HOME=/box
-		 --processes=${max_run_processes_and_threads}
-		 --mem=${max_run_memory_in_kb}
-		 --time=${run_time_in_seconds}
-		 --wall-time=${wall_time_in_seconds}
-		 --run
-		 --
-		 ./code
-		 ${prepare_user_arguments(snippet.run_arguments)}
+		--box-id=${box_id}
+		--dir=${@VEXEROOT}
+		--env=HOME=/box
+		--processes=${max_run_processes_and_threads}
+		--mem=${max_run_memory_in_kb}
+		--time=${run_time_in_seconds}
+		--wall-time=${wall_time_in_seconds}
+		--run
+		--
+		./code ${prepare_user_arguments(snippet.run_arguments)}
 	')
 
 	is_reached_resource_limit := run_res.exit_code == 1
@@ -116,10 +111,7 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !RunResult {
 			--wall-time=${wall_time_in_seconds}
 			--run
 			--
-
-			${@VEXEROOT}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g
-			${prepare_user_arguments(snippet.build_arguments)}
-			test ${file}
+			${@VEXEROOT}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g ${prepare_user_arguments(snippet.build_arguments)} test ${file}
 		')
 		run_output := run_res.output.trim_right('\n')
 
@@ -133,18 +125,15 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !RunResult {
 
 	build_res := isolate.execute('
 		isolate
-		 --box-id=${box_id}
-		 --dir=${@VEXEROOT}
-		 --env=HOME=/box
-		 --processes=${max_run_processes_and_threads}
-		 --mem=${max_compiler_memory_in_kb}
-		 --wall-time=${wall_time_in_seconds}
-		 --run
-		 --
-
-		${@VEXEROOT}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g
-		${prepare_user_arguments(snippet.build_arguments)}
-		${file}
+		--box-id=${box_id}
+		--dir=${@VEXEROOT}
+		--env=HOME=/box
+		--processes=${max_run_processes_and_threads}
+		--mem=${max_compiler_memory_in_kb}
+		--wall-time=${wall_time_in_seconds}
+		--run
+		--
+		${@VEXEROOT}/v -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -g ${prepare_user_arguments(snippet.build_arguments)} ${file}
 	')
 	build_output := build_res.output.trim_right('\n')
 
@@ -156,17 +145,16 @@ fn run_in_sandbox(snippet models.CodeStorage, as_test bool) !RunResult {
 
 	run_res := isolate.execute('
 		isolate
-		 --box-id=${box_id}
-		 --dir=${@VEXEROOT}
-		 --env=HOME=/box
-		 --processes=${max_run_processes_and_threads}
-		 --mem=${max_run_memory_in_kb}
-		 --time=${run_time_in_seconds}
-		 --wall-time=${wall_time_in_seconds}
-		 --run
-		 --
-		 ./code
-		 ${prepare_user_arguments(snippet.run_arguments)}
+		--box-id=${box_id}
+		--dir=${@VEXEROOT}
+		--env=HOME=/box
+		--processes=${max_run_processes_and_threads}
+		--mem=${max_run_memory_in_kb}
+		--time=${run_time_in_seconds}
+		--wall-time=${wall_time_in_seconds}
+		--run
+		--
+		./code ${prepare_user_arguments(snippet.run_arguments)}
 	')
 
 	is_reached_resource_limit := run_res.exit_code == 1

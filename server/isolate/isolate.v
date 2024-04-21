@@ -7,6 +7,7 @@ import log
 pub fn execute(raw_cmd string) os.Result {
 	cmd := raw_cmd
 		.trim_indent()
+		.replace('\t', ' ')
 		.replace('\r', '')
 		.replace('\n', ' ')
 
