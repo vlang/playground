@@ -1,6 +1,7 @@
 module isolate
 
 import os
+import log
 
 // execute runs a command in a sandbox inside isolate.
 pub fn execute(raw_cmd string) os.Result {
@@ -14,13 +15,13 @@ pub fn execute(raw_cmd string) os.Result {
 		two_dash_index := cmd.index('-- ') or { -1 }
 		if two_dash_index != -1 {
 			local_cmd := cmd[two_dash_index + 3..]
-			eprintln('> cmd: ${local_cmd}')
+			log.info('> local cmd: ${local_cmd}')
 			return os.execute(local_cmd)
 		}
 	}
 
 	$if debug {
-		eprintln('> cmd: ${cmd}')
+		log.info('> cmd: ${cmd}')
 	}
 
 	return os.execute(cmd)
@@ -32,18 +33,15 @@ pub fn init_sandbox() (string, int) {
 	$if local ? {
 		return './', -1
 	}
-
-	for {
-		for box_id in 0 .. 1000 {
-			// TODO: implement --cg when isolate releases v2 support
-			// remove --quota if isolate throws `Cannot identify filesystem which contains /var/local/lib/isolate/0`
-			iso_res := execute('isolate --box-id=${box_id} --init')
-			if iso_res.exit_code == 0 {
-				box_path := os.join_path(iso_res.output.trim_string_right('\n'), 'box')
-				return box_path, box_id
-			}
+	for box_id in 0 .. 1000 {
+		// TODO: implement --cg when isolate releases v2 support
+		// remove --quota if isolate throws `Cannot identify filesystem which contains /var/local/lib/isolate/0`
+		iso_res := execute('isolate --box-id=${box_id} --init')
+		if iso_res.exit_code == 0 {
+			box_path := os.join_path(iso_res.output.trim_string_right('\n'), 'box')
+			return box_path, box_id
 		}
 	}
-
+	log.error('> init_sandbox failed to find usable sandbox')
 	return '', -1
 }
