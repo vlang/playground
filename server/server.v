@@ -6,6 +6,8 @@ import db.sqlite
 import isolate
 import models
 import flag
+import time
+import log
 
 const default_port = 5555
 
@@ -89,6 +91,14 @@ fn precompile_vfmt() {
 	}
 }
 
+fn report_memory_usage() {
+	time.sleep(2 * time.second)
+	for {
+		log.info('server gc_memory_use: ${gc_memory_use()}')
+		time.sleep(2 * time.minute)
+	}
+}
+
 // precompile_vtest prepares the vtest binary in the sandbox.
 // See `precompile_vfmt` for more details.
 fn precompile_vtest() {
@@ -122,5 +132,6 @@ fn main() {
 
 	mut app := &Server{}
 	app.init_once()
+	spawn report_memory_usage()
 	vweb.run(app, port)
 }
