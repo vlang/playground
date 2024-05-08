@@ -936,7 +936,7 @@ aside.mobile-header-aside.open + .header-mobile-overlay {
   height: 30px;
   padding: 0 10px;
   font-size: 13px;
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
   border: 1px solid var(--border-color);
   outline: none;
   color: var(--text-color);
@@ -1994,7 +1994,7 @@ main {
   margin: 0;
   overflow: scroll;
   padding: 5px 20px 20px 10px;
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
   font-size: 13.5px;
   line-height: 1.57;
   background-color: var(--terminal-background);
@@ -2030,7 +2030,7 @@ main {
 .CodeMirror {
   width: 100%;
   height: auto;
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
   font-size: 13.5px;
   line-height: 1.57;
   background-color: var(--background-color);
@@ -2067,7 +2067,7 @@ main {
   background: var(--select-background);
   color: var(--completion-variant-color);
   font-size: 14px;
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
   max-height: 20em;
   overflow-y: auto;
 }
