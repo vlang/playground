@@ -77,6 +77,7 @@ export const keywords: Set<string> = new Set<string>([
     "go",
     "goto",
     "if",
+    "implements",
     "import",
     "in",
     "interface",
