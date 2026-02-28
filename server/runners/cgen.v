@@ -16,9 +16,19 @@ pub fn retrieve_cgen_code(snippet models.CodeStorage) !(string, int, string) {
 	}
 
 	build_res := isolate.execute('
-		 ${@VEXEROOT}/v -showcc -keepc -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -skip-unused -g
-		 ${prepare_user_arguments(snippet.build_arguments)}
-		 ${box_path}/code.v
+		isolate
+		--box-id=${box_id}
+		--dir=${@VEXEROOT}
+		--env=HOME=/box
+		--env=TMPDIR=/box
+		--processes=${max_run_processes_and_threads}
+		--mem=${max_compiler_memory_in_kb}
+		--wall-time=${wall_time_in_seconds}
+		--run
+		--
+		${@VEXEROOT}/v -showcc -keepc -cflags -DGC_MARKERS=1 -no-parallel -no-retry-compilation -skip-unused -g
+		${prepare_user_arguments(snippet.build_arguments)}
+		code.v
 	')
 	build_output := build_res.output.trim_right('\n')
 
@@ -28,8 +38,10 @@ pub fn retrieve_cgen_code(snippet models.CodeStorage) !(string, int, string) {
 		// skip handling of errors for now
 	}
 
-	path_to_cgen := $if macos { '/tmp/v_501/code.tmp.c' } $else { '/tmp/v_0/code.tmp.c' }
-	cgen_file := os.read_file(path_to_cgen) or { return error('Failed to read generated C code.') }
+	// The V compiler writes temp C code relative to TMPDIR (/box inside sandbox = box_path on host).
+	cgen_file := os.read_file(os.join_path(box_path, 'code.tmp.c')) or {
+		return error('Failed to read generated C code.')
+	}
 
 	return cgen_file, build_res.exit_code, build_output
 }
